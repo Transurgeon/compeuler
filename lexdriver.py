@@ -90,8 +90,17 @@ class LexFridman:
                     self.getNextChar()
                     return Token(TokenType.INLINECMT, self.text[startIdx:endIdx], line)
                 elif self.peekNextChar() == '*':
+                    startIdx = self.currentIdx
+                    count = 1
+                    while count > 0 and self.currentIdx < len(self.text) - 1:
+                        self.getNextChar()
+                        if self.currentChar == '*' and self.peekNextChar() == '/':
+                            count -= 1
+                        elif self.currentChar == '/' and self.peekNextChar() == '*':
+                            count += 1
+                    endIdx = self.currentIdx
                     self.getNextChar()
-                    print("block comment")
+                    return Token(TokenType.BLOCKCMT, self.text[startIdx:endIdx+2], line)
                 else:
                     return Token(TokenType.DIV, char, line)
             # match remainder of operators
@@ -114,6 +123,32 @@ class LexFridman:
                 tok = Token(TokenType.ID, self.text[startIdx:endIdx+1], line)
                 tok.verifyKeyword()
                 return tok
+            case char if char.isdecimal():
+                if char == '0':
+                    return Token(TokenType.INTNUM, char, line)
+                else:
+                    startIdx = self.currentIdx
+                    while self.currentChar.isdecimal():
+                        self.getNextChar()
+                    if self.currentChar != '.':
+                        endIdx = self.currentIdx
+                        return Token(TokenType.INTNUM, self.text[startIdx:endIdx], line)
+                    # matching lexeme for floating point numbers
+                    else:
+                        self.getNextChar()
+                        while self.currentChar.isdecimal():
+                            self.getNextChar()
+                        if self.currentChar != 'e':
+                            endIdx = self.currentIdx
+                            return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
+                        else:
+                            self.getNextChar()
+                            if self.currentChar == '+' or self.currentChar == '-':
+                                self.getNextChar()
+                            while self.currentChar.isdecimal():
+                                self.getNextChar()
+                            endIdx = self.currentIdx
+                            return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
         return 4
     
     def getTokens(self):
