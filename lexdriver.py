@@ -74,7 +74,7 @@ class LexFridman:
     def __init__(self, text: str):
         self.text = text
         self.currentChar = ""
-        self.currentIdx = 0
+        self.currentIdx = -1
         self.errors = []
         self.tokens = []
         self.currentLine = 1
@@ -88,16 +88,6 @@ class LexFridman:
         if self.currentIdx + 1 < len(self.text):
             return self.text[self.currentIdx + 1]
         
-    def getStrings(self):
-        str = ""
-        while self.currentIdx < len(self.text) - 1:
-            str += self.currentChar
-            self.getNextChar()
-            if self.currentChar == ' ':
-                self.skipWhiteSpace()
-                self.tokens.append(str)
-                str = ""
-        
     def skipWhiteSpace(self):
         while self.currentChar == ' ' or self.currentChar == '\t':
             self.getNextChar()
@@ -109,7 +99,6 @@ class LexFridman:
             case '\n':
                 self.currentLine += 1
             case '=':
-                print("in peek", self.peekNextChar())
                 if self.peekNextChar() == '=':
                     self.getNextChar()
                     return Token(TokenType.EQ, '==', line)
@@ -123,8 +112,27 @@ class LexFridman:
                 return Token(TokenType.OPENPAR, char, line)
             case ';':
                 return Token(TokenType.SEMI, char, line)
+            case '<':
+                if self.peekNextChar() == '>':
+                    self.getNextChar()
+                    return Token(TokenType.NOTEQ, '<>', line)
+                elif self.peekNextChar() == '=':
+                    self.getNextChar()
+                    return Token(TokenType.LEQ, '<=', line)
+                else:
+                    return Token(TokenType.LT, char, line)
+            case '>':
+                if self.peekNextChar() == '=':
+                    self.getNextChar()
+                    return Token(TokenType.GEQ, '>=', line)
+                else:
+                    return Token(TokenType.GT, char, line)
             case '-':
-                return Token(TokenType.MINUS, char, line)
+                if self.peekNextChar() == '>':
+                    self.getNextChar()
+                    return Token(TokenType.ARROW, '->', line)
+                else:
+                    return Token(TokenType.MINUS, char, line)
             case '&':
                 return Token(TokenType.AND, char, line)
             case ')':
@@ -139,25 +147,54 @@ class LexFridman:
                 return Token(TokenType.OPENCUBR, char, line)
             case '}':
                 return Token(TokenType.CLOSECUBR, char, line)
+            case '.':
+                return Token(TokenType.DOT, char, line)
+            # match comments and division operator
+            case '/':
+                if self.peekNextChar() == '/':
+                    startIdx = self.currentIdx
+                    while self.currentChar != '\n':
+                        self.getNextChar()
+                    endIdx = self.currentIdx
+                    self.currentLine += 1
+                    self.getNextChar()
+                    return Token(TokenType.INLINECMT, self.text[startIdx:endIdx], line)
+                elif self.peekNextChar() == '*':
+                    self.getNextChar()
+                    print("block comment")
+                else:
+                    return Token(TokenType.DIV, char, line)
+            # match remainder of operators
             case ':':
                 if self.peekNextChar() == ':':
+                    self.getNextChar()
                     return Token(TokenType.COLONCOLON, '::', line)
                 else:
                     return Token(TokenType.COLON, char, line)
-            case ':':
-                return Token(TokenType.COLON, char, line)
+            case '[':
+                return Token(TokenType.OPENSQBR, char, line)
+            case ']':
+                return Token(TokenType.CLOSESQBR, char, line)
+            # match lexemes for id, float and integer
+            case char if char.isalpha():
+                startIdx = self.currentIdx
+                while self.peekNextChar().isalnum():
+                    self.getNextChar()
+                endIdx = self.currentIdx
+                return Token(TokenType.ID, self.text[startIdx:endIdx+1], line)
         return 4
     
     def getTokens(self):
-        for i in range(50):
+        while self.currentIdx < len(self.text) - 1:
             self.tokens.append(self.nextToken())
             self.getNextChar()
             self.skipWhiteSpace()
-            
+                
         
 f = open("assignment1/lexpositivegrading.src")
 text = f.read()
 lex = LexFridman(text)
 lex.getTokens()
 for t in lex.tokens:
-    print(t)
+    if t != 4:
+        print(t)
