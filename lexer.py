@@ -1,8 +1,9 @@
 from kento import Token, TokenType
 
 class LexFridman:
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self, filename: str):
+        self.filename = filename
+        self.text = self.readFile()
         self.currentChar = ""
         self.currentIdx = -1
         self.errors = []
@@ -151,13 +152,6 @@ class LexFridman:
                 return Token(TokenType.INVALIDCHAR, char, line)
         return
     
-    def getTokens(self):
-        while self.currentIdx < len(self.text) - 1:
-            self.tokens.append(self.nextToken())
-            self.getNextChar()
-            self.skipWhiteSpace()
-
-        
     def isValidInteger(self) -> bool:
         if not self.peekNextChar().isdecimal():
             self.backtrack()
@@ -193,4 +187,32 @@ class LexFridman:
         self.getNextChar()
         self.isValidInteger()
         return 
+
+    def getTokens(self):
+        while self.currentIdx < len(self.text) - 1:
+            self.tokens.append(self.nextToken())
+            self.getNextChar()
+            self.skipWhiteSpace()
+
+    def readFile(self):
+        with open(self.filename) as f:
+            return f.read()
+    
+    def outputTokens(self):
+        name, extension = self.filename.split(".")
+        fout = open(name + "_tokens." + extension, "w")
+        prevLine = 1
+        for tok in self.tokens:
+            if tok:
+                if tok.line != prevLine:
+                    fout.write("\n" + str(tok))
+                    prevLine = tok.line
+                else:
+                    fout.write(str(tok))
         
+    def outputErrors(self):
+        name, extension = self.filename.split(".")
+        ferr = open(name + "_errors." + extension, "w")
+        for e in self.errors:
+            ferr.write(e + "\n")
+    
