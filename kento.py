@@ -55,6 +55,7 @@ class TokenType(Enum):
     FLOATNUM = 204
     INLINECMT = 205
     BLOCKCMT = 206
+    INVALIDCHAR = 207
 
 class Token:
     def __init__(self, type: TokenType, lex: str, location: int):

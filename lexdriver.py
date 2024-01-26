@@ -14,18 +14,24 @@ class LexFridman:
             self.currentIdx += 1
             self.currentChar = self.text[self.currentIdx]
 
-    def peekNextChar(self):
-        if self.currentIdx + 1 < len(self.text):
-            return self.text[self.currentIdx + 1]
+    def peekNextChar(self, step = 1):
+        if self.currentIdx + step < len(self.text):
+            return self.text[self.currentIdx + step]
         
     def skipWhiteSpace(self):
         while self.currentChar == ' ' or self.currentChar == '\t':
             self.getNextChar()
     
+    def backtrack(self):
+        self.currentIdx -= 1
+        self.currentChar == self.text[self.currentIdx]
+    
     def nextToken(self):
         char, line = self.currentChar, self.currentLine
         match char:
             # match operators
+            case '':
+                pass
             case '\n':
                 self.currentLine += 1
             case '=':
@@ -119,8 +125,8 @@ class LexFridman:
                 startIdx = self.currentIdx
                 while self.peekNextChar().isalnum() or self.peekNextChar() == '_':
                     self.getNextChar()
-                endIdx = self.currentIdx
-                tok = Token(TokenType.ID, self.text[startIdx:endIdx+1], line)
+                endIdx = self.currentIdx + 1
+                tok = Token(TokenType.ID, self.text[startIdx:endIdx], line)
                 tok.verifyKeyword()
                 return tok
             case char if char.isdecimal():
@@ -130,38 +136,68 @@ class LexFridman:
                     startIdx = self.currentIdx
                     while self.currentChar.isdecimal():
                         self.getNextChar()
-                    if self.currentChar != '.':
-                        endIdx = self.currentIdx
+                    if not self.isValidFraction():
+                        endIdx = self.currentIdx + 1
                         return Token(TokenType.INTNUM, self.text[startIdx:endIdx], line)
                     # matching lexeme for floating point numbers
                     else:
-                        self.getNextChar()
-                        while self.currentChar.isdecimal():
-                            self.getNextChar()
-                        if self.currentChar != 'e':
-                            endIdx = self.currentIdx
-                            return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
-                        else:
-                            self.getNextChar()
-                            if self.currentChar == '+' or self.currentChar == '-':
-                                self.getNextChar()
-                            while self.currentChar.isdecimal():
-                                self.getNextChar()
-                            endIdx = self.currentIdx
-                            return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
-        return 4
+                        self.isValidFloat()
+                        endIdx = self.currentIdx + 1
+                        return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
+            case _:
+                self.errors.append("Lexical error: Invalid character: '" + char + "': line " + str(line) + ".")
+                return Token(TokenType.INVALIDCHAR, char, line)
+        return
     
     def getTokens(self):
         while self.currentIdx < len(self.text) - 1:
             self.tokens.append(self.nextToken())
             self.getNextChar()
             self.skipWhiteSpace()
+
+        
+    def isValidInteger(self) -> bool:
+        if not self.peekNextChar().isdecimal():
+            self.backtrack()
+            return False
+        elif self.peekNextChar() == '0':
+            self.getNextChar()
+            return True
+        # iterate as long as the current char is a digit
+        while self.peekNextChar().isdecimal():
+            self.getNextChar()
+        return True
                 
+    def isValidFraction(self) -> bool:
+        if self.currentChar != '.' or not self.peekNextChar().isdecimal():
+            self.backtrack()
+            return False
+        if self.peekNextChar() == '0':
+            self.getNextChar()
+            return True
+        while self.peekNextChar().isdecimal():
+            self.getNextChar()
+        if self.currentChar == '0':
+            self.backtrack()
+        return True
+    
+    def isValidFloat(self):
+        if self.peekNextChar() != 'e':
+            return 
+        c = self.peekNextChar(2)
+        if c == '+' or c == '-':
+            self.getNextChar()
+        self.getNextChar()
+        self.isValidInteger()
+        return 
         
 f = open("assignment1/lexpositivegrading.src")
 text = f.read()
 lex = LexFridman(text)
 lex.getTokens()
 for t in lex.tokens:
-    if t != 4:
+    if t:
         print(t)
+for e in lex.errors:
+    print(e)
+    
