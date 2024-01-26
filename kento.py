@@ -58,13 +58,13 @@ class TokenType(Enum):
     INVALIDCHAR = 207
 
 class Token:
-    def __init__(self, type: TokenType, lex: str, location: int):
+    def __init__(self, type: TokenType, lex: str, line: int):
         self.type = type
         self.lexeme = lex
-        self.location = location
+        self.line = line
     
     def __str__(self) -> str:
-        return "["+ self.type.name + ", " + self.lexeme + ", " + str(self.location) + "]"
+        return "["+ self.type.name + ", " + self.lexeme + ", " + str(self.line) + "]"
 
     # verifies if an identifier is a reserved keyword
     def verifyKeyword(self) -> None:
