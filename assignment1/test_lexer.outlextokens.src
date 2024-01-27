@@ -24,7 +24,7 @@
 [BLOCKCMT, /* this is a single line block comment */, 33]
 [BLOCKCMT, /* this is a \nmultiple line\nblock comment \n*/, 35]
 [BLOCKCMT, /* this is an imbricated \n/* block comment\n*/\n*/, 40]
-[FLOATNUM, 12.12e0, 47][INTNUM, 23410, 47]
+[FLOATNUM, 12.0000012e23410, 47]
 [FLOATNUM, 12.123e-0, 48][INTNUM, 123, 48]
 [FLOATNUM, 12.123e+0, 49][INTNUM, 12, 49]
 [FLOATNUM, 12.123, 50][ID, easports, 50]

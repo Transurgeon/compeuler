@@ -168,9 +168,6 @@ class LexFridman:
         if self.currentChar != '.' or not self.peekNextChar().isdecimal():
             self.backtrack()
             return False
-        if self.peekNextChar() == '0':
-            self.getNextChar()
-            return True
         while self.peekNextChar().isdecimal():
             self.getNextChar()
         # the fraction cannot end with zero so we must backtrack
@@ -200,7 +197,7 @@ class LexFridman:
     
     def outputTokens(self):
         name, extension = self.filename.split(".")
-        fout = open(name + "_tokens." + extension, "w")
+        fout = open(name + ".outlextokens." + extension, "w")
         prevLine = 1
         for tok in self.tokens:
             if tok:
@@ -212,7 +209,7 @@ class LexFridman:
         
     def outputErrors(self):
         name, extension = self.filename.split(".")
-        ferr = open(name + "_errors." + extension, "w")
+        ferr = open(name + ".outlexerrors." + extension, "w")
         for e in self.errors:
             ferr.write(e + "\n")
     
