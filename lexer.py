@@ -25,7 +25,7 @@ class LexFridman:
     
     def backtrack(self):
         self.currentIdx -= 1
-        self.currentChar == self.text[self.currentIdx]
+        self.currentChar = self.text[self.currentIdx]
     
     def nextToken(self):
         char, line = self.currentChar, self.currentLine
@@ -133,20 +133,20 @@ class LexFridman:
                 return tok
             # match lexeme for float and integer
             case char if char.isdecimal():
+                startIdx = self.currentIdx
                 if char == '0':
-                    return Token(TokenType.INTNUM, char, line)
+                    self.getNextChar()
                 else:
-                    startIdx = self.currentIdx
                     while self.currentChar.isdecimal():
                         self.getNextChar()
-                    if not self.isValidFraction():
-                        endIdx = self.currentIdx + 1
-                        return Token(TokenType.INTNUM, self.text[startIdx:endIdx], line)
-                    # matching lexeme for floating point numbers
-                    else:
-                        self.isValidFloat()
-                        endIdx = self.currentIdx + 1
-                        return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
+                if not self.isValidFraction():
+                    endIdx = self.currentIdx + 1
+                    return Token(TokenType.INTNUM, self.text[startIdx:endIdx], line)
+                # matching lexeme for floating point numbers
+                else:
+                    self.isValidFloat()
+                    endIdx = self.currentIdx + 1
+                    return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
             case _:
                 self.errors.append("Lexical error: Invalid character: '" + char + "': line " + str(line) + ".")
                 return Token(TokenType.INVALIDCHAR, char, line)
@@ -171,7 +171,7 @@ class LexFridman:
         while self.peekNextChar().isdecimal():
             self.getNextChar()
         # the fraction cannot end with zero so we must backtrack
-        if self.currentChar == '0':
+        while self.currentChar == '0':
             self.backtrack()
         return True
     
@@ -180,6 +180,8 @@ class LexFridman:
             return 
         c = self.peekNextChar(2)
         if c == '+' or c == '-':
+            if not self.peekNextChar(3).isdecimal():
+                return
             self.getNextChar()
         self.getNextChar()
         self.isValidInteger()
@@ -202,10 +204,10 @@ class LexFridman:
         for tok in self.tokens:
             if tok:
                 if tok.line != prevLine:
-                    fout.write("\n" + str(tok))
+                    fout.write("\n" + str(tok) + " ")
                     prevLine = tok.line
                 else:
-                    fout.write(str(tok))
+                    fout.write(str(tok) + " ")
         
     def outputErrors(self):
         name, extension = self.filename.split(".")
