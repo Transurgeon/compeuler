@@ -1,6 +1,10 @@
 from lexer import LexFridman
+import os
 
-lex = LexFridman("assignment1/test_lexer.src")
-lex.getTokens()
-lex.outputTokens()
-lex.outputErrors()
+path = "assignment1/tests/"
+for filename in os.listdir(path):
+    if filename.endswith(".src"):
+        lex = LexFridman(path + filename)
+        lex.getTokens()
+        lex.outputTokens()
+        lex.outputErrors()

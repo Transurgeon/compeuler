@@ -198,8 +198,8 @@ class LexFridman:
             return f.read()
     
     def outputTokens(self):
-        name, extension = self.filename.split(".")
-        fout = open(name + ".outlextokens." + extension, "w")
+        name, _ = self.filename.split(".")
+        fout = open(name + ".outlextokens", "w")
         prevLine = 1
         for tok in self.tokens:
             if tok:
@@ -210,8 +210,8 @@ class LexFridman:
                     fout.write(str(tok) + " ")
         
     def outputErrors(self):
-        name, extension = self.filename.split(".")
-        ferr = open(name + ".outlexerrors." + extension, "w")
+        name, _ = self.filename.split(".")
+        ferr = open(name + ".outlexerrors", "w")
         for e in self.errors:
             ferr.write(e + "\n")
     
