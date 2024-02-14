@@ -11,12 +11,10 @@ addOp -> 'or'
 
 arithExpr -> term rightrec-arithExpr 
 
-arraySize -> '[' arraySize2
+arraySize -> '[' arraySize2 
 arraySize2 -> 'intNum' ']' | ']' 
 
 assignOp -> '=' 
-
-assignStat -> variable assignOp expr 
 
 expr -> arithExpr expr2
 
@@ -36,10 +34,10 @@ factor -> 'not' factor
 factor -> sign factor 
 
 factor2 -> '(' aParams ')'
-factor2 -> rept-idnest1
+factor2 -> reptIdnest1
 
-rept-idnest1 -> indice rept-idnest1 
-rept-idnest1 -> EPSILON 
+reptIdnest1 -> indice reptIdnest1
+reptIdnest1 -> EPSILON
 
 reptVariableOrFunc -> idnest reptVariableOrFunc
 reptVariableOrFunc -> EPSILON
@@ -50,11 +48,13 @@ funcDecl -> funcHead ';'
 
 funcDef -> funcHead funcBody 
 
-funcHead -> 'func' 'id' '(' fParams ')' '-' returnType 
+funcHead -> 'func' 'id' '(' fParams ')' 'arrow' returnType 
+
+functionCall -> rept-functionCall0 'id' '(' aParams ')' 
 
 idnest -> '.' 'id' idnest2
 idnest2 -> '(' aParams ')'
-idnest2 -> rept-idnest1
+idnest2 -> reptIdnest1
 
 implDef -> 'impl' 'id' '{' rept-implDef3 '}' 
 
@@ -99,13 +99,16 @@ rept-funcBody1 -> EPSILON
 rept-functionCall0 -> idnest rept-functionCall0 
 rept-functionCall0 -> EPSILON 
 
+rept-idnest1 -> indice rept-idnest1 
+rept-idnest1 -> EPSILON 
+
 rept-implDef3 -> funcDef rept-implDef3 
 rept-implDef3 -> EPSILON 
 
 rept-opt-structDecl22 -> ',' 'id' rept-opt-structDecl22 
 rept-opt-structDecl22 -> EPSILON 
 
-rept-prog0 -> structOrImplOrFunc rept-prog0 
+rept-prog0 -> structOrImplOrfunc rept-prog0 
 rept-prog0 -> EPSILON 
 
 rept-statBlock1 -> statement rept-statBlock1 
@@ -139,17 +142,13 @@ statBlock -> '{' rept-statBlock1 '}'
 statBlock -> statement 
 statBlock -> EPSILON 
 
-statement -> rept-functionCall0 'id' funcCallOrAssignTail ';'
+statement -> assignStat ';' 
 statement -> 'if' '(' relExpr ')' 'then' statBlock 'else' statBlock ';' 
 statement -> 'while' '(' relExpr ')' statBlock ';' 
 statement -> 'read' '(' variable ')' ';' 
 statement -> 'write' '(' expr ')' ';' 
 statement -> 'return' '(' expr ')' ';' 
-
-functionCall -> rept-functionCall0 'id' '(' aParams ')' 
-
-funcCallOrAssignTail -> '(' aParams ')'
-funcCallOrAssignTail -> rept-variable2 assignOp expr
+statement -> functionCall ';' 
 
 structDecl -> 'struct' 'id' opt-structDecl2 '{' rept-structDecl4 '}' ';' 
 
@@ -168,7 +167,17 @@ varDecl -> 'let' 'id' ':' type rept-varDecl4 ';'
 varDeclOrStat -> varDecl 
 varDeclOrStat -> statement 
 
-variable -> rept-variable0 'id' rept-variable2 
+variable -> 'id' variable2
+
+variable2 -> reptIdnest1 reptvariable
+variable2 -> '(' aParams ')' varIdnest
+
+reptvariable -> varIdnest reptvariable
+reptvariable -> EPSILON
+
+varIdnest -> '.' 'id' varIdnest2
+varIdnest2 -> '(' aParams ')' varIdnest
+varIdnest2 -> reptIdnest1
 
 visibility -> 'public' 
 visibility -> 'private' 
