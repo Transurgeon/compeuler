@@ -147,6 +147,8 @@ class LexFridman:
                     self.isValidFloat()
                     endIdx = self.currentIdx + 1
                     return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
+            case '\0':
+                return Token(TokenType.EOF, char, line)
             case _:
                 self.errors.append("Lexical error: Invalid character: '" + char + "': line " + str(line) + ".")
                 return Token(TokenType.INVALIDCHAR, char, line)

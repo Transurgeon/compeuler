@@ -34,10 +34,7 @@ factor -> 'not' factor
 factor -> sign factor 
 
 factor2 -> '(' aParams ')'
-factor2 -> reptIdnest1
-
-reptIdnest1 -> indice reptIdnest1
-reptIdnest1 -> EPSILON
+factor2 -> rept-idnest1
 
 reptVariableOrFunc -> idnest reptVariableOrFunc
 reptVariableOrFunc -> EPSILON
@@ -54,7 +51,7 @@ functionCall -> rept-functionCall0 'id' '(' aParams ')'
 
 idnest -> '.' 'id' idnest2
 idnest2 -> '(' aParams ')'
-idnest2 -> reptIdnest1
+idnest2 -> rept-idnest1
 
 implDef -> 'impl' 'id' '{' rept-implDef3 '}' 
 
@@ -149,7 +146,7 @@ statement -> 'write' '(' expr ')' ';'
 statement -> 'return' '(' expr ')' ';' 
 statement -> 'id' statement2
 
-statement2 -> reptIdnest1 statement3
+statement2 -> rept-idnest1 statement3
 statement2 -> '(' aParams ')' statement4
 
 statement3 -> '.' 'id' statement2
@@ -177,7 +174,7 @@ varDeclOrStat -> statement
 
 variable -> 'id' variable2
 
-variable2 -> reptIdnest1 reptvariable
+variable2 -> rept-idnest1 reptvariable
 variable2 -> '(' aParams ')' varIdnest
 
 reptvariable -> varIdnest reptvariable
@@ -185,7 +182,7 @@ reptvariable -> EPSILON
 
 varIdnest -> '.' 'id' varIdnest2
 varIdnest2 -> '(' aParams ')' varIdnest
-varIdnest2 -> reptIdnest1
+varIdnest2 -> rept-idnest1
 
 visibility -> 'public' 
 visibility -> 'private' 
