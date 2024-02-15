@@ -3,8 +3,8 @@ from lexer import LexFridman
 class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
         self.currToken = []
+        self.peekToken = []
         self.next = []
-        self.tokens = lexer.getTokens()
     
     def checkToken(self, type):
         pass

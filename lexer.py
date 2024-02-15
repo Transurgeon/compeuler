@@ -3,7 +3,7 @@ from kento import Token, TokenType
 class LexFridman:
     def __init__(self, filename: str):
         self.filename = filename
-        self.text = self.readFile()
+        self.text = self.readFile() + '\n'
         self.currentChar = ""
         self.currentIdx = -1
         self.errors = []
@@ -11,13 +11,17 @@ class LexFridman:
         self.currentLine = 1
         
     def getNextChar(self):
-        if self.currentIdx < len(self.text):
-            self.currentIdx += 1
+        self.currentIdx += 1
+        if self.currentIdx >= len(self.text):
+            self.currentChar = '\0'
+        else:
             self.currentChar = self.text[self.currentIdx]
 
     def peekNextChar(self, step = 1):
         if self.currentIdx + step < len(self.text):
             return self.text[self.currentIdx + step]
+        else:
+            return '\0'
         
     def skipWhiteSpace(self):
         while self.currentChar == ' ' or self.currentChar == '\t':
@@ -31,8 +35,6 @@ class LexFridman:
         char, line = self.currentChar, self.currentLine
         match char:
             # match operators
-            case '':
-                pass
             case '\n':
                 self.currentLine += 1
             case '=':
@@ -148,7 +150,7 @@ class LexFridman:
                     endIdx = self.currentIdx + 1
                     return Token(TokenType.FLOATNUM, self.text[startIdx:endIdx], line)
             case '\0':
-                return Token(TokenType.EOF, char, line)
+                return Token(TokenType.EOF, '', line)
             case _:
                 self.errors.append("Lexical error: Invalid character: '" + char + "': line " + str(line) + ".")
                 return Token(TokenType.INVALIDCHAR, char, line)
