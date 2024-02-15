@@ -2,26 +2,34 @@ from lexer import LexFridman
 
 class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
-        self.currToken = []
-        self.peekToken = []
-        self.next = []
-    
+        self.peekIndex = 1
+        self.lex = lexer
+        self.lex.getTokens()
+        self.currToken = self.lex.tokens[0]
+        self.peekToken = self.lex.tokens[self.peekIndex]
+        
     def checkToken(self, type):
-        pass
+        return type == self.currToken.type
     
     def checkNext(self, type):
-        pass
+        return type == self.peekToken.type
     
-    def matchToken(self, type):
-        pass
+    def nextToken(self):
+        if self.peekIndex < len(self.lex.tokens) - 1:
+            self.currToken = self.peekToken
+            self.peekIndex  = self.peekIndex + 1
+            self.peekToken = self.lex.tokens[self.peekIndex]
     
-    def nextToken(self, type):
+    def match(self):
         pass
     
     def skipErrors(self):
         pass
     
     # Grammar rules
+    def parse(self):
+        pass
+    
     def prog(self):
         pass
     

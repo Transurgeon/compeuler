@@ -57,6 +57,7 @@ class TokenType(Enum):
     BLOCKCMT = 206
     INVALIDCHAR = 207
     EOF = 208
+    NEWLINE = 209
 
 class Token:
     def __init__(self, type: TokenType, lex: str, line: int):

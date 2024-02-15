@@ -32,6 +32,8 @@ class LexFridman:
         self.currentChar = self.text[self.currentIdx]
     
     def nextToken(self):
+        self.getNextChar()
+        self.skipWhiteSpace()
         char, line = self.currentChar, self.currentLine
         match char:
             # match operators
@@ -154,7 +156,6 @@ class LexFridman:
             case _:
                 self.errors.append("Lexical error: Invalid character: '" + char + "': line " + str(line) + ".")
                 return Token(TokenType.INVALIDCHAR, char, line)
-        return
     
     def isValidInteger(self) -> bool:
         if not self.peekNextChar().isdecimal():
@@ -193,9 +194,9 @@ class LexFridman:
 
     def getTokens(self):
         while self.currentIdx < len(self.text) - 1:
-            self.tokens.append(self.nextToken())
-            self.getNextChar()
-            self.skipWhiteSpace()
+            token = self.nextToken()
+            if token:
+                self.tokens.append(token)
 
     def readFile(self):
         with open(self.filename) as f:
@@ -206,12 +207,11 @@ class LexFridman:
         fout = open(name + ".outlextokens", "w")
         prevLine = 1
         for tok in self.tokens:
-            if tok:
-                if tok.line != prevLine:
-                    fout.write("\n" + str(tok) + " ")
-                    prevLine = tok.line
-                else:
-                    fout.write(str(tok) + " ")
+            if tok.line != prevLine:
+                fout.write("\n" + str(tok) + " ")
+                prevLine = tok.line
+            else:
+                fout.write(str(tok) + " ")
         
     def outputErrors(self):
         name, _ = self.filename.split(".")
