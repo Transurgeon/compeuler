@@ -1,4 +1,4 @@
-func id() arrow void {
+func id() -> void {
     id.id(id) ;
 }
 /*
