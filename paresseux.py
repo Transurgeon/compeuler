@@ -1,5 +1,6 @@
 from lexer import LexFridman
 from kento import Token, TokenType
+
 class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
         self.peekIndex = 1
@@ -11,14 +12,18 @@ class Paresseux:
     def checkToken(self, type):
         return type == self.currToken.type
     
-    def checkNext(self, type):
+    def checkPeek(self, type):
         return type == self.peekToken.type
     
+    def validateToken(self, types):
+        return self.currToken.type in types
+    
     def nextToken(self):
-        if self.peekIndex < len(self.lex.tokens) - 1:
+        if self.peekIndex < len(self.lex.tokens):
             self.currToken = self.peekToken
-            self.peekIndex  = self.peekIndex + 1
-            self.peekToken = self.lex.tokens[self.peekIndex]
+            if self.peekIndex < len(self.lex.tokens) - 1:
+                self.peekIndex  = self.peekIndex + 1
+                self.peekToken = self.lex.tokens[self.peekIndex]
     
     def match(self):
         pass
@@ -38,8 +43,9 @@ class Paresseux:
         while self.currToken.type != TokenType.EOF:
             self.structOrImplOrFunc()
 
+    # structOrImplOrFunc -> structDecl | implDef | funcDef 
     def structOrImplOrFunc(self):
-        pass
+        return self.structDecl() or self.implDef() or self.funcDef()
     
     def structDecl(self):
         pass
@@ -47,6 +53,7 @@ class Paresseux:
     def implDef(self):
         pass
     
+    # funcDef -> funcHead funcBody 
     def funcDef(self):
         pass
     
@@ -56,17 +63,28 @@ class Paresseux:
     def memberDecl(self):
         pass
     
+    # funcDecl -> funcHead ; 
     def funcDecl(self):
-        pass
+        if not self.funcHead():
+            return False
+        self.nextToken()
+        return self.checkToken(TokenType.CLOSECUBR)
     
+    # funcHead -> func id ( fParams ) arrow returnType 
     def funcHead(self):
         pass
     
+    # funcBody -> { rept-funcBody1 } 
     def funcBody(self):
         pass
     
-    def varDeclOrStat(self):
+    # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
+    def rept_funcBody1(self):
         pass
+    
+    # varDeclOrStat -> varDecl | statement 
+    def varDeclOrStat(self):
+        return self.varDecl() or self.statement()
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
@@ -83,9 +101,15 @@ class Paresseux:
     def statBlock(self):
         pass
     
+    # expr -> arithExpr expr2 
     def expr(self):
         pass
     
+    # expr2 -> relOp arithExpr | EPSILON 
+    def expr2(self):
+        pass
+    
+    # relExpr -> arithExpr relOp arithExpr 
     def relExpr(self):
         pass
     

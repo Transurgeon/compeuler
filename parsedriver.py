@@ -1,6 +1,6 @@
 from lexer import LexFridman
 from paresseux import Paresseux
-parse = Paresseux(LexFridman("assignment1/tests/test_lexer.src"))
+parse = Paresseux(LexFridman("assignment2/tests/variable-idnest.src"))
 for _ in range(len(parse.lex.tokens)): 
-    print(parse.peekToken)
+    print(parse.currToken)
     parse.nextToken()
