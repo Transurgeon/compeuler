@@ -45,7 +45,9 @@ class Paresseux:
     def prog(self):
         print("PROG")
         self.structOrImplOrFunc()
-        #self.structOrImplOrFunc()
+        self.structOrImplOrFunc()
+        self.structOrImplOrFunc()
+        self.structOrImplOrFunc()
         print(self.currToken)
 
     # structOrImplOrFunc -> structDecl | implDef | funcDef 
@@ -139,8 +141,54 @@ class Paresseux:
         if self.matchCurr({TokenType.ID}):
             self.nextToken()
             self.statement2()
-            return True
+        elif self.matchCurr({TokenType.IF}):
+            self.nextToken()
+            self.par_relExpr()
+            self.matchCurr({TokenType.THEN})
+            self.nextToken()
+            self.statBlock()
+            self.matchCurr({TokenType.ELSE})
+            self.nextToken()
+            self.statBlock()
+            self.matchCurr({TokenType.SEMI})
+            self.nextToken()
+        elif self.matchCurr({TokenType.WHILE}):
+            self.nextToken()
+            self.par_relExpr()
+            self.statBlock()
+            self.matchCurr({TokenType.SEMI})
+            self.nextToken()
+        elif self.matchCurr({TokenType.READ}):
+            self.nextToken()
+            self.matchCurr({TokenType.OPENPAR})
+            self.nextToken()
+            self.variable()
+            self.matchCurr({TokenType.CLOSEPAR})
+            self.nextToken()
+            self.matchCurr({TokenType.SEMI})
+            self.nextToken()
+        elif self.matchCurr({TokenType.WRITE}):
+            self.nextToken()
+            self.par_relExpr()
+            self.matchCurr({TokenType.SEMI})
+            self.nextToken()
+        elif self.matchCurr({TokenType.RETURN}):
+            self.nextToken()
+            self.par_relExpr()
+            self.matchCurr({TokenType.SEMI})
+            self.nextToken()
+        else:
+            return False
+        return True
     
+    # helper function to match for ( relExpr )
+    def par_relExpr(self):
+        self.matchCurr({TokenType.OPENPAR})
+        self.nextToken()
+        self.relExpr()
+        self.matchCurr({TokenType.CLOSEPAR})
+        self.nextToken()
+        
     # statement2 -> ( aParams ) statement4 | rept-idnest1 statement3 
     def statement2(self):
         print("statement2")
@@ -190,7 +238,22 @@ class Paresseux:
     
     # statBlock -> { rept-statBlock1 } | statement | EPSILON 
     def statBlock(self):
-        pass
+        if self.matchCurr({TokenType.OPENCUBR}):
+            self.nextToken()
+            self.rept_statBlock1()
+            self.matchCurr({TokenType.CLOSECUBR})
+            self.nextToken()
+        elif self.statement():
+            return
+        else:
+            return
+    
+    # rept-statBlock1 -> statement rept-statBlock1 | EPSILON 
+    def rept_statBlock1(self):
+        if self.statement():
+            self.rept_statBlock1()
+        else:
+            return True
     
     # expr -> arithExpr expr2 
     def expr(self):
@@ -253,6 +316,20 @@ class Paresseux:
             self.nextToken()
             self.factor2()
             self.reptVariableOrFunc()
+        elif self.matchCurr({TokenType.INTNUM}):
+            self.nextToken()
+        elif self.matchCurr({TokenType.FLOATNUM}):
+            self.nextToken()
+        elif self.matchCurr({TokenType.OPENPAR}):
+            self.nextToken()
+            self.arithExpr()
+            self.matchCurr({TokenType.CLOSEPAR})
+            self.nextToken()
+        elif self.matchCurr({TokenType.NOT}):
+            self.nextToken()
+            self.factor()
+        elif self.sign():
+            self.factor()
     
     # factor2 -> ( aParams ) | rept-idnest1 
     def factor2(self):
@@ -264,9 +341,49 @@ class Paresseux:
         else:
             self.rept_idnest1()
     
+    # variable -> id variable2 
     def variable(self):
-        pass
+        self.matchCurr({TokenType.ID})
+        self.variable2()
+        return True
+        
+    # variable2 -> ( aParams ) varIdnest | rept-idnest1 reptvariable
+    def variable2(self):
+        if self.matchCurr({TokenType.OPENPAR}):
+            self.nextToken()
+            self.aParams()
+            self.matchCurr({TokenType.CLOSEPAR})
+            self.nextToken()
+            self.varIdnest()
+        else:
+            self.rept_idnest1()
+            self.reptvariable()
     
+    # reptvariable -> varIdnest reptvariable | EPSILON 
+    def reptvariable(self):
+        if self.varIdnest():
+            self.reptvariable()
+        else:
+            return True
+    
+    # varIdnest -> . id varIdnest2 
+    def varIdnest(self):
+        if not self.matchSequence([TokenType.DOT, TokenType.ID]):
+            return False
+        self.varIdnest2()
+        return True
+    
+    # varIdnest2 -> ( aParams ) varIdnest | rept-idnest1 
+    def varIdnest2(self):
+        if self.matchCurr({TokenType.OPENPAR}):
+            self.nextToken()
+            self.aParams()
+            self.matchCurr({TokenType.CLOSEPAR})
+            self.nextToken()
+            self.varIdnest()
+        else:
+            self.rept_idnest1()
+            
     # reptVariableOrFunc -> idnest reptVariableOrFunc | EPSILON 
     def reptVariableOrFunc(self):
         if self.idnest():

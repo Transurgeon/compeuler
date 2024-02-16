@@ -1,5 +1,18 @@
 func id() -> void {
     id.id(id) ;
+    id(id).id = id;
+    id(id).id() ;
+    id.id[id] = id;
+    id[id].id = id;
+    id[id].id[id] = id;
+    id.id[id][id] = id;
+    id[id][id].id = id;
+    id[id][id].id[id][id] =id ;
+    id(id).id[id] = id; 
+    id(id).id[id][id] = id ; 
+    id(id).id[id][id][id] = id;
+    id(id).id[id][id][id][id] = id;
+    id[id][id][id].id(id).id[id].id(id).id[id][id] = id;
 }
 /*
     variable + idnest
