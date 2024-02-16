@@ -1,50 +1,61 @@
 from lexer import LexFridman
 from kento import Token, TokenType
+from typing import List
 
 class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
         self.peekIndex = 1
         self.lex = lexer
-        self.lex.getTokens()
+        self.lex.getTokens() # get all tokens from the lexer
         self.currToken = self.lex.tokens[0]
         self.peekToken = self.lex.tokens[self.peekIndex]
-        
-    def checkToken(self, type):
-        return type == self.currToken.type
-    
-    def checkPeek(self, type):
-        return type == self.peekToken.type
-    
-    def validateToken(self, types):
+
+    def matchCurr(self, types):
         return self.currToken.type in types
+    
+    def matchPeek(self, types):
+        return self.peekToken.type in types
+
+    def matchSequence(self, sequence: List[Token]):
+        for s in sequence:
+            if self.matchCurr({s}):
+                self.nextToken()
+            else:
+                return
     
     def nextToken(self):
         if self.peekIndex < len(self.lex.tokens):
             self.currToken = self.peekToken
+            self.skipToken()
             if self.peekIndex < len(self.lex.tokens) - 1:
                 self.peekIndex  = self.peekIndex + 1
                 self.peekToken = self.lex.tokens[self.peekIndex]
+        else:
+            self.currToken = Token(TokenType.EOF, "$", -1) # add an end of file token
     
-    def match(self):
-        pass
-    
+    def skipToken(self):
+        if self.matchCurr({TokenType.INVALIDCHAR, TokenType.BLOCKCMT, TokenType.INLINECMT}):
+            self.nextToken()
+            
     def skipErrors(self):
         pass
     
     # Grammar rules
     # START -> prog 
     def parse(self):
-        print("starting parse")
+        print("starting parsing sequence")
         self.prog()
         
     # prog -> rept-prog0 
     def prog(self):
         print("PROG")
-        while self.currToken.type != TokenType.EOF:
-            self.structOrImplOrFunc()
+        self.structOrImplOrFunc()
+        #self.structOrImplOrFunc()
+        print(self.currToken)
 
     # structOrImplOrFunc -> structDecl | implDef | funcDef 
     def structOrImplOrFunc(self):
+        print("structOrImplOrFunc")
         return self.structDecl() or self.implDef() or self.funcDef()
     
     def structDecl(self):
@@ -55,7 +66,9 @@ class Paresseux:
     
     # funcDef -> funcHead funcBody 
     def funcDef(self):
-        pass
+        print("funcDef")
+        self.funcHead()
+        self.funcBody()
     
     def visibility(self):
         pass
@@ -65,37 +78,86 @@ class Paresseux:
     
     # funcDecl -> funcHead ; 
     def funcDecl(self):
-        if not self.funcHead():
-            return False
+        print("funcDecl")
+        self.funcHead()
         self.nextToken()
-        return self.checkToken(TokenType.CLOSECUBR)
+        self.checkToken(TokenType.CLOSECUBR)
+        return True
     
     # funcHead -> func id ( fParams ) arrow returnType 
     def funcHead(self):
-        pass
+        print("funcHead")
+        self.matchSequence([TokenType.FUNC, TokenType.ID, TokenType.OPENPAR])
+        self.fParams()
+        self.matchSequence([TokenType.CLOSEPAR, TokenType.ARROW])
+        self.returnType()
     
     # funcBody -> { rept-funcBody1 } 
     def funcBody(self):
-        pass
+        print("funcBody")
+        self.matchCurr({TokenType.OPENCUBR})
+        self.nextToken()
+        self.rept_funcBody1()
+        self.matchCurr({TokenType.CLOSESQBR})
+        self.nextToken()
+        return True
     
     # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
     def rept_funcBody1(self):
-        pass
+        print("rept-funcBody1")
+        if self.varDeclOrStat():
+            self.rept_funcBody1()
+        else:
+            return True
     
     # varDeclOrStat -> varDecl | statement 
     def varDeclOrStat(self):
+        print("varDeclOrStat")
         return self.varDecl() or self.statement()
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
-        pass
+        print("varDecl")
+        self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON])
+        self.type()
+        self.rept_varDecl4()
+        self.matchCurr({TokenType.SEMI})
     
+    # rept-varDecl4 -> arraySize rept-varDecl4 | EPSILON 
+    def rept_varDecl4(self):
+        print("rept_varDecl4")
+        if self.arraySize():
+            self.rept_varDecl4()
+        else:
+            return True
+        
+    # statement -> id statement2 | if ( relExpr ) then statBlock else statBlock ; | while ( relExpr ) statBlock ; | read ( variable ) ; | write ( expr ) ; | return ( expr ) ;
     def statement(self):
+        if self.matchCurr({TokenType.ID}):
+            self.nextToken()
+            self.statement2()
+    
+    # statement2 -> rept-idnest1 statement3 | ( aParams ) statement4 
+    def statement2(self):
+        if self.rept_idnest1():
+            self.statement3()
+        elif self.matchCurr({TokenType.OPENPAR}):
+            self.aParams()
+    
+    # statement3 -> . id statement2 | assignOp expr ; 
+    def statement3(self):
         pass
     
-    # might not be needed in reformed grammar
-    def assignStat(self):
+    # statement4 -> . id statement2 | ; 
+    def statement4(self):
         pass
+    
+    # rept-idnest1 -> indice rept-idnest1 | EPSILON
+    def rept_idnest1(self):
+        if self.indice():
+            self.rept_idnest1()
+        else:
+            return True
     
     # statBlock -> { rept-statBlock1 } | statement | EPSILON 
     def statBlock(self):
@@ -148,7 +210,11 @@ class Paresseux:
     
     # indice -> [ arithExpr ] 
     def indice(self):
-        pass
+        self.matchCurr({TokenType.OPENSQBR})
+        self.nextToken()
+        self.arithExpr()
+        self.matchCurr({TokenType.CLOSESQBR})
+        self.nextToken()
     
     # arraySize -> [ arraySize2
     def arraySize(self):
@@ -180,6 +246,18 @@ class Paresseux:
     
     # fParams -> id : type rept-fParams3 rept-fParams4 | EPSILON 
     def fParams(self):
+        if not self.matchCurr({TokenType.ID}):
+            return True
+        else:
+            self.matchSequence([TokenType.ID, TokenType.COLON])
+        self.type()
+        self.rept_fParams3()
+        self.rept_fParams4()
+    
+    def rept_fParams3(self):
+        pass
+    
+    def rept_fParams4(self):
         pass
     
     # aParams -> expr rept-aParams1 | EPSILON 
@@ -199,7 +277,7 @@ class Paresseux:
     
     # assignOp -> = 
     def assignOp(self):
-        if self.currToken.type in {TokenType.EQ}:
+        if self.matchCurr({TokenType.EQ}):
             self.nextToken()
             return True
     
