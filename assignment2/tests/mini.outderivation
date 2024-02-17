@@ -1,0 +1,18 @@
+PROG
+REPTPROG0
+STRUCTORIMPLORFUNC REPTPROG0
+FUNCDEF REPTPROG0
+FUNCHEAD FUNCBODY REPTPROG0
+func id lpar FPARAMS rpar arrow RETURNTYPE FUNCBODY REPTPROG0
+func mini lpar FPARAMS rpar arrow RETURNTYPE FUNCBODY REPTPROG0
+func mini ( FPARAMS rpar arrow RETURNTYPE FUNCBODY REPTPROG0
+func mini ( rpar arrow RETURNTYPE FUNCBODY REPTPROG0
+func mini ( ) arrow RETURNTYPE FUNCBODY REPTPROG0
+func mini ( ) -> RETURNTYPE FUNCBODY REPTPROG0
+func mini ( ) -> void FUNCBODY REPTPROG0
+func mini ( ) -> void lcurbr REPTFUNCBODY1 rcurbr REPTPROG0
+func mini ( ) -> void { REPTFUNCBODY1 rcurbr REPTPROG0
+func mini ( ) -> void { rcurbr REPTPROG0
+func mini ( ) -> void { } REPTPROG0
+func mini ( ) -> void { }
+PASSED
