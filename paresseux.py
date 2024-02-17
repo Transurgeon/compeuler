@@ -26,8 +26,8 @@ class Paresseux:
     def nextToken(self):
         if self.peekIndex < len(self.lex.tokens):
             self.currToken = self.peekToken
+            self.peekIndex  = self.peekIndex + 1
             if self.peekIndex < len(self.lex.tokens) - 1:
-                self.peekIndex  = self.peekIndex + 1
                 self.peekToken = self.lex.tokens[self.peekIndex]
         else:
             self.currToken = Token(TokenType.EOF, "$", -1) # add an end of file token
@@ -40,14 +40,15 @@ class Paresseux:
     def parse(self):
         print("Starting Parsing Sequence")
         self.prog()
+        print("Parsing completed")
         
     # prog -> rept-prog0 
     def prog(self):
         print("PROG")
-        self.structOrImplOrFunc()
-        self.structOrImplOrFunc()
-        self.structOrImplOrFunc()
-        self.structOrImplOrFunc()
+        while not self.matchCurr({TokenType.EOF}):
+            if self.matchCurr({TokenType.BLOCKCMT, TokenType.INLINECMT, TokenType.INVALIDCHAR}):
+                self.nextToken()
+            self.structOrImplOrFunc()
         print(self.currToken)
 
     # structOrImplOrFunc -> structDecl | implDef | funcDef 
@@ -119,9 +120,9 @@ class Paresseux:
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
-        print("varDecl")
         if not self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON]):
             return False
+        print("varDecl")
         self.type()
         self.rept_varDecl4()
         self.matchCurr({TokenType.SEMI})
@@ -137,7 +138,6 @@ class Paresseux:
     # statement -> id statement2 | if ( relExpr ) then statBlock else statBlock ; | while ( relExpr ) statBlock ;
     # | read ( variable ) ; | write ( expr ) ; | return ( expr ) ;
     def statement(self):
-        print("statement")
         if self.matchCurr({TokenType.ID}):
             self.nextToken()
             self.statement2()
@@ -179,6 +179,7 @@ class Paresseux:
             self.nextToken()
         else:
             return False
+        print("statement")
         return True
     
     # helper function to match for ( relExpr )
