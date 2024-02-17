@@ -5,10 +5,10 @@ from typing import List, Set
 
 class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
-        self.peekIndex = 1
         self.lex = lexer
         self.lex.getTokens() # get all tokens from the lexer
         self.currToken = self.lex.tokens[0]
+        self.peekIndex = 1
         self.peekToken = self.lex.tokens[self.peekIndex]
         self.derivation = "Starting Parsing Sequence \n"
         self.lastDeriv = ""
@@ -21,10 +21,9 @@ class Paresseux:
 
     def matchSequence(self, sequence: List[Token]):
         for s in sequence:
-            if self.matchCurr({s}):
-                self.nextToken()
-            else:
-                return
+            if not self.matchCurr({s}):
+                return False
+            self.nextToken()
     
     def nextToken(self):
         if self.peekIndex < len(self.lex.tokens):
@@ -35,14 +34,17 @@ class Paresseux:
         else:
             self.currToken = Token(TokenType.EOF, "$", -1) # add an end of file token
             
-    def skipErrors(self, first: Set, follow: Set):
-        pass
-    
+    def skipErrors(self, name: str):
+        first_set = first[name]
+        follow_set = follow[name]
+        
+    # method to update the derivation during top down parsing
     def updateDerivation(self, prev, new):
         self.lastDeriv = self.lastDeriv.replace(prev, new, 1)
         self.derivation += self.lastDeriv + "\n"
     
-    # Grammar rules
+    #####################################
+    # GRAMMAR RULES 
     # START -> prog 
     def parse(self):
         self.updateDerivation("", "prog")
@@ -95,19 +97,26 @@ class Paresseux:
     
     # visibility -> public | private 
     def visibility(self):
-        return self.matchCurr({TokenType.PUBLIC, TokenType.PRIVATE})
+        if self.matchCurr({TokenType.PUBLIC}):
+            self.updateDerivation("visibility", "public")
+        elif self.matchCurr({TokenType.PRIVATE}):
+            self.updateDerivation("visibility", "private")
         
     # memberDecl -> funcDecl | varDecl 
     def memberDecl(self):
-        return self.funcDecl() or self.varDecl()
+        if self.matchCurr(first["FUNCDECL"]):
+            self.updateDerivation("memberDecl", "funcDecl")
+            self.memberDecl()
+        elif self.matchCurr(first["VARDECL"]):
+            self.updateDerivation("memberDecl", "varDecl")
+            self.varDecl()
     
     # funcDecl -> funcHead ; 
     def funcDecl(self):
-        print("funcDecl")
+        self.derivation("funcDecl", "funcHead ;")
         self.funcHead()
+        self.matchCurr({TokenType.SEMI})
         self.nextToken()
-        self.checkToken(TokenType.CLOSECUBR)
-        return True
     
     # funcHead -> func id ( fParams ) arrow returnType 
     def funcHead(self):
@@ -125,7 +134,6 @@ class Paresseux:
         self.rept_funcBody1()
         self.matchCurr({TokenType.CLOSESQBR})
         self.nextToken()
-        return True
     
     # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
     def rept_funcBody1(self):
