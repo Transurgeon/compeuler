@@ -27,7 +27,7 @@ follow = {
     "MEMBERDECL": {TokenType.CLOSECUBR, TokenType.PUBLIC, TokenType.PRIVATE},
     "ARRAYSIZE": {TokenType.SEMI, TokenType.OPENSQBR, TokenType.CLOSEPAR, TokenType.COMMA},
     "REPTVARIABLE0": set(),
-    "INDICE": {TokenType.EQ, TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.OPENSQBR, TokenType.ID, TokenType.DOT, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
+    "INDICE": {TokenType.ASSIGN, TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.OPENSQBR, TokenType.ID, TokenType.DOT, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
     "REPTVARIABLE2": set(),
     "IDNEST": {TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.DOT, TokenType.ID, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
     "REPTVARIABLEORFUNC": {TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
@@ -65,7 +65,7 @@ follow = {
     "VARIDNEST2": {TokenType.CLOSEPAR, TokenType.DOT},
     "APARAMS": {TokenType.CLOSEPAR},
     "VARIDNEST": {TokenType.CLOSEPAR, TokenType.DOT},
-    "REPTIDNEST1": {TokenType.EQ, TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.ID, TokenType.DOT, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
+    "REPTIDNEST1": {TokenType.ASSIGN, TokenType.MULT, TokenType.DIV, TokenType.AND, TokenType.ID, TokenType.DOT, TokenType.CLOSESQBR, TokenType.EQ, TokenType.NOTEQ, TokenType.LT, TokenType.GT, TokenType.LEQ, TokenType.GEQ, TokenType.PLUS, TokenType.MINUS, TokenType.OR, TokenType.COMMA, TokenType.CLOSEPAR, TokenType.SEMI},
     "VISIBILITY": {TokenType.LET, TokenType.FUNC}
 }
 
@@ -109,11 +109,11 @@ first = {
     "REPTSTATBLOCK1": {TokenType.ID, TokenType.IF, TokenType.WHILE, TokenType.READ, TokenType.WRITE, TokenType.RETURN},
     "RELEXPR": {TokenType.ID, TokenType.INTNUM, TokenType.FLOATNUM, TokenType.OPENPAR, TokenType.NOT, TokenType.PLUS, TokenType.MINUS},
     "STATBLOCK": {TokenType.OPENCUBR, TokenType.ID, TokenType.IF, TokenType.WHILE, TokenType.READ, TokenType.WRITE, TokenType.RETURN},
-    "STATEMENT3": {TokenType.DOT, TokenType.EQ},
-    "ASSIGNOP": {TokenType.EQ},
+    "STATEMENT3": {TokenType.DOT, TokenType.ASSIGN},
+    "ASSIGNOP": {TokenType.ASSIGN},
     "EXPR": {TokenType.ID, TokenType.INTNUM, TokenType.FLOATNUM, TokenType.OPENPAR, TokenType.NOT, TokenType.PLUS, TokenType.MINUS},
     "STATEMENT4": {TokenType.DOT, TokenType.SEMI},
-    "STATEMENT2": {TokenType.OPENPAR, TokenType.DOT, TokenType.OPENSQBR, TokenType.EQ},
+    "STATEMENT2": {TokenType.OPENPAR, TokenType.DOT, TokenType.OPENSQBR, TokenType.ASSIGN},
     "OPTSTRUCTDECL2": {TokenType.INHERITS},
     "REPTSTRUCTDECL4": {TokenType.PUBLIC, TokenType.PRIVATE},
     "STRUCTORIMPLORFUNC": {TokenType.STRUCT, TokenType.IMPL, TokenType.FUNC},
