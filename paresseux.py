@@ -19,6 +19,15 @@ class Paresseux:
     def matchPeek(self, types):
         return self.peekToken.type in types
 
+    def match(self, types):
+        if self.currToken.type in types:
+            self.nextToken()
+            return True
+        else:
+            # print errors to outerrors
+            # self.skipErrors()
+            return False
+        
     def matchSequence(self, sequence: List[Token]):
         for s in sequence:
             if not self.matchCurr({s}):
@@ -42,7 +51,6 @@ class Paresseux:
     def updateDerivation(self, prev, new):
         self.lastDeriv = self.lastDeriv.replace(prev, new, 1)
         self.derivation += self.lastDeriv + "\n"
-        print(self.lastDeriv)
     
     #####################################
     # GRAMMAR RULES 
@@ -248,7 +256,7 @@ class Paresseux:
             self.nextToken()
             self.statement2()
         elif self.matchCurr(first["ASSIGNOP"]):
-            self.updateDerivation("statement3 ", "assignOp expr ; ")
+            self.updateDerivation("statement3 ", "assignOp expr ;\n")
             self.assignOp()
             self.expr()
             self.matchCurr({TokenType.SEMI})
@@ -263,7 +271,7 @@ class Paresseux:
             self.nextToken()
             self.statement2()
         elif self.matchCurr({TokenType.SEMI}):
-            self.updateDerivation("statement4 ", "; ")
+            self.updateDerivation("statement4 ", ";\n")
             self.nextToken()
     
     # rept-idnest1 -> indice rept-idnest1 | EPSILON
@@ -311,6 +319,7 @@ class Paresseux:
     
     # relExpr -> arithExpr relOp arithExpr 
     def relExpr(self):
+        self.updateDerivation("relExpr ", "arithExpr relOp arithExpr ")
         self.arithExpr()
         self.relOp()
         self.arithExpr()
@@ -373,7 +382,8 @@ class Paresseux:
         elif self.matchCurr({TokenType.NOT}):
             self.nextToken()
             self.factor()
-        elif self.sign():
+        elif self.matchCurr(first["SIGN"]):
+            self.sign()
             self.factor()
     
     # factor2 -> ( aParams ) | rept-idnest1 
@@ -478,8 +488,8 @@ class Paresseux:
     
     # indice -> [ arithExpr ] 
     def indice(self):
-        if not self.matchCurr({TokenType.OPENSQBR}):
-            return False
+        self.updateDerivation("indice ", "[ arithExpr ] ")
+        self.matchCurr({TokenType.OPENSQBR})
         self.nextToken()
         self.arithExpr()
         self.matchCurr({TokenType.CLOSESQBR})
@@ -576,11 +586,11 @@ class Paresseux:
     # assignOp -> = 
     def assignOp(self):
         self.updateDerivation("assignOp ", "= ")
-        self.matchCurr({TokenType.EQ})
-        self.nextToken()
+        self.match({TokenType.ASSIGN})
     
     # relOp -> eq | neq | lt | gt | leq | geq 
     def relOp(self):
+        oper = self.currToken.lexeme
         relationOperators = {
             TokenType.EQ,
             TokenType.NOTEQ,
@@ -589,21 +599,18 @@ class Paresseux:
             TokenType.LEQ,
             TokenType.GEQ
         }
-        if self.currToken.type in relationOperators:
-            self.nextToken()
-            return True
+        self.match(relationOperators)
+        self.updateDerivation("addOp ", oper + " ")
     
     # addOp -> + | - | or 
     def addOp(self):
-        if self.currToken.type in {TokenType.PLUS, TokenType.MINUS, TokenType.OR}:
-            self.nextToken()
-            return True
-        return False
+        oper = self.currToken.lexeme
+        self.match({TokenType.PLUS, TokenType.MINUS, TokenType.OR})
+        self.updateDerivation("addOp ", oper + " ")
     
     # multOp -> * | / | and 
     def multOp(self):
-        if self.currToken.type in {TokenType.MULT, TokenType.DIV, TokenType.AND}:
-            self.nextToken()
-            return True
-        return False
+        oper = self.currToken.lexeme
+        self.match({TokenType.MULT, TokenType.DIV, TokenType.AND})
+        self.updateDerivation("multOp ", oper + " ")
     
