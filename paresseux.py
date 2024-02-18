@@ -432,40 +432,42 @@ class Paresseux:
     
     # varIdnest2 -> ( aParams ) varIdnest | rept-idnest1 
     def varIdnest2(self):
-        if self.matchCurr({TokenType.OPENPAR}):
-            self.nextToken()
-            self.aParams()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
-            self.varIdnest()
-        else:
+        if self.matchCurr(first["REPTIDNEST1"]):
+            self.updateDerivation("varIdnest2 ", "rept-idnest1 ")
             self.rept_idnest1()
+        else:
+            self.updateDerivation("varIdnest2 ", "( aParams ) varIdnest ")
+            self.match({TokenType.OPENPAR})
+            self.aParams()
+            self.match({TokenType.CLOSEPAR})
+            self.varIdnest()
             
     # reptVariableOrFunc -> idnest reptVariableOrFunc | EPSILON 
     def reptVariableOrFunc(self):
         if self.matchCurr(first["IDNEST"]):
             self.updateDerivation("reptVariableOrFunc ", "idnest reptVariableOrFunc ")
+            self.idnest()
             self.reptVariableOrFunc()
         else:
             self.updateDerivation("reptVariableOrFunc ", "")
     
     # functionCall -> rept-functionCall0 id ( aParams ) 
     def functionCall(self):
+        self.updateDerivation("functionCall ", "rept-functionCall0 id ( aParams ) ")
         self.rept_functionCall0()
-        self.matchCurr({TokenType.ID})
-        self.nextToken()
-        self.matchCurr({TokenType.OPENPAR})
-        self.nextToken()
+        self.match({TokenType.ID})
+        self.match({TokenType.OPENPAR})
         self.aParams()
-        self.matchCurr({TokenType.CLOSEPAR})
-        self.nextToken()
-        return True
+        self.match({TokenType.CLOSEPAR})
     
     # rept-functionCall0 -> idnest rept-functionCall0 | EPSILON 
     def rept_functionCall0(self):
-        if self.idnest():
+        if self.matchCurr(first["IDNEST"]):
+            self.updateDerivation("rept-functionCall0 ", "idnest rept-functionCall0 ")
+            self.idnest()
             self.rept_functionCall0()
-        return True
+        else:
+            self.updateDerivation("rept-functionCall0 ", "")
     
     # idnest -> . id idnest2 
     def idnest(self):
@@ -489,33 +491,31 @@ class Paresseux:
     # indice -> [ arithExpr ] 
     def indice(self):
         self.updateDerivation("indice ", "[ arithExpr ] ")
-        self.matchCurr({TokenType.OPENSQBR})
-        self.nextToken()
+        self.match({TokenType.OPENSQBR})
         self.arithExpr()
-        self.matchCurr({TokenType.CLOSESQBR})
-        self.nextToken()
+        self.match({TokenType.CLOSESQBR})
     
     # arraySize -> [ arraySize2
     def arraySize(self):
-        if self.currToken.type not in {TokenType.OPENSQBR}:
-            return False
-        self.nextToken()
-        return self.arraySize2()
+        self.updateDerivation("arraySize ", "[ arraySize2 ")
+        self.match({TokenType.OPENSQBR})
+        self.arraySize2()
     
     # arraySize2 -> intLit ] | ] 
     def arraySize2(self):
-        if self.currToken.type in {TokenType.INTEGER}:
+        if self.matchCurr({TokenType.INTEGER}):
+            self.updateDerivation("arraySize2 ", "intLit ] ")
             self.nextToken()
-        if self.currToken.type in {TokenType.CLOSESQBR}:
-            self.nextToken()
-            return True
-        return False
+            self.match({TokenType.CLOSESQBR})
+        else:
+            self.updateDerivation("arraySize2 ", "] ")
+            self.match({TokenType.CLOSESQBR})
     
     # type -> integer | float | id 
     def type(self):
-        if self.currToken.type in {TokenType.INTEGER, TokenType.FLOAT, TokenType.ID}:
-            self.nextToken()
-            return True
+        type = self.currToken.lexeme
+        self.match({TokenType.INTEGER, TokenType.FLOAT, TokenType.ID})
+        self.updateDerivation("type ", type + " ")
     
     # returnType -> type | void 
     def returnType(self):
@@ -540,17 +540,21 @@ class Paresseux:
     
     # rept-fParams3 -> arraySize rept-fParams3 | EPSILON 
     def rept_fParams3(self):
-        if self.arraySize():
+        if self.matchCurr(first["ARRAYSIZE"]):
+            self.updateDerivation("rept-fParams4 ", "arraySize rept-fParams3 ")
+            self.arraySize()
             self.rept_fParams3()
         else:
-            return True
+            self.updateDerivation("rept-fParams4 ", "")
     
     # rept-fParams4 -> fParamsTail rept-fParams4 | EPSILON 
     def rept_fParams4(self):
-        if self.fParamsTail():
+        if self.matchCurr(first["FPARAMSTAIL"]):
+            self.updateDerivation("rept-fParams4 ", "fParamsTail rept-fParams4 ")
+            self.fParamsTail()
             self.rept_fParams4()
         else:
-            return True
+            self.updateDerivation("rept-fParams4 ", "")
     
     # aParams -> expr rept-aParams1 | EPSILON 
     def aParams(self):
@@ -578,10 +582,9 @@ class Paresseux:
     
     # aParamsTail -> , expr 
     def aParamsTail(self):
-        if self.currToken.type not in {TokenType.COMMA}:
-            return False
-        self.nextToken()
-        return self.expr()
+        self.updateDerivation("aParamsTail ", ", expr ")
+        self.match({TokenType.COMMA})
+        self.expr()
     
     # assignOp -> = 
     def assignOp(self):
