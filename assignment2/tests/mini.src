@@ -1,1 +1,3 @@
-func mini() -> void {}
+func mini() -> void {
+    x = !(x + 1);
+}

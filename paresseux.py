@@ -188,50 +188,39 @@ class Paresseux:
         elif self.matchCurr({TokenType.IF}):
             self.nextToken()
             self.par_relExpr()
-            self.matchCurr({TokenType.THEN})
-            self.nextToken()
+            self.match({TokenType.THEN})
             self.statBlock()
-            self.matchCurr({TokenType.ELSE})
-            self.nextToken()
+            self.match({TokenType.ELSE})
             self.statBlock()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WHILE}):
             self.nextToken()
             self.par_relExpr()
             self.statBlock()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.READ}):
             self.nextToken()
-            self.matchCurr({TokenType.OPENPAR})
-            self.nextToken()
+            self.match({TokenType.OPENPAR})
             self.variable()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
+            self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WRITE}):
             self.nextToken()
             self.par_relExpr()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.RETURN}):
             self.nextToken()
             self.par_relExpr()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.SEMI})
         else:
             return False
         return True
     
     # helper function to match for ( relExpr )
     def par_relExpr(self):
-        self.matchCurr({TokenType.OPENPAR})
-        self.nextToken()
+        self.match({TokenType.OPENPAR})
         self.relExpr()
-        self.matchCurr({TokenType.CLOSEPAR})
-        self.nextToken()
+        self.match({TokenType.CLOSEPAR})
         
     # statement2 -> ( aParams ) statement4 | rept-idnest1 statement3 
     def statement2(self):
@@ -239,8 +228,7 @@ class Paresseux:
             self.updateDerivation("statement2 ", "( aParams ) statement4 ")
             self.nextToken()
             self.aParams()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
             self.statement4()
         else:
             self.updateDerivation("statement2 ", "rept-idnest1 statement3 ")
@@ -252,23 +240,20 @@ class Paresseux:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement3 ", ". id statement2 ")
             self.nextToken()
-            self.matchCurr({TokenType.ID})
-            self.nextToken()
+            self.match({TokenType.ID})
             self.statement2()
         elif self.matchCurr(first["ASSIGNOP"]):
             self.updateDerivation("statement3 ", "assignOp expr ;\n")
             self.assignOp()
             self.expr()
-            self.matchCurr({TokenType.SEMI})
-            self.nextToken()
+            self.match({TokenType.SEMI})
     
     # statement4 -> . id statement2 | ; 
     def statement4(self):
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement4 ", ". id statement2 ")
             self.nextToken()
-            self.matchCurr({TokenType.ID})
-            self.nextToken()
+            self.match({TokenType.ID})
             self.statement2()
         elif self.matchCurr({TokenType.SEMI}):
             self.updateDerivation("statement4 ", ";\n")
@@ -288,8 +273,7 @@ class Paresseux:
         if self.matchCurr({TokenType.OPENCUBR}):
             self.nextToken()
             self.rept_statBlock1()
-            self.matchCurr({TokenType.CLOSECUBR})
-            self.nextToken()
+            self.match({TokenType.CLOSECUBR})
         elif self.statement():
             return
         else:
@@ -297,10 +281,12 @@ class Paresseux:
     
     # rept-statBlock1 -> statement rept-statBlock1 | EPSILON 
     def rept_statBlock1(self):
-        if self.statement():
+        if self.matchCurr(first["STATEMENT"]):
+            self.updateDerivation("rept-statBlock1 ", "statement rept-statBlock1 ")
+            self.statement()
             self.rept_statBlock1()
         else:
-            return True
+            self.updateDerivation("rept-statBlock1 ", "")
     
     # expr -> arithExpr expr2 
     def expr(self):
@@ -342,11 +328,9 @@ class Paresseux:
     
     # sign -> + | - 
     def sign(self):
-        if self.currToken.type in {TokenType.PLUS, TokenType.MINUS}:
-            self.nextToken()
-            return True
-        return False
-    
+        self.updateDerivation("sign ", self.currToken.lexeme)
+        self.match({TokenType.PLUS, TokenType.MINUS})
+        
     # term -> factor rightrec-term 
     def term(self):
         self.updateDerivation("term ", "factor rightrec-term ")
@@ -371,18 +355,22 @@ class Paresseux:
             self.factor2()
             self.reptVariableOrFunc()
         elif self.matchCurr({TokenType.INTNUM}):
+            self.updateDerivation("factor ", "intLit ")
             self.nextToken()
         elif self.matchCurr({TokenType.FLOATNUM}):
+            self.updateDerivation("factor ", "floatLit ")
             self.nextToken()
         elif self.matchCurr({TokenType.OPENPAR}):
+            self.updateDerivation("factor ", "( arithExpr ) ")
             self.nextToken()
             self.arithExpr()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
         elif self.matchCurr({TokenType.NOT}):
+            self.updateDerivation("factor ", "not factor ")
             self.nextToken()
             self.factor()
         elif self.matchCurr(first["SIGN"]):
+            self.updateDerivation("factor ", "sign factor ")
             self.sign()
             self.factor()
     
@@ -392,43 +380,44 @@ class Paresseux:
             self.updateDerivation("factor2 ", "( aParams ) ")
             self.nextToken()
             self.aParams()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
         else:
             self.updateDerivation("factor2 ", "rept-idnest1 ")
             self.rept_idnest1()
     
     # variable -> id variable2 
     def variable(self):
+        self.updateDerivation("variable ", "id variable2 ")
         self.matchCurr({TokenType.ID})
         self.variable2()
-        return True
         
     # variable2 -> ( aParams ) varIdnest | rept-idnest1 reptvariable
     def variable2(self):
         if self.matchCurr({TokenType.OPENPAR}):
+            self.updateDerivation("variable2 ", "( aParams ) varIdnest ")
             self.nextToken()
             self.aParams()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
             self.varIdnest()
         else:
+            self.updateDerivation("variable2 ", "rept-idnest1 reptvariable ")
             self.rept_idnest1()
             self.reptvariable()
     
     # reptvariable -> varIdnest reptvariable | EPSILON 
     def reptvariable(self):
-        if self.varIdnest():
+        if self.matchCurr(first["VARIDNEST"]):
+            self.updateDerivation("reptvariable ", "varIdnest reptvariable ")
+            self.varIdnest()
             self.reptvariable()
         else:
-            return True
+            self.updateDerivation("reptvariable ", "")
     
     # varIdnest -> . id varIdnest2 
     def varIdnest(self):
-        if not self.matchSequence([TokenType.DOT, TokenType.ID]):
-            return False
+        self.updateDerivation("varIdnest ", ". id varIdnest2 ")
+        self.matchSequence([TokenType.DOT, TokenType.ID])
         self.varIdnest2()
-        return True
     
     # varIdnest2 -> ( aParams ) varIdnest | rept-idnest1 
     def varIdnest2(self):
@@ -471,11 +460,8 @@ class Paresseux:
     
     # idnest -> . id idnest2 
     def idnest(self):
-        if not self.matchCurr({TokenType.DOT}):
-            return False
-        self.nextToken()
-        self.matchCurr({TokenType.ID})
-        self.nextToken()
+        self.match({TokenType.DOT})
+        self.match({TokenType.ID})
         self.idnest2()
     
     # idnest2 -> ( aParams ) | rept-idnest1 
@@ -483,8 +469,7 @@ class Paresseux:
         if self.matchCurr({TokenType.OPENPAR}):
             self.nextToken()
             self.aParams()
-            self.matchCurr({TokenType.CLOSEPAR})
-            self.nextToken()
+            self.match({TokenType.CLOSEPAR})
         else:
             self.rept_idnest1()
     
@@ -530,7 +515,6 @@ class Paresseux:
     def fParams(self):
         if not self.matchCurr({TokenType.ID}):
             self.updateDerivation("fParams ", "")
-            return True
         else:
             self.updateDerivation("fParams", "id : type rept-fParams3 rept-fParams4")
             self.matchSequence([TokenType.ID, TokenType.COLON])
@@ -577,8 +561,19 @@ class Paresseux:
         
     # fParamsTail -> , id : type rept-fParamsTail4 
     def fParamsTail(self):
+        self.updateDerivation("fParamsTail ", ", id : type rept-fParamsTail4 ")
         self.matchSequence([TokenType.COMMA, TokenType.ID, TokenType.COLON])
         self.type()
+        self.rept_fParamsTail4()
+    
+    # rept-fParamsTail4 -> arraySize rept-fParamsTail4 | EPSILON 
+    def rept_fParamsTail4(self):
+        if self.matchCurr(first["ARRAYSIZE"]):
+            self.updateDerivation("rept-fParamsTail4 ", "arraySize rept-fParamsTail4 ")
+            self.arraySize()
+            self.rept_fParamsTail4()
+        else:
+            self.updateDerivation("rept-fParamsTail4 ", "")
     
     # aParamsTail -> , expr 
     def aParamsTail(self):
