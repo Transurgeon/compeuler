@@ -124,8 +124,7 @@ class Paresseux:
     def funcDecl(self):
         self.updateDerivation("funcDecl ", "funcHead ; ")
         self.funcHead()
-        self.matchCurr({TokenType.SEMI})
-        self.nextToken()
+        self.match({TokenType.SEMI})
     
     # funcHead -> func id ( fParams ) arrow returnType 
     def funcHead(self):
@@ -138,11 +137,9 @@ class Paresseux:
     # funcBody -> { rept-funcBody1 } 
     def funcBody(self):
         self.updateDerivation("funcBody ", "{ rept-funcBody1 } ")
-        self.matchCurr({TokenType.OPENCUBR})
-        self.nextToken()
+        self.match({TokenType.OPENCUBR})
         self.rept_funcBody1()
-        self.matchCurr({TokenType.CLOSESQBR})
-        self.nextToken()
+        self.match({TokenType.CLOSESQBR})
     
     # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
     def rept_funcBody1(self):
@@ -152,7 +149,6 @@ class Paresseux:
             self.rept_funcBody1()
         else:
             self.updateDerivation("rept-funcBody1 ", " ")
-            return True
     
     # varDeclOrStat -> varDecl | statement 
     def varDeclOrStat(self):
@@ -165,18 +161,20 @@ class Paresseux:
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
-        if not self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON]):
-            return False
+        self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ; ")
+        self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON])
         self.type()
         self.rept_varDecl4()
-        self.matchCurr({TokenType.SEMI})
+        self.match({TokenType.SEMI})
     
     # rept-varDecl4 -> arraySize rept-varDecl4 | EPSILON 
     def rept_varDecl4(self):
-        if self.arraySize():
+        if self.matchCurr(first["ARRAYSIZE"]):
+            self.updateDerivation("rept-varDecl4 ", "arraySize rept-varDecl4 ")
+            self.arraySize()
             self.rept_varDecl4()
         else:
-            return True
+            self.updateDerivation("rept-varDecl4 ", "")
         
     # statement -> id statement2 | if ( relExpr ) then statBlock else statBlock ; | while ( relExpr ) statBlock ;
     # | read ( variable ) ; | write ( expr ) ; | return ( expr ) ;
