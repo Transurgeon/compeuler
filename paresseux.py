@@ -76,7 +76,6 @@ class Paresseux:
             self.rept_prog0()
         else:
             self.updateDerivation("rept-prog0 ", " ")
-            return True
         
     # structOrImplOrFunc -> structDecl | implDef | funcDef 
     def structOrImplOrFunc(self):
@@ -92,11 +91,59 @@ class Paresseux:
     
     # structDecl -> struct id opt-structDecl2 { rept-structDecl4 } ; 
     def structDecl(self):
-        pass
+        self.updateDerivation("structDecl ", "struct id opt-structDecl2 { rept-structDecl4 } ;\n")
+        self.matchSequence([TokenType.STRUCT, TokenType.ID])
+        self.opt_structDecl2()
+        self.match({TokenType.OPENCUBR})
+        self.rept_structDecl4()
+        self.matchSequence([TokenType.CLOSECUBR, TokenType.SEMI])
+    
+    # opt-structDecl2 -> inherits id rept-opt-structDecl22 | EPSILON 
+    def opt_structDecl2(self):
+        if self.matchCurr({TokenType.INHERITS}):
+            self.updateDerivation("opt-structDecl2 ", "inherits id rept-opt-structDecl22 ")
+            self.nextToken()
+            self.match({TokenType.ID})
+            self.rept_opt_structDecl22()
+        else:
+            self.updateDerivation("opt-structDecl2 ", "")
+    
+    # rept-opt-structDecl22 -> , id rept-opt-structDecl22 | EPSILON 
+    def rept_opt_structDecl22(self):
+        if self.matchCurr({TokenType.COMMA}):
+            self.updateDerivation("rept-opt-structDecl22 ", ", id rept-opt-structDecl22 ")
+            self.nextToken()
+            self.match({TokenType.ID})
+            self.rept_opt_structDecl22()
+        else:
+            self.updateDerivation("rept-opt-structDecl22 ", "")
+            
+    
+    # rept-structDecl4 -> visibility memberDecl rept-structDecl4 | EPSILON 
+    def rept_structDecl4(self):
+        if self.matchCurr(first["VISIBILITY"]):
+            self.updateDerivation("rept-structDecl4 ", "visibility memberDecl rept-structDecl4 ")
+            self.visibility()
+            self.memberDecl()
+            self.rept_structDecl4()
+        else:
+            self.updateDerivation("rept-structDecl4 ", "")
     
     # implDef -> impl id { rept-implDef3 }
     def implDef(self):
-        pass
+        self.updateDerivation("implDef ", "impl id { rept-implDef3 } ")
+        self.matchSequence([TokenType.IMPL, TokenType.ID, TokenType.OPENCUBR])
+        self.rept_implDef3()
+        self.match({TokenType.CLOSECUBR})
+        
+    # rept-implDef3 -> funcDef rept-implDef3 | EPSILON 
+    def rept_implDef3(self):
+        if self.matchCurr(first["FUNCDEF"]):
+            self.updateDerivation("rept-implDef3 ", "funcDef rept-implDef3 ")
+            self.funcDef()
+            self.rept_implDef3()
+        else:
+            self.updateDerivation("rept-implDef3 ", "")
     
     # funcDef -> funcHead funcBody 
     def funcDef(self):
@@ -106,10 +153,9 @@ class Paresseux:
     
     # visibility -> public | private 
     def visibility(self):
-        if self.matchCurr({TokenType.PUBLIC}):
-            self.updateDerivation("visibility ", "public ")
-        elif self.matchCurr({TokenType.PRIVATE}):
-            self.updateDerivation("visibility ", "private ")
+        visib = self.currToken.lexeme
+        self.match({TokenType.PUBLIC, TokenType.PRIVATE})
+        self.updateDerivation("visibility ", visib + " ")
         
     # memberDecl -> funcDecl | varDecl 
     def memberDecl(self):
@@ -122,7 +168,7 @@ class Paresseux:
     
     # funcDecl -> funcHead ; 
     def funcDecl(self):
-        self.updateDerivation("funcDecl ", "funcHead ; ")
+        self.updateDerivation("funcDecl ", "funcHead ;\n")
         self.funcHead()
         self.match({TokenType.SEMI})
     
@@ -148,7 +194,7 @@ class Paresseux:
             self.varDeclOrStat()
             self.rept_funcBody1()
         else:
-            self.updateDerivation("rept-funcBody1 ", " ")
+            self.updateDerivation("rept-funcBody1 ", "")
     
     # varDeclOrStat -> varDecl | statement 
     def varDeclOrStat(self):
@@ -161,7 +207,7 @@ class Paresseux:
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
-        self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ; ")
+        self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ;\n")
         self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON])
         self.type()
         self.rept_varDecl4()
@@ -184,41 +230,45 @@ class Paresseux:
             self.nextToken()
             self.statement2()
         elif self.matchCurr({TokenType.IF}):
+            self.updateDerivation("statement ", "if ( relExpr ) then statBlock else statBlock ;\n")
             self.nextToken()
-            self.par_relExpr()
+            self.match({TokenType.OPENPAR})
+            self.relExpr()
+            self.match({TokenType.CLOSEPAR})
             self.match({TokenType.THEN})
             self.statBlock()
             self.match({TokenType.ELSE})
             self.statBlock()
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WHILE}):
+            self.updateDerivation("statement ", "while ( relExpr ) statBlock ;\n")
             self.nextToken()
-            self.par_relExpr()
+            self.match({TokenType.OPENPAR})
+            self.relExpr()
+            self.match({TokenType.CLOSEPAR})
             self.statBlock()
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.READ}):
+            self.updateDerivation("statement ", "read ( variable ) ;\n")
             self.nextToken()
             self.match({TokenType.OPENPAR})
             self.variable()
             self.match({TokenType.CLOSEPAR})
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WRITE}):
+            self.updateDerivation("statement ", "write ( expr ) ;\n")
             self.nextToken()
-            self.par_relExpr()
+            self.match({TokenType.OPENPAR})
+            self.expr()
+            self.match({TokenType.CLOSEPAR})
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.RETURN}):
+            self.updateDerivation("statement ", "return ( expr ) ;\n")
             self.nextToken()
-            self.par_relExpr()
+            self.match({TokenType.OPENPAR})
+            self.expr()
+            self.match({TokenType.CLOSEPAR})
             self.match({TokenType.SEMI})
-        else:
-            return False
-        return True
-    
-    # helper function to match for ( relExpr )
-    def par_relExpr(self):
-        self.match({TokenType.OPENPAR})
-        self.relExpr()
-        self.match({TokenType.CLOSEPAR})
         
     # statement2 -> ( aParams ) statement4 | rept-idnest1 statement3 
     def statement2(self):
@@ -269,13 +319,15 @@ class Paresseux:
     # statBlock -> { rept-statBlock1 } | statement | EPSILON 
     def statBlock(self):
         if self.matchCurr({TokenType.OPENCUBR}):
+            self.updateDerivation("statBlock ", "{ rept-statBlock1 } ")
             self.nextToken()
             self.rept_statBlock1()
             self.match({TokenType.CLOSECUBR})
-        elif self.statement():
-            return
+        elif self.matchCurr(first["STATEMENT"]):
+            self.updateDerivation("statBlock ", "statement ")
+            self.statement()
         else:
-            return
+            self.updateDerivation("statBlock ", "")
     
     # rept-statBlock1 -> statement rept-statBlock1 | EPSILON 
     def rept_statBlock1(self):
@@ -464,12 +516,13 @@ class Paresseux:
     
     # idnest2 -> ( aParams ) | rept-idnest1 
     def idnest2(self):
-        if self.matchCurr({TokenType.OPENPAR}):
-            self.nextToken()
+        if self.updateDerivation(first["REPTIDNEST1"]):
+            self.updateDerivation("idnest2 ", "rept-idnest1 ")
+        else:
+            self.updateDerivation("idnest2 ", "( aParams ) ")
+            self.match({TokenType.OPENPAR})
             self.aParams()
             self.match({TokenType.CLOSEPAR})
-        else:
-            self.rept_idnest1()
     
     # indice -> [ arithExpr ] 
     def indice(self):
