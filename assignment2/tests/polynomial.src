@@ -32,8 +32,8 @@ impl QUADRATIC {
     let result: float;
     result = a;
     result = result * x + b;
-    result = result * x + c;
-    return (result);
+    result = result * x + c; //comments everywhyre
+    return (result); //trying to add a comment
   }
   func build(A: float, B: float, C: float) -> QUADRATIC 
   {

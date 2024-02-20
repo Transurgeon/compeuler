@@ -7,12 +7,13 @@ class Paresseux:
     def __init__(self, lexer: LexFridman) -> None:
         self.lex = lexer
         self.lex.getTokens() # get all tokens from the lexer
+        self.skipInvalidTokens()
         self.currToken = self.lex.tokens[0]
         self.peekIndex = 1
         self.peekToken = self.lex.tokens[self.peekIndex]
         self.derivation = "Starting Parsing Sequence \n"
         self.lastDeriv = ""
-
+        
     def matchCurr(self, types):
         return self.currToken.type in types
     
@@ -37,7 +38,7 @@ class Paresseux:
     def nextToken(self):
         if self.peekIndex < len(self.lex.tokens):
             self.currToken = self.peekToken
-            self.peekIndex  = self.peekIndex + 1
+            self.peekIndex += 1
             if self.peekIndex < len(self.lex.tokens) - 1:
                 self.peekToken = self.lex.tokens[self.peekIndex]
         else:
@@ -46,7 +47,11 @@ class Paresseux:
     def skipErrors(self, name: str):
         first_set = first[name]
         follow_set = follow[name]
-        
+    
+    def skipInvalidTokens(self):
+        invalidTokens = {TokenType.BLOCKCMT, TokenType.INVALIDCHAR, TokenType.INLINECMT}
+        self.lex.tokens = [t for t in self.lex.tokens if t.type not in invalidTokens]
+
     # method to update the derivation during top down parsing
     def updateDerivation(self, prev, new):
         self.lastDeriv = self.lastDeriv.replace(prev, new, 1)
@@ -69,8 +74,6 @@ class Paresseux:
 
     # rept-prog0 -> structOrImplOrFunc rept-prog0 | EPSILON 
     def rept_prog0(self):
-        if self.matchCurr({TokenType.BLOCKCMT, TokenType.INVALIDCHAR, TokenType.INLINECMT}):
-            self.nextToken()
         if self.matchCurr(first["REPTPROG0"]):
             self.updateDerivation("rept-prog0 ", "structOrImplOrFunc rept-prog0 ")
             self.structOrImplOrFunc()
