@@ -30,7 +30,6 @@ impl QUADRATIC {
   func evaluate(x: float) -> float
   {
     let result: float;
-    //Using Horner's method
     result = a;
     result = result * x + b;
     result = result * x + c;

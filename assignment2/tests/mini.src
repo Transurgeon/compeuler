@@ -1,5 +1,9 @@
-func mini() -> void {
-    x = !(x + 1);
-    let arr: integer[7]; 
-    arr[0] = 64;
-}
+impl LINEAR {
+  func evaluate(x: float) -> float 
+  {
+    let result: float;
+    result = 0.0;
+    result = a * x + b;
+    return (result);
+  }
+} 

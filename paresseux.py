@@ -510,14 +510,16 @@ class Paresseux:
     
     # idnest -> . id idnest2 
     def idnest(self):
+        self.updateDerivation("idnest ", ". id idnest2 ")
         self.match({TokenType.DOT})
         self.match({TokenType.ID})
         self.idnest2()
     
     # idnest2 -> ( aParams ) | rept-idnest1 
     def idnest2(self):
-        if self.updateDerivation(first["REPTIDNEST1"]):
+        if self.matchCurr(first["REPTIDNEST1"]):
             self.updateDerivation("idnest2 ", "rept-idnest1 ")
+            self.rept_idnest1()
         else:
             self.updateDerivation("idnest2 ", "( aParams ) ")
             self.match({TokenType.OPENPAR})

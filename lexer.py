@@ -173,6 +173,10 @@ class LexFridman:
         if self.currentChar != '.' or not self.peekNextChar().isdecimal():
             self.backtrack()
             return False
+        if self.peekNextChar() == '0':
+            self.getNextChar()
+        if not self.peekNextChar().isdecimal():
+            return True
         while self.peekNextChar().isdecimal():
             self.getNextChar()
         # the fraction cannot end with zero so we must backtrack
