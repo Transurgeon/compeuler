@@ -1,3 +1,5 @@
 func mini() -> void {
     x = !(x + 1);
+    let arr: integer[7]; 
+    arr[0] = 64;
 }

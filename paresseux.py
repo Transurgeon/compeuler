@@ -51,6 +51,7 @@ class Paresseux:
     def updateDerivation(self, prev, new):
         self.lastDeriv = self.lastDeriv.replace(prev, new, 1)
         self.derivation += self.lastDeriv + "\n"
+        self.derivation += "." * 88 + "\n"
     
     #####################################
     # GRAMMAR RULES 
@@ -118,7 +119,6 @@ class Paresseux:
         else:
             self.updateDerivation("rept-opt-structDecl22 ", "")
             
-    
     # rept-structDecl4 -> visibility memberDecl rept-structDecl4 | EPSILON 
     def rept_structDecl4(self):
         if self.matchCurr(first["VISIBILITY"]):
@@ -161,7 +161,7 @@ class Paresseux:
     def memberDecl(self):
         if self.matchCurr(first["FUNCDECL"]):
             self.updateDerivation("memberDecl ", "funcDecl ")
-            self.memberDecl()
+            self.funcDecl()
         elif self.matchCurr(first["VARDECL"]):
             self.updateDerivation("memberDecl ", "varDecl ")
             self.varDecl()
@@ -185,7 +185,7 @@ class Paresseux:
         self.updateDerivation("funcBody ", "{ rept-funcBody1 } ")
         self.match({TokenType.OPENCUBR})
         self.rept_funcBody1()
-        self.match({TokenType.CLOSESQBR})
+        self.match({TokenType.CLOSECUBR})
     
     # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
     def rept_funcBody1(self):
@@ -272,16 +272,16 @@ class Paresseux:
         
     # statement2 -> ( aParams ) statement4 | rept-idnest1 statement3 
     def statement2(self):
-        if self.matchCurr({TokenType.OPENPAR}):
-            self.updateDerivation("statement2 ", "( aParams ) statement4 ")
-            self.nextToken()
-            self.aParams()
-            self.match({TokenType.CLOSEPAR})
-            self.statement4()
-        else:
+        if self.matchCurr(first["REPTIDNEST1"]) or self.matchCurr(first["STATEMENT3"]):
             self.updateDerivation("statement2 ", "rept-idnest1 statement3 ")
             self.rept_idnest1()
             self.statement3()
+        elif self.matchCurr({TokenType.OPENPAR}):
+            self.updateDerivation("statement2 ", "( aParams ) statement4 ")
+            self.match({TokenType.OPENPAR})
+            self.aParams()
+            self.match({TokenType.CLOSEPAR})
+            self.statement4()
     
     # statement3 -> . id statement2 | assignOp expr ; 
     def statement3(self):
@@ -309,7 +309,7 @@ class Paresseux:
     
     # rept-idnest1 -> indice rept-idnest1 | EPSILON
     def rept_idnest1(self):
-        if self.matchCurr(first["REPTIDNEST1"]):
+        if self.matchCurr(first["INDICE"]):
             self.updateDerivation("rept-idnest1 ", "indice rept-idnest1 ")
             self.indice()
             self.rept_idnest1()
@@ -539,7 +539,7 @@ class Paresseux:
     
     # arraySize2 -> intLit ] | ] 
     def arraySize2(self):
-        if self.matchCurr({TokenType.INTEGER}):
+        if self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("arraySize2 ", "intLit ] ")
             self.nextToken()
             self.match({TokenType.CLOSESQBR})
@@ -564,23 +564,23 @@ class Paresseux:
     
     # fParams -> id : type rept-fParams3 rept-fParams4 | EPSILON 
     def fParams(self):
-        if not self.matchCurr({TokenType.ID}):
-            self.updateDerivation("fParams ", "")
-        else:
-            self.updateDerivation("fParams", "id : type rept-fParams3 rept-fParams4")
+        if self.matchCurr({TokenType.ID}):
+            self.updateDerivation("fParams ", "id : type rept-fParams3 rept-fParams4 ")
             self.matchSequence([TokenType.ID, TokenType.COLON])
             self.type()
             self.rept_fParams3()
             self.rept_fParams4()
+        else:
+            self.updateDerivation("fParams ", "")
     
     # rept-fParams3 -> arraySize rept-fParams3 | EPSILON 
     def rept_fParams3(self):
         if self.matchCurr(first["ARRAYSIZE"]):
-            self.updateDerivation("rept-fParams4 ", "arraySize rept-fParams3 ")
+            self.updateDerivation("rept-fParams3 ", "arraySize rept-fParams3 ")
             self.arraySize()
             self.rept_fParams3()
         else:
-            self.updateDerivation("rept-fParams4 ", "")
+            self.updateDerivation("rept-fParams3 ", "")
     
     # rept-fParams4 -> fParamsTail rept-fParams4 | EPSILON 
     def rept_fParams4(self):
