@@ -13,6 +13,7 @@ class Paresseux:
         self.peekToken = self.lex.tokens[self.peekIndex]
         self.derivation = "Starting Parsing Sequence \n"
         self.lastDeriv = ""
+        self.syntaxErrors = ""
         
     def matchCurr(self, types):
         return self.currToken.type in types
@@ -20,13 +21,14 @@ class Paresseux:
     def matchPeek(self, types):
         return self.peekToken.type in types
 
-    def match(self, types):
-        if self.currToken.type in types:
+    def match(self, type):
+        if self.currToken.type in type:
             self.nextToken()
             return True
         else:
             # print errors to outerrors
-            # self.skipErrors()
+            self.syntaxErrors += "Syntax error at line : " + str(self.currToken.line) + ", expected: " + str(type) + "\n"
+            self.nextToken()
             return False
         
     def matchSequence(self, sequence: List[Token]):
@@ -39,14 +41,23 @@ class Paresseux:
         if self.peekIndex < len(self.lex.tokens):
             self.currToken = self.peekToken
             self.peekIndex += 1
-            if self.peekIndex < len(self.lex.tokens) - 1:
+            if self.peekIndex < len(self.lex.tokens):
                 self.peekToken = self.lex.tokens[self.peekIndex]
         else:
             self.currToken = Token(TokenType.EOF, "$", -1) # add an end of file token
             
-    def skipErrors(self, name: str):
+    def skipErrors(self, name: str, epsilon: bool):
         first_set = first[name]
         follow_set = follow[name]
+        if self.currToken.type in first_set or (epsilon and self.currToken.type in follow_set):
+            return True # no error detected, parse continues in the current parsing function
+        else:
+            self.syntaxErrors += "Syntax error at line : " + str(self.currToken.line) + "\n"
+            while self.currToken.type not in {first_set and follow_set}:
+                self.nextToken()
+                if epsilon and self.currToken.type in follow_set:
+                    return False # detected error and parsing should be aborted
+            return True # detected error but parsing continues
     
     def skipInvalidTokens(self):
         invalidTokens = {TokenType.BLOCKCMT, TokenType.INVALIDCHAR, TokenType.INLINECMT}
@@ -70,7 +81,6 @@ class Paresseux:
     def prog(self):
         self.updateDerivation("prog ", "rept-prog0 ")
         self.rept_prog0()
-        print(self.derivation)
 
     # rept-prog0 -> structOrImplOrFunc rept-prog0 | EPSILON 
     def rept_prog0(self):
