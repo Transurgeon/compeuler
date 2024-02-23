@@ -3,7 +3,7 @@ impl LINEAR {
   {
     let result: float;
     result = 0.0;
-    result = a * x + b;
+    result = a * x + b;;
     return (result);
   }
 } 

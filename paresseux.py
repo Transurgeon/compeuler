@@ -75,7 +75,7 @@ class Paresseux:
     def parse(self):
         self.updateDerivation("", "prog ")
         self.prog()
-        print("Parsing completed")
+        self.derivation += "Parsing Completed Successfully"
         
     # prog -> rept-prog0 
     def prog(self):
