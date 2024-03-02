@@ -1,4 +1,4 @@
-<START> ::= <prog> 'eof'   
+<START> ::= push(ε) <prog> push(createRoot(program,popuntilε)) 'eof'   
 
 <addOp> ::= '+' push(createLeaf(plus))
 <addOp> ::= '-' push(createLeaf(minus))
@@ -23,20 +23,20 @@
 <expr2>  ::= <relOp>  <arithExpr>    
 <expr2>  ::= EPSILON
 
-<factor>  ::= 'id' <factor2>  <rept-var-or-funcCall>    
+<factor>  ::= 'id' push(createLeaf(id)) <factor2> push(ε) <rept-var-or-funcCall> push(createSubtree(indicelist), popuntilε)  
 <factor>  ::= 'intlit' push(createLeaf(intLit))
 <factor>  ::= 'floatlit' push(createLeaf(floatLit))
 <factor>  ::= push(ε) '(' <arithExpr>  ')' push(createSubtree(arithExpr,popuntilε))
 <factor>  ::= 'not' push(not) <factor> 
 <factor>  ::= <sign> push(createSubtree(sign, pop)) <factor>    
 
-<factor2>  ::= push(ε) '(' <aParams> ')' push(createSubtree(paramList,popuntilε))
-<factor2>  ::= push(ε) <rept-idnest1>  push(createSubtree(indicelist,popuntilε))
+<factor2>  ::= push(ε) '(' <aParams> ')' push(createSubtree(paramList,popuntilε)) push(createSubtree(var,pop,pop))
+<factor2>  ::= push(ε) <rept-idnest1>  push(createSubtree(indicelist,popuntilε)) push(createSubtree(var,pop,pop))
 
-<fParams>  ::= 'id' ':' <type> push(ε) <rept-fParams3> push(createSubtree(rept-fParams3,popuntilε)) <rept-fParams4>   
+<fParams>  ::= 'id' ':' <type> push(createSubtree(type), pop) push(ε) <rept-fParams3> push(createSubtree(arraySizeList,popuntilε)) push(ε) <rept-fParams4> push(createSubtree(paramTailList,popuntilε))  
 <fParams>  ::= EPSILON
 
-<fParamsTail> ::= ',' 'id' ':' <type> <rept-fParamsTail4>   
+<fParamsTail> ::= ',' 'id' ':' <type> push(createSubtree(type), pop) push(ε) <rept-fParamsTail4> push(createSubtree(arraySizeList,popuntilε)) 
 
 <funcBody> ::= '{' <rept-funcBody1> '}'   
 
@@ -44,7 +44,7 @@
 
 <funcDef> ::= <funcHead> <funcBody>   
 
-<funcHead> ::= 'func' 'id' '(' <fParams> ')' 'arrow' <returnType>   
+<funcHead> ::= 'func' 'id' '(' <fParams> ')' 'arrow' <returnType>  push(createSubtree(returnType), pop)
 
 <statement> ::= 'id' <statement-Id-nest> ';'  
 <statement> ::= 'if' '(' <relExpr> ')' 'then' <statBlock> 'else' <statBlock> ';'   
@@ -71,17 +71,17 @@
 <rept-var-or-funcCall>  ::=  <idNest> <rept-var-or-funcCall>    
 <rept-var-or-funcCall>  ::=  EPSILON
 
-<idNest> ::= '.' 'id' <idNest2>   
-<idNest2> ::= '(' <aParams> ')'   
-<idNest2> ::= <rept-idnest1>   
+<idNest> ::= '.' 'id' push(createLeaf(id)) <idNest2> push(createSubtree(dot,pop,pop))
+<idNest2> ::= push(ε) '(' <aParams> ')' push(createSubtree(paramList,popuntilε)) push(createSubtree(var,pop,pop))   
+<idNest2> ::= push(ε) <rept-idnest1> push(createSubtree(indicelist,popuntilε))  
 
 
 <implDef> ::= 'impl' 'id' '{' <rept-implDef3> '}'   
 
 <indice> ::= '[' <arithExpr>  ']'   
 
-<memberDecl> ::= <funcDecl>   
-<memberDecl> ::= <varDecl>   
+<memberDecl> ::= <funcDecl>   push(createSubtree(funcDecl), pop)
+<memberDecl> ::= <varDecl>   push(createSubtree(varDecl), pop, pop)
 
 <multOp> ::= '*'   
 <multOp> ::= '/'   
@@ -125,7 +125,7 @@
 <rept-prog0> ::= <structOrImplOrfunc> <rept-prog0>   
 <rept-prog0> ::= EPSILON
 
-<rept-statBlock1> ::= <statement> <rept-statBlock1>   
+<rept-statBlock1> ::= <statement> push(createSubtree(statement), pop) <rept-statBlock1>   
 <rept-statBlock1> ::= EPSILON
 
 <rept-structDecl4> ::= <visibility> push(createSubtree(visibility, pop) <memberDecl> <rept-structDecl4>   
@@ -145,20 +145,20 @@
 <rightRecTerm>  ::= EPSILON
 <rightRecTerm>  ::= <multOp> push(ε) <factor> push(createSubtree(factor,popuntilε)) <rightRecTerm>    
 
-<sign> ::= '+' push(plus)
-<sign> ::= '-' push(minus)
+<sign> ::= '+' push(createLeaf(plus))
+<sign> ::= '-' push(createLeaf(minus))
 
-<statBlock> ::= '{' <rept-statBlock1> '}'   
-<statBlock> ::= <statement>   
+<statBlock> ::= push(ε) '{' <rept-statBlock1> '}' push(createSubtree(statBlock,popuntilε))
+<statBlock> ::= <statement> push(createSubtree(statBlock), pop)
 <statBlock> ::= EPSILON
 
 
 
 <structDecl> ::= 'struct' 'id' <opt-structDecl2> '{' <rept-structDecl4> '}' ';'   
 
-<structOrImplOrfunc> ::= <structDecl>   
-<structOrImplOrfunc> ::= <implDef>   
-<structOrImplOrfunc> ::= <funcDef>   
+<structOrImplOrfunc> ::= <structDecl>  push(createSubtree(struct), pop)
+<structOrImplOrfunc> ::= <implDef>   push(createSubtree(impl), pop)
+<structOrImplOrfunc> ::= <funcDef>   push(createSubtree(func), pop)
 
 <term>  ::= push(ε) <factor> push(createSubtree(factor,popuntilε))  <rightRecTerm>    
 
@@ -166,10 +166,10 @@
 <type> ::= 'float' push(createLeaf(float))
 <type> ::= 'id' push(createLeaf(id))
 
-<varDecl> ::= 'let' 'id' ':' <type> push(createSubtree(type, pop)) <rept-varDecl4> ';'   
+<varDecl> ::= 'let' 'id' ':' <type> push(createSubtree(type, pop)) push(ε) <rept-varDecl4> push(createSubtree(arraySizeList,popuntilε)) ';'   
 
-<varDeclOrStat> ::= <varDecl>   
-<varDeclOrStat> ::= <statement>   
+<varDeclOrStat> ::= <varDecl>  push(createSubtree(varDecl), pop, pop)
+<varDeclOrStat> ::= <statement>   push(createSubtree(statement), pop)
 
 <variable> ::=  'id' push(createLeaf(id)) <variable2>  
 
@@ -180,8 +180,8 @@
 <rept-variable> ::=  EPSILON
 
 <var-idNest> ::= '.' 'id' push(createLeaf(id)) <var-idNest2> push(createSubtree(dot,pop,pop))  
-<var-idNest2> ::= '(' <aParams> ')' push(createSubtree(paramList,popuntilε)) push(createSubtree(var,pop,pop)) <var-idNest>   
-<var-idNest2> ::= <rept-idnest1>   
+<var-idNest2> ::= push(ε) '(' <aParams> ')' push(createSubtree(paramList,popuntilε)) push(createSubtree(var,pop,pop)) <var-idNest>   
+<var-idNest2> ::= push(ε) <rept-idnest1> push(createSubtree(indicelist,popuntilε))  
 
 
 <visibility> ::= 'public' push(createLeaf(public))
