@@ -1,8 +1,8 @@
 <START> ::= <prog> 'eof'   
 
-<addOp> ::= '+'    
-<addOp> ::= '-'   
-<addOp> ::= 'or'   
+<addOp> ::= '+' push(createLeaf(plus))
+<addOp> ::= '-' push(createLeaf(minus))
+<addOp> ::= 'or' push(createLeaf(or))
 
 <aParams> ::= <expr> <rept-aParams1>   
 <aParams> ::= EPSILON
@@ -11,12 +11,12 @@
 
 <arithExpr>  ::= <term>  <rightrec-arithExpr>    
 
-<arraySize>  ::= '[' <arraySize2>     
+<arraySize>  ::= '[' <arraySize2> 
 
-<arraySize2>  ::= 'intlit' ']'  
-<arraySize2>  ::= ']'  
+<arraySize2>  ::= 'intlit' ']' push(createLeaf(arraysize))
+<arraySize2>  ::= ']' push(createLeaf(emptysize))
 
-<assignOp>  ::= '='   
+<assignOp>  ::= '=' push(createLeaf(assign))
 
 <expr> ::= <arithExpr>  <expr2>   
 
@@ -24,16 +24,16 @@
 <expr2>  ::= EPSILON
 
 <factor>  ::= 'id' <factor2>  <rept-var-or-funcCall>    
-<factor>  ::= 'intlit'
-<factor>  ::= 'floatlit'   
-<factor>  ::= '(' <arithExpr>  ')'   
-<factor>  ::= 'not' <factor>    
-<factor>  ::= <sign> <factor>    
+<factor>  ::= 'intlit' push(createLeaf(intLit))
+<factor>  ::= 'floatlit' push(createLeaf(floatLit))
+<factor>  ::= push(ε) '(' <arithExpr>  ')' push(createSubtree(arithExpr,popuntilε))
+<factor>  ::= 'not' push(not) <factor> 
+<factor>  ::= <sign> push(createSubtree(sign, pop)) <factor>    
 
-<factor2>  ::= '(' <aParams> ')'   
-<factor2>  ::= <rept-idnest1>   
+<factor2>  ::= push(ε) '(' <aParams> ')' push(createSubtree(paramList,popuntilε))
+<factor2>  ::= push(ε) <rept-idnest1>  push(createSubtree(indicelist,popuntilε))
 
-<fParams>  ::= 'id' ':' <type> <rept-fParams3> <rept-fParams4>   
+<fParams>  ::= 'id' ':' <type> push(ε) <rept-fParams3> push(createSubtree(rept-fParams3,popuntilε)) <rept-fParams4>   
 <fParams>  ::= EPSILON
 
 <fParamsTail> ::= ',' 'id' ':' <type> <rept-fParamsTail4>   
@@ -65,8 +65,8 @@
 <statement-Id-nest3> ::= <assignOp>  <expr>    
 <statement-Id-nest3> ::= '.' 'id' <statement-Id-nest>   
 
-<rept-idnest1> ::= <indice> <rept-idnest1>   
-<rept-idnest1> ::= EPSILON
+<rept-idnest1> ::= <indice> push(createSubtree(indice, pop, pop)) <rept-idnest1>   
+<rept-idnest1> ::= push(ε) EPSILON
 
 <rept-var-or-funcCall>  ::=  <idNest> <rept-var-or-funcCall>    
 <rept-var-or-funcCall>  ::=  EPSILON
@@ -101,8 +101,8 @@
 <relOp>  ::= 'leq'   
 <relOp>  ::= 'geq'   
 
-<rept-aParams1> ::= push(createSubtree(<factor>) <aParamsTail>  <rept-aParams1>
-<rept-aParams1> ::= push(createSubtree(<factor>) EPSILON
+<rept-aParams1> ::= push(createSubtree(factor) <aParamsTail>  <rept-aParams1>
+<rept-aParams1> ::= push(createSubtree(factor) EPSILON
 
 <rept-fParams3> ::= <arraySize>  <rept-fParams3>   
 <rept-fParams3> ::= EPSILON
@@ -119,8 +119,8 @@
 <rept-implDef3> ::= <funcDef> <rept-implDef3>   
 <rept-implDef3> ::= EPSILON
 
-<rept-opt-structDecl22> ::= ',' 'id' <rept-opt-structDecl22>   
-<rept-opt-structDecl22> ::= EPSILON
+<rept-opt-structDecl22> ::= push(createLeaf(id)) ',' 'id' <rept-opt-structDecl22>   
+<rept-opt-structDecl22> ::= push(createLeaf(id)) EPSILON
 
 <rept-prog0> ::= <structOrImplOrfunc> <rept-prog0>   
 <rept-prog0> ::= EPSILON
@@ -128,7 +128,7 @@
 <rept-statBlock1> ::= <statement> <rept-statBlock1>   
 <rept-statBlock1> ::= EPSILON
 
-<rept-structDecl4> ::= <visibility> <memberDecl> <rept-structDecl4>   
+<rept-structDecl4> ::= <visibility> push(createSubtree(visibility, pop) <memberDecl> <rept-structDecl4>   
 <rept-structDecl4> ::= EPSILON
 
 <rept-varDecl4> ::= <arraySize>  <rept-varDecl4>   
@@ -136,17 +136,17 @@
 
 
 
-<returnType> ::= <type>   
-<returnType> ::= 'void'   
+<returnType> ::= <type>  push(createSubtree(type), pop)
+<returnType> ::= 'void'  push(createLeaf(void))
 
-<rightrec-arithExpr>  ::= EPSILON
-<rightrec-arithExpr>  ::= <addOp> <term>  <rightrec-arithExpr>    
+<rightrec-arithExpr>  ::= push(createSubtree(term)) EPSILON
+<rightrec-arithExpr>  ::= push(createSubtree(term)) <addOp> <term>  <rightrec-arithExpr>    
 
 <rightRecTerm>  ::= EPSILON
-<rightRecTerm>  ::= <multOp> <factor>  <rightRecTerm>    
+<rightRecTerm>  ::= <multOp> push(ε) <factor> push(createSubtree(factor,popuntilε)) <rightRecTerm>    
 
-<sign> ::= '+'    
-<sign> ::= '-'   
+<sign> ::= '+' push(plus)
+<sign> ::= '-' push(minus)
 
 <statBlock> ::= '{' <rept-statBlock1> '}'   
 <statBlock> ::= <statement>   
@@ -160,7 +160,7 @@
 <structOrImplOrfunc> ::= <implDef>   
 <structOrImplOrfunc> ::= <funcDef>   
 
-<term>  ::= <factor>  <rightRecTerm>    
+<term>  ::= push(ε) <factor> push(createSubtree(factor,popuntilε))  <rightRecTerm>    
 
 <type> ::= 'integer' push(createLeaf(integer))
 <type> ::= 'float' push(createLeaf(float))
