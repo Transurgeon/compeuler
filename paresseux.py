@@ -67,7 +67,6 @@ class Paresseux:
     def updateDerivation(self, prev, new):
         self.lastDeriv = self.lastDeriv.replace(prev, new, 1)
         self.derivation += self.lastDeriv + "\n"
-        self.derivation += "." * 88 + "\n"
     
     #####################################
     # GRAMMAR RULES 
