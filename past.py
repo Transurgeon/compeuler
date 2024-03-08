@@ -79,16 +79,17 @@ class Past:
     def createSubtree(self, name: str, pops: int):
         childs = []
         if pops == -1:
-            str = self.stack.pop()
-            while str != "$eps":
-                childs.append(Node(str))
-                str = self.stack.pop()  
+            node = self.stack.pop()
+            while node.name != "$eps":
+                childs.append(node)
+                node = self.stack.pop()
         else:
-            for _ in pops:
-                childs.append(Node(self.stack.pop()))
+            for _ in range(pops):
+                childs.append(self.stack.pop())
+        childs.reverse()
         self.stack.append(Node(name, children=childs))
 
-    def printTree(self, root):
+    def printTree(self, root: Node):
         for pre, _, node in RenderTree(root):
             print("%s%s" % (pre, node.name))
             
@@ -102,6 +103,9 @@ class Past:
         self.updateDerivation("", "prog ")
         self.prog()
         self.derivation += "Parsing Completed Successfully"
+        root = self.stack.pop()
+        self.printTree(root)
+        self.exportGraph(root, "example.png")
         
     # prog -> rept-prog0 
     def prog(self):
@@ -248,8 +252,12 @@ class Past:
     def varDecl(self):
         self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ;\n")
         self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON])
+        self.createLeaf("id")
         self.type()
+        self.createLeaf("$eps")
         self.rept_varDecl4()
+        self.createSubtree("arraySize", -1)
+        self.createSubtree("varDecl", 3)
         self.match({TokenType.SEMI})
     
     # rept-varDecl4 -> arraySize rept-varDecl4 | EPSILON 
@@ -583,14 +591,17 @@ class Past:
         if self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("arraySize2 ", "intLit ] ")
             self.nextToken()
+            self.createLeaf("intLit")
             self.match({TokenType.CLOSESQBR})
         else:
             self.updateDerivation("arraySize2 ", "] ")
+            self.createLeaf("emptySize")
             self.match({TokenType.CLOSESQBR})
     
     # type -> integer | float | id 
     def type(self):
         type = self.currToken.lexeme
+        self.createLeaf(type)
         self.match({TokenType.INTEGER, TokenType.FLOAT, TokenType.ID})
         self.updateDerivation("type ", type + " ")
     
