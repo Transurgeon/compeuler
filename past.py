@@ -106,11 +106,15 @@ class Past:
         root = self.stack.pop()
         self.printTree(root)
         self.exportGraph(root, "example.png")
+        for n in self.stack:
+            print(n)
         
     # prog -> rept-prog0 
     def prog(self):
         self.updateDerivation("prog ", "rept-prog0 ")
+        self.createLeaf("$eps")
         self.rept_prog0()
+        self.createSubtree("program", -1)
 
     # rept-prog0 -> structOrImplOrFunc rept-prog0 | EPSILON 
     def rept_prog0(self):
@@ -193,6 +197,7 @@ class Past:
         self.updateDerivation("funcDef ", "funcHead funcBody ")
         self.funcHead()
         self.funcBody()
+        self.createSubtree("function", 4)
     
     # visibility -> public | private 
     def visibility(self):
@@ -219,15 +224,21 @@ class Past:
     def funcHead(self):
         self.updateDerivation("funcHead ", "func id ( fParams ) arrow returnType ")
         self.matchSequence([TokenType.FUNC, TokenType.ID, TokenType.OPENPAR])
+        self.createLeaf("id")
+        self.createLeaf("$eps")
         self.fParams()
+        self.createSubtree("funcParams", -1)
         self.matchSequence([TokenType.CLOSEPAR, TokenType.ARROW])
         self.returnType()
+        self.createSubtree("returnType", 1)
     
     # funcBody -> { rept-funcBody1 } 
     def funcBody(self):
         self.updateDerivation("funcBody ", "{ rept-funcBody1 } ")
         self.match({TokenType.OPENCUBR})
+        self.createLeaf("$eps")
         self.rept_funcBody1()
+        self.createSubtree("funcBody", -1)
         self.match({TokenType.CLOSECUBR})
     
     # rept-funcBody1 -> varDeclOrStat rept-funcBody1 | EPSILON 
@@ -321,7 +332,10 @@ class Past:
     def statement2(self):
         if self.matchCurr(first["REPTIDNEST1"]) or self.matchCurr(first["STATEMENT3"]):
             self.updateDerivation("statement2 ", "rept-idnest1 statement3 ")
+            self.createLeaf("$eps")
             self.rept_idnest1()
+            self.createSubtree("indiceList", -1)
+            self.createSubtree("var", 2)
             self.statement3()
         elif self.matchCurr({TokenType.OPENPAR}):
             self.updateDerivation("statement2 ", "( aParams ) statement4 ")
@@ -359,6 +373,7 @@ class Past:
         if self.matchCurr(first["INDICE"]):
             self.updateDerivation("rept-idnest1 ", "indice rept-idnest1 ")
             self.indice()
+            self.createLeaf("indice") # Will need to change to expr subtree
             self.rept_idnest1()
         else:
             self.updateDerivation("rept-idnest1 ", "")
@@ -486,6 +501,7 @@ class Past:
     def variable(self):
         self.updateDerivation("variable ", "id variable2 ")
         self.matchCurr({TokenType.ID})
+        self.createLeaf("id")
         self.variable2()
         
     # variable2 -> ( aParams ) varIdnest | rept-idnest1 reptvariable
@@ -498,7 +514,10 @@ class Past:
             self.varIdnest()
         else:
             self.updateDerivation("variable2 ", "rept-idnest1 reptvariable ")
+            self.createLeaf("$eps")
             self.rept_idnest1()
+            self.createSubtree("indiceList", -1)
+            self.createSubtree("var", 2)
             self.reptvariable()
     
     # reptvariable -> varIdnest reptvariable | EPSILON 
@@ -514,13 +533,18 @@ class Past:
     def varIdnest(self):
         self.updateDerivation("varIdnest ", ". id varIdnest2 ")
         self.matchSequence([TokenType.DOT, TokenType.ID])
+        self.createLeaf("id")
         self.varIdnest2()
+        self.createSubtree("dot", 2)
     
     # varIdnest2 -> ( aParams ) varIdnest | rept-idnest1 
     def varIdnest2(self):
         if self.matchCurr(first["REPTIDNEST1"]):
             self.updateDerivation("varIdnest2 ", "rept-idnest1 ")
+            self.createLeaf("$eps")
             self.rept_idnest1()
+            self.createSubtree("indiceList", -1)
+            self.createSubtree("var", 2)
         else:
             self.updateDerivation("varIdnest2 ", "( aParams ) varIdnest ")
             self.match({TokenType.OPENPAR})
