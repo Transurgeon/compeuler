@@ -1,4 +1,6 @@
-func evaluate(x: float) -> float 
+func evaluate(x: float, y: float, z: int) -> float 
 {
-a
+let v : integer[2][3];
+a = 5;
+a.b[c]
 }

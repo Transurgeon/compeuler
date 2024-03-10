@@ -286,6 +286,7 @@ class Past:
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("statement ", "id statement2 ")
             self.nextToken()
+            self.createLeaf("id")
             self.statement2()
         elif self.matchCurr({TokenType.IF}):
             self.updateDerivation("statement ", "if ( relExpr ) then statBlock else statBlock ;\n")
@@ -350,11 +351,16 @@ class Past:
             self.updateDerivation("statement3 ", ". id statement2 ")
             self.nextToken()
             self.match({TokenType.ID})
+            self.createLeaf("id")
             self.statement2()
+            self.createSubtree("dot", 2)
         elif self.matchCurr(first["ASSIGNOP"]):
             self.updateDerivation("statement3 ", "assignOp expr ;\n")
             self.assignOp()
+            self.createLeaf("=")
             self.expr()
+            self.createLeaf("expr")
+            self.createSubtree("assign", 3)
             self.match({TokenType.SEMI})
     
     # statement4 -> . id statement2 | ; 
