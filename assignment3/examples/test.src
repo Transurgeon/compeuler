@@ -2,5 +2,5 @@ func evaluate(x: float, y: float, z: int) -> float
 {
 let v : integer[2][3];
 a = 5;
-a.b[c]
+a.b[c].d = 5;
 }

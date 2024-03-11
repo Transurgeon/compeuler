@@ -353,13 +353,13 @@ class Past:
             self.match({TokenType.ID})
             self.createLeaf("id")
             self.statement2()
-            self.createSubtree("dot", 2)
+            self.createSubtree("dot", 2) # need to look into case when combined with assign
         elif self.matchCurr(first["ASSIGNOP"]):
             self.updateDerivation("statement3 ", "assignOp expr ;\n")
             self.assignOp()
             self.createLeaf("=")
             self.expr()
-            self.createLeaf("expr")
+            self.createLeaf("expr") # replace expr with subtree
             self.createSubtree("assign", 3)
             self.match({TokenType.SEMI})
     
