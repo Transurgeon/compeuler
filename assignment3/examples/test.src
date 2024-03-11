@@ -1,6 +1,3 @@
-func evaluate(x: float, y: float, z: int) -> float 
-{
-let v : integer[2][3];
-a = 5;
-a.b[c].d = 5;
-}
+struct shrek inherits shriek { } ;
+
+impl id { func id ( id : float ) -> float { return ( 5 ) ; } }

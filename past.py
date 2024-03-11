@@ -141,10 +141,16 @@ class Past:
     def structDecl(self):
         self.updateDerivation("structDecl ", "struct id opt-structDecl2 { rept-structDecl4 } ;\n")
         self.matchSequence([TokenType.STRUCT, TokenType.ID])
+        self.createLeaf("id")
+        self.createLeaf("$eps")
         self.opt_structDecl2()
+        self.createSubtree("inherits", -1)
         self.match({TokenType.OPENCUBR})
+        self.createLeaf("$eps")
         self.rept_structDecl4()
+        self.createSubtree("memberList", -1)
         self.matchSequence([TokenType.CLOSECUBR, TokenType.SEMI])
+        self.createSubtree("struct", 3)
     
     # opt-structDecl2 -> inherits id rept-opt-structDecl22 | EPSILON 
     def opt_structDecl2(self):
@@ -180,7 +186,11 @@ class Past:
     def implDef(self):
         self.updateDerivation("implDef ", "impl id { rept-implDef3 } ")
         self.matchSequence([TokenType.IMPL, TokenType.ID, TokenType.OPENCUBR])
+        self.createLeaf("id")
+        self.createLeaf("$eps")
         self.rept_implDef3()
+        self.createSubtree("funcList", -1)
+        self.createSubtree("impl", 2)
         self.match({TokenType.CLOSECUBR})
         
     # rept-implDef3 -> funcDef rept-implDef3 | EPSILON 
