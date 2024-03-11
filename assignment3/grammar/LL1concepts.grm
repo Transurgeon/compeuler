@@ -40,7 +40,7 @@
 
 <funcBody> ::= '{' push(ε) <rept-funcBody1> createSubtree(funcBody, -1) '}'   
 
-<funcDecl> ::= <funcHead> ';'   
+<funcDecl> ::= <funcHead> createSubtree(funcHead, 3) ';'   
 
 <funcDef> ::= <funcHead> <funcBody> createSubtree(function, 4)
 
@@ -76,18 +76,18 @@
 <idNest2> ::= push(ε) <rept-idnest1> createSubtree(indicelist,popuntilε) 
 
 
-<implDef> ::= 'impl' 'id' '{' <rept-implDef3> '}'   
+<implDef> ::= 'impl' 'id' createLeaf(id) '{' push(ε) <rept-implDef3> createSubtree(funcList,popuntilε)'}' createSubtree(impl, 2) 
 
 <indice> ::= '[' <arithExpr>  ']'   
 
 <memberDecl> ::= <funcDecl> createSubtree(funcDecl, pop)
-<memberDecl> ::= <varDecl> createSubtree(varDecl, pop, pop)
+<memberDecl> ::= <varDecl>
 
 <multOp> ::= '*' createLeaf("*")
 <multOp> ::= '/' createLeaf("/")
 <multOp> ::= 'and' createLeaf(and)
 
-<opt-structDecl2> ::= 'inherits' 'id' <rept-opt-structDecl22>   
+<opt-structDecl2> ::= 'inherits' 'id' createLeaf(id) <rept-opt-structDecl22>
 <opt-structDecl2> ::= EPSILON
 
 <prog> ::= <rept-prog0> 
@@ -119,8 +119,8 @@
 <rept-implDef3> ::= <funcDef> <rept-implDef3>   
 <rept-implDef3> ::= EPSILON
 
-<rept-opt-structDecl22> ::= createLeaf(id) ',' 'id' <rept-opt-structDecl22>   
-<rept-opt-structDecl22> ::= createLeaf(id) EPSILON
+<rept-opt-structDecl22> ::= ',' 'id' createLeaf(id) <rept-opt-structDecl22>   
+<rept-opt-structDecl22> ::= EPSILON
 
 <rept-prog0> ::= <structOrImplOrfunc> <rept-prog0>   
 <rept-prog0> ::= EPSILON
@@ -154,7 +154,7 @@
 
 
 
-<structDecl> ::= 'struct' 'id' <opt-structDecl2> '{' <rept-structDecl4> '}' ';'   
+<structDecl> ::= 'struct' 'id' createLeaf(id) push(ε) <opt-structDecl2> createSubtree(inherits, -1) '{' push(ε) <rept-structDecl4> createSubtree(memberList, -1) '}' ';'  createSubtree(struct, 3)
 
 <structOrImplOrfunc> ::= <structDecl> createSubtree(struct, pop)
 <structOrImplOrfunc> ::= <implDef> createSubtree(impl, pop)
@@ -166,10 +166,10 @@
 <type> ::= 'float' createLeaf(float)
 <type> ::= 'id' createLeaf(id)
 
-<varDecl> ::= 'let' 'id' ':' <type> createSubtree(type, pop) push(ε) <rept-varDecl4> createSubtree(arraySizeList,popuntilε) ';'   
+<varDecl> ::= 'let' 'id' createLeaf(id) ':' <type> createSubtree(type, pop) push(ε) <rept-varDecl4> createSubtree(arraySizeList,popuntilε) ';' createSubtree(varDecl, 3)
 
-<varDeclOrStat> ::= <varDecl>  createSubtree(varDecl, pop, pop)
-<varDeclOrStat> ::= <statement>  createSubtree(statement, pop)
+<varDeclOrStat> ::= <varDecl> 
+<varDeclOrStat> ::= <statement> 
 
 <variable> ::=  'id' createLeaf(id) <variable2>  
 
