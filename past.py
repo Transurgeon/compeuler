@@ -90,11 +90,14 @@ class Past:
         self.stack.append(Node(name, children=childs))
 
     def printTree(self, root: Node):
+        name, _ = self.lex.filename.split(".")
+        fout = open(name + ".ast.outast", "w")
         for pre, _, node in RenderTree(root):
-            print("%s%s" % (pre, node.name))
+            fout.write("%s%s" % (pre, node.name) + "\n")
             
-    def exportGraph(self, root, filename):
-        UniqueDotExporter(root).to_picture(filename)
+    def exportGraph(self, root):
+        name, _ = self.lex.filename.split(".")
+        UniqueDotExporter(root).to_picture(name + ".dot.png")
             
     #####################################
     # GRAMMAR RULES 
@@ -105,9 +108,7 @@ class Past:
         self.derivation += "Parsing Completed Successfully"
         root = self.stack.pop()
         self.printTree(root)
-        self.exportGraph(root, "example.png")
-        for n in self.stack:
-            print(n)
+        self.exportGraph(root)
         
     # prog -> rept-prog0 
     def prog(self):

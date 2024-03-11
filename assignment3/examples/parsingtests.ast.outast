@@ -1,0 +1,38 @@
+program
+├── function
+│   ├── struct
+│   │   ├── id
+│   │   ├── inherits
+│   │   └── memberList
+│   ├── id
+│   ├── returnType
+│   │   └── funcParams
+│   └── funcBody
+├── function
+│   ├── id
+│   ├── funcParams
+│   │   ├── id
+│   │   ├── integer
+│   │   ├── emptySize
+│   │   ├── emptySize
+│   │   ├── integer
+│   │   └── intLit
+│   ├── returnType
+│   │   └── integer
+│   └── funcBody
+│       └── id
+└── function
+    ├── id
+    ├── funcParams
+    ├── returnType
+    │   └── float
+    └── funcBody
+        ├── id
+        ├── indice
+        ├── indice
+        ├── indice
+        ├── indice
+        ├── id
+        └── var
+            ├── id
+            └── indiceList

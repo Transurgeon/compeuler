@@ -1,0 +1,15 @@
+program
+├── struct
+│   ├── id
+│   ├── inherits
+│   └── memberList
+└── impl
+    ├── id
+    └── funcList
+        └── function
+            ├── id
+            ├── funcParams
+            │   └── float
+            ├── returnType
+            │   └── float
+            └── funcBody
