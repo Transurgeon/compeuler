@@ -9,7 +9,7 @@
 
 <aParamsTail>  ::= ',' <expr>   
 
-<arithExpr>  ::= <term>  <rightrec-arithExpr>    
+<arithExpr>  ::= <term>  push(ε) <rightrec-arithExpr> createSubtree(rightrecArith, -1) createSubtree(arithExpr, 2)
 
 <arraySize>  ::= '[' <arraySize2> 
 
@@ -18,7 +18,7 @@
 
 <assignOp>  ::= '=' createLeaf("=")
 
-<expr> ::= <arithExpr>  <expr2> 
+<expr> ::= push(ε) <arithExpr>  <expr2> createSubtree(expr, -1)
 
 <expr2>  ::= <relOp>  <arithExpr>    
 <expr2>  ::= EPSILON
@@ -46,7 +46,7 @@
 
 <funcHead> ::= 'func' 'id' createLeaf(id) push(ε) '(' <fParams> ')' createSubtree(funcParams, -1) 'arrow' <returnType>  createSubtree(returnType, pop)
 
-<statement> ::= 'id' <statement-Id-nest> ';'  
+<statement> ::= 'id' createLeaf("id") <statement-Id-nest> ';'  
 <statement> ::= 'if' '(' <relExpr> ')' 'then' <statBlock> 'else' <statBlock> ';'   
 <statement> ::= 'while' '(' <relExpr> ')' <statBlock> ';'   
 <statement> ::= 'read' '(' <variable> ')' ';'   
@@ -54,16 +54,16 @@
 <statement> ::= 'return' '(' <expr> ')' ';'   
 
 
-<statement-Id-nest> ::= '.' 'id' <statement-Id-nest>   
+<statement-Id-nest> ::= '.' 'id' <statement-Id-nest> createSubtree(dot, 2)  
 <statement-Id-nest> ::= '(' <aParams> ')' <statement-Id-nest2>  
 <statement-Id-nest> ::= <indice> <rept-idnest1> <statement-Id-nest3>  
-<statement-Id-nest> ::= <assignOp>  <expr>   
+<statement-Id-nest> ::= <assignOp>  <expr> createSubtree(assignStat, 3)  
 
 <statement-Id-nest2> ::= EPSILON
-<statement-Id-nest2> ::= '.' 'id' <statement-Id-nest>   
+<statement-Id-nest2> ::= '.' 'id' <statement-Id-nest> createSubtree(dot, 2)
 
-<statement-Id-nest3> ::= <assignOp>  <expr>    
-<statement-Id-nest3> ::= '.' 'id' <statement-Id-nest>   
+<statement-Id-nest3> ::= <assignOp>  <expr> createSubtree(assignStat, 3) 
+<statement-Id-nest3> ::= '.' 'id' <statement-Id-nest> createSubtree(dot, 2) 
 
 <rept-idnest1> ::= <indice> createSubtree(indice, pop, pop) <rept-idnest1>   
 <rept-idnest1> ::= EPSILON
@@ -83,23 +83,23 @@
 <memberDecl> ::= <funcDecl> createSubtree(funcDecl, pop)
 <memberDecl> ::= <varDecl> createSubtree(varDecl, pop, pop)
 
-<multOp> ::= '*'   
-<multOp> ::= '/'   
-<multOp> ::= 'and'   
+<multOp> ::= '*' createLeaf("*")
+<multOp> ::= '/' createLeaf("/")
+<multOp> ::= 'and' createLeaf(and)
 
 <opt-structDecl2> ::= 'inherits' 'id' <rept-opt-structDecl22>   
 <opt-structDecl2> ::= EPSILON
 
 <prog> ::= <rept-prog0> 
 
-<relExpr> ::= <arithExpr>  <relOp>  <arithExpr>    
+<relExpr> ::= <arithExpr>  <relOp>  <arithExpr> createSubtree(relExpr, 3)
 
-<relOp>  ::= 'eq'   
-<relOp>  ::= 'neq'   
-<relOp>  ::= 'lt'   
-<relOp>  ::= 'gt'   
-<relOp>  ::= 'leq'   
-<relOp>  ::= 'geq'   
+<relOp>  ::= 'eq' createLeaf("==")
+<relOp>  ::= 'neq' createLeaf("!=")
+<relOp>  ::= 'lt' createLeaf("<")
+<relOp>  ::= 'gt' createLeaf(">")
+<relOp>  ::= 'leq' createLeaf("<=")
+<relOp>  ::= 'geq' createLeaf(">=")
 
 <rept-aParams1> ::= createSubtree(factor) <aParamsTail>  <rept-aParams1>
 <rept-aParams1> ::= createSubtree(factor) EPSILON
@@ -139,8 +139,8 @@
 <returnType> ::= <type>  createSubtree(type, pop)
 <returnType> ::= 'void'  createLeaf(void)
 
-<rightrec-arithExpr>  ::= createSubtree(term) EPSILON
-<rightrec-arithExpr>  ::= createSubtree(term) <addOp> <term>  <rightrec-arithExpr>    
+<rightrec-arithExpr>  ::= EPSILON
+<rightrec-arithExpr>  ::= <addOp> <term> <rightrec-arithExpr>    
 
 <rightRecTerm>  ::= EPSILON
 <rightRecTerm>  ::= <multOp> push(ε) <factor> createSubtree(factor,popuntilε) <rightRecTerm>    
@@ -160,7 +160,7 @@
 <structOrImplOrfunc> ::= <implDef> createSubtree(impl, pop)
 <structOrImplOrfunc> ::= <funcDef>
 
-<term>  ::= push(ε) <factor> createSubtree(factor,popuntilε) <rightRecTerm>    
+<term>  ::= push(ε) <factor> createSubtree(factor,popuntilε) push(ε) <rightRecTerm> createSubtree(rightRecTerm,popuntilε) createSubtree(term, 2)
 
 <type> ::= 'integer' createLeaf(integer)
 <type> ::= 'float' createLeaf(float)

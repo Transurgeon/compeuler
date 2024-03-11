@@ -1,0 +1,13 @@
+struct id inherits id { } ; func id ( ) -> void { } func id ( id : id , id : integer [ ] [ ] , id : integer [ 10 ] ) -> integer { id ( ) ; } func id ( ) -> float { if ( id > id ) then { id ( id [ 34 ] [ 44 ] , id [ 5 ] , id [ 6 ] ) ; } else { } ; while ( id > id ) { } ; while ( id < id ) { id ( id ) ; } ; read ( id ) ; let id : float ; id ( id ) ; let id : id ; id ( id ) ; let id : id [ ] [ ] ; id = 6 ; let id : integer [ ] ; id ( id > id ) ; id = 8 * 4 ; id = ( 1 + 1 ) * 1 > 1 ; id = ( ( 4 - 7 ) / ( 2 + 3 ) ) + ( - 4 ) ; id = ! ( 4 * 5 ) ; }
+
+func a () -> void { id.id(id) ;  id(id).id = id;  id(id).id() ; id.id[id] = id; id[id].id = id; id[id].id[id] = id; id.id[id][id] = id; id[id][id].id = id;  id[id][id].id[id][id] =id ; id(id).id[id] = id; id(id).id[id][id] = id ; id(id).id[id][id][id] = id; id(id).id[id][id][id][id] = id; id[id][id][id].id(id).id[id].id(id).id[id][id] = id;}
+
+func a ( de : integer [], b : integer ) -> void { let a: integer; c = 5; while ( a < b - 5 ) { while( a < b - r - 9) { b[h] = r[a + 5]; }; if ( a [ r ] > t [ n + 7 ] ) then { m = p [ l ] ; } else ;}; }
+func a ( de : integer [], b : integer ) -> void { read ( id ) ; g = ( ( 5 - 8) / ( 6 + 8 ) ) + (- 7); pop = 6*9; rtt3 = ! (5 * 5);}
+
+
+impl id { func id ( id : float ) -> float { return ( 5 ) ; } }
+
+
+impl id { func id ( id : float ) -> float { let id : float ; id = id ; id = id * id + id ; id = id * id + id ; return ( id ) ; } func id ( id : float , id : float , id : float ) -> id { let id : id ; id . id = id ; id . id = id ; id . id = id ; return ( id ) ; } }
+impl id { func id ( id : float , id : float ) -> id { let id : id ; id . id = id ; id . id = id ; return ( id ) ; } func id ( id : float ) -> float { let id : float ; id = 4.9 ; id = id * id + id ; return ( id ) ; } }
