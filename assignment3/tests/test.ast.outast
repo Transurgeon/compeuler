@@ -21,3 +21,8 @@ program
             ├── returnType
             │   └── float
             └── funcBody
+                ├── factor
+                │   └── int
+                └── arithExpr
+                    ├── rightTerm
+                    └── rightRecArith

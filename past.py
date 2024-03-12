@@ -320,6 +320,7 @@ class Past:
             self.match({TokenType.CLOSEPAR})
             self.statBlock()
             self.match({TokenType.SEMI})
+            self.createSubtree("while", 2)
         elif self.matchCurr({TokenType.READ}):
             self.updateDerivation("statement ", "read ( variable ) ;\n")
             self.nextToken()
@@ -372,7 +373,6 @@ class Past:
             self.assignOp()
             self.createLeaf("=")
             self.expr()
-            self.createLeaf("expr") # replace expr with subtree
             self.createSubtree("assign", 3)
             self.match({TokenType.SEMI})
     
@@ -409,7 +409,6 @@ class Past:
         elif self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("statBlock ", "statement ")
             self.statement()
-            self.createSubtree("statement", 1)
         else:
             self.updateDerivation("statBlock ", "")
     
@@ -435,6 +434,7 @@ class Past:
             self.updateDerivation("expr2 ", "relOp arithExpr ")
             self.relOp()
             self.arithExpr()
+            self.createSubtree("relExpr", 3)
         else:
             self.updateDerivation("expr2 ", "")
     
@@ -474,15 +474,21 @@ class Past:
     # term -> factor rightrec-term 
     def term(self):
         self.updateDerivation("term ", "factor rightrec-term ")
+        self.createLeaf("$eps")
         self.factor()
+        self.createSubtree("factor", -1)
+        self.createLeaf("$eps")
         self.rightrec_term()
+        self.createSubtree("rightTerm", -1)
     
     # rightrec-term -> multOp factor rightrec-term | EPSILON
     def rightrec_term(self):
         if self.matchCurr(first["MULTOP"]):
             self.updateDerivation("rightrec-term ", "multOp factor rightrec-term ")
             self.multOp()
+            self.createLeaf("$eps")
             self.factor()
+            self.createSubtree("factor", -1)
             self.rightrec_term()
         else:
             self.updateDerivation("rightrec-term ", "")
@@ -671,6 +677,7 @@ class Past:
             self.type()
         elif self.matchCurr({TokenType.VOID}):
             self.updateDerivation("returnType", "void")
+            self.createLeaf("void")
             self.nextToken()
     
     # fParams -> id : type rept-fParams3 rept-fParams4 | EPSILON 
@@ -710,7 +717,6 @@ class Past:
             self.rept_aParams1()
         else:
             self.updateDerivation("aParams ", "")
-            return True
     
     # rept-aParams1 -> aParamsTail rept-aParams1 | EPSILON 
     def rept_aParams1(self):
