@@ -2,7 +2,15 @@ program
 ├── struct
 │   ├── id
 │   ├── inherits
+│   │   ├── id
+│   │   ├── id
+│   │   └── id
 │   └── memberList
+│       └── varDecl
+│           ├── id
+│           ├── int
+│           └── arraySize
+│               └── intLit
 └── impl
     ├── id
     └── funcList

@@ -159,6 +159,7 @@ class Past:
             self.updateDerivation("opt-structDecl2 ", "inherits id rept-opt-structDecl22 ")
             self.nextToken()
             self.match({TokenType.ID})
+            self.createLeaf("id")
             self.rept_opt_structDecl22()
         else:
             self.updateDerivation("opt-structDecl2 ", "")
@@ -169,6 +170,7 @@ class Past:
             self.updateDerivation("rept-opt-structDecl22 ", ", id rept-opt-structDecl22 ")
             self.nextToken()
             self.match({TokenType.ID})
+            self.createLeaf("id")
             self.rept_opt_structDecl22()
         else:
             self.updateDerivation("rept-opt-structDecl22 ", "")
@@ -400,11 +402,14 @@ class Past:
         if self.matchCurr({TokenType.OPENCUBR}):
             self.updateDerivation("statBlock ", "{ rept-statBlock1 } ")
             self.nextToken()
+            self.createLeaf("$eps")
             self.rept_statBlock1()
+            self.createSubtree("statBlock", -1)
             self.match({TokenType.CLOSECUBR})
         elif self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("statBlock ", "statement ")
             self.statement()
+            self.createSubtree("statement", 1)
         else:
             self.updateDerivation("statBlock ", "")
     
@@ -413,6 +418,7 @@ class Past:
         if self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("rept-statBlock1 ", "statement rept-statBlock1 ")
             self.statement()
+            self.createSubtree("statement", 1)
             self.rept_statBlock1()
         else:
             self.updateDerivation("rept-statBlock1 ", "")
@@ -438,12 +444,16 @@ class Past:
         self.arithExpr()
         self.relOp()
         self.arithExpr()
+        self.createSubtree("relExpr", 3)
     
     # arithExpr -> term rightrec-arithExpr 
     def arithExpr(self):
         self.updateDerivation("arithExpr ", "term rightrec-arithExpr ")
         self.term()
+        self.createLeaf("$eps")
         self.rightrec_arithExpr()
+        self.createSubtree("rightRecArith", -1)
+        self.createSubtree("arithExpr", 2)
     
     # rightrec-arithExpr -> addOp term rightrec-arithExpr | EPSILON 
     def rightrec_arithExpr(self):
@@ -458,6 +468,7 @@ class Past:
     # sign -> + | - 
     def sign(self):
         self.updateDerivation("sign ", self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme)
         self.match({TokenType.PLUS, TokenType.MINUS})
         
     # term -> factor rightrec-term 
@@ -481,14 +492,19 @@ class Past:
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("factor ", "id factor2 reptVariableOrFunc ")
             self.nextToken()
+            self.createLeaf("id")
             self.factor2()
+            self.createLeaf("$eps")
             self.reptVariableOrFunc()
+            self.createSubtree("indiceList", -1)
         elif self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("factor ", "intLit ")
             self.nextToken()
+            self.createLeaf("int")
         elif self.matchCurr({TokenType.FLOATNUM}):
             self.updateDerivation("factor ", "floatLit ")
             self.nextToken()
+            self.createLeaf("float")
         elif self.matchCurr({TokenType.OPENPAR}):
             self.updateDerivation("factor ", "( arithExpr ) ")
             self.nextToken()
@@ -497,10 +513,12 @@ class Past:
         elif self.matchCurr({TokenType.NOT}):
             self.updateDerivation("factor ", "not factor ")
             self.nextToken()
+            self.createLeaf("not")
             self.factor()
         elif self.matchCurr(first["SIGN"]):
             self.updateDerivation("factor ", "sign factor ")
             self.sign()
+            self.createSubtree("sign", 1)
             self.factor()
     
     # factor2 -> ( aParams ) | rept-idnest1 
@@ -743,16 +761,19 @@ class Past:
         }
         self.match(relationOperators)
         self.updateDerivation("addOp ", oper + " ")
+        self.createLeaf(oper)
     
     # addOp -> + | - | or 
     def addOp(self):
         oper = self.currToken.lexeme
         self.match({TokenType.PLUS, TokenType.MINUS, TokenType.OR})
         self.updateDerivation("addOp ", oper + " ")
+        self.createLeaf(oper)
     
     # multOp -> * | / | and 
     def multOp(self):
         oper = self.currToken.lexeme
         self.match({TokenType.MULT, TokenType.DIV, TokenType.AND})
         self.updateDerivation("multOp ", oper + " ")
+        self.createLeaf(oper)
     

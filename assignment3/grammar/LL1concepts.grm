@@ -26,7 +26,7 @@
 <factor>  ::= 'id' createLeaf(id) <factor2> push(ε) <rept-var-or-funcCall> push(createSubtree(indicelist), popuntilε)  
 <factor>  ::= 'intlit' createLeaf(intLit)
 <factor>  ::= 'floatlit' createLeaf(floatLit)
-<factor>  ::= push(ε) '(' <arithExpr>  ')' createSubtree(arithExpr,popuntilε)
+<factor>  ::= '(' <arithExpr>  ')'
 <factor>  ::= 'not' createLeaf(not) <factor> 
 <factor>  ::= <sign> createSubtree(sign, pop) <factor>    
 

@@ -3,6 +3,7 @@ program
 │   ├── struct
 │   │   ├── id
 │   │   ├── inherits
+│   │   │   └── id
 │   │   └── memberList
 │   ├── id
 │   ├── returnType
