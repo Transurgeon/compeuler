@@ -2,9 +2,15 @@ program
 └── function
     ├── id
     ├── funcParams
-    │   ├── integer
-    │   ├── emptySize
-    │   └── integer
+    │   ├── param
+    │   │   ├── id
+    │   │   ├── integer
+    │   │   └── arraySize
+    │   │       └── emptySize
+    │   └── param
+    │       ├── id
+    │       ├── integer
+    │       └── arraySize
     ├── returnType
     │   └── void
     └── funcBody

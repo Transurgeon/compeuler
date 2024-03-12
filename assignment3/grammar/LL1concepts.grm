@@ -33,7 +33,7 @@
 <factor2>  ::= push(ε) '(' <aParams> ')' createSubtree(paramList,popuntilε) createSubtree(var,pop,pop)
 <factor2>  ::= push(ε) <rept-idnest1> createSubtree(indicelist,popuntilε) createSubtree(var,pop,pop)
 
-<fParams>  ::= 'id' ':' <type> createSubtree(type, pop) push(ε) <rept-fParams3> createSubtree(arraySizeList,popuntilε) push(ε) <rept-fParams4> createSubtree(paramTailList,popuntilε)
+<fParams>  ::= 'id' ':' <type> push(ε) <rept-fParams3> createSubtree(arraySizeList,popuntilε) push(ε) <rept-fParams4> createSubtree(paramTailList,popuntilε)
 <fParams>  ::= EPSILON
 
 <fParamsTail> ::= ',' 'id' ':' <type> createSubtree(type, pop) push(ε) <rept-fParamsTail4> createSubtree(arraySizeList,popuntilε)

@@ -13,12 +13,21 @@ program
 ├── function
 │   ├── id
 │   ├── funcParams
-│   │   ├── id
-│   │   ├── integer
-│   │   ├── emptySize
-│   │   ├── emptySize
-│   │   ├── integer
-│   │   └── intLit
+│   │   ├── param
+│   │   │   ├── id
+│   │   │   ├── id
+│   │   │   └── arraySize
+│   │   ├── param
+│   │   │   ├── id
+│   │   │   ├── integer
+│   │   │   └── arraySize
+│   │   │       ├── emptySize
+│   │   │       └── emptySize
+│   │   └── param
+│   │       ├── id
+│   │       ├── integer
+│   │       └── arraySize
+│   │           └── intLit
 │   ├── returnType
 │   │   └── integer
 │   └── funcBody

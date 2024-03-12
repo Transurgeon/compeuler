@@ -685,8 +685,12 @@ class Past:
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("fParams ", "id : type rept-fParams3 rept-fParams4 ")
             self.matchSequence([TokenType.ID, TokenType.COLON])
+            self.createLeaf("id")
             self.type()
+            self.createLeaf("$eps")
             self.rept_fParams3()
+            self.createSubtree("arraySize", -1)
+            self.createSubtree("param", 3)
             self.rept_fParams4()
         else:
             self.updateDerivation("fParams ", "")
@@ -731,8 +735,12 @@ class Past:
     def fParamsTail(self):
         self.updateDerivation("fParamsTail ", ", id : type rept-fParamsTail4 ")
         self.matchSequence([TokenType.COMMA, TokenType.ID, TokenType.COLON])
+        self.createLeaf("id")
         self.type()
+        self.createLeaf("$eps")
         self.rept_fParamsTail4()
+        self.createSubtree("arraySize", -1)
+        self.createSubtree("param", 3)
     
     # rept-fParamsTail4 -> arraySize rept-fParamsTail4 | EPSILON 
     def rept_fParamsTail4(self):
