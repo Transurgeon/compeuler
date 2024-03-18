@@ -271,6 +271,7 @@ class Past:
         elif self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("varDeclOrStat ", "statement ")
             self.statement()
+            self.createSubtree("statement", 1)
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
@@ -450,10 +451,7 @@ class Past:
     def arithExpr(self):
         self.updateDerivation("arithExpr ", "term rightrec-arithExpr ")
         self.term()
-        self.createLeaf("$eps")
         self.rightrec_arithExpr()
-        self.createSubtree("rightRecArith", -1)
-        self.createSubtree("arithExpr", 2)
     
     # rightrec-arithExpr -> addOp term rightrec-arithExpr | EPSILON 
     def rightrec_arithExpr(self):
@@ -474,24 +472,22 @@ class Past:
     # term -> factor rightrec-term 
     def term(self):
         self.updateDerivation("term ", "factor rightrec-term ")
-        self.createLeaf("$eps")
         self.factor()
-        self.createSubtree("factor", -1)
-        self.createLeaf("$eps")
         self.rightrec_term()
-        self.createSubtree("rightTerm", -1)
     
     # rightrec-term -> multOp factor rightrec-term | EPSILON
     def rightrec_term(self):
         if self.matchCurr(first["MULTOP"]):
             self.updateDerivation("rightrec-term ", "multOp factor rightrec-term ")
+            self.createSubtree("term", 1)
             self.multOp()
-            self.createLeaf("$eps")
             self.factor()
-            self.createSubtree("factor", -1)
+            self.createSubtree("factor", 1)
+            self.createSubtree("multOp", 2)
             self.rightrec_term()
         else:
             self.updateDerivation("rightrec-term ", "")
+            self.createSubtree("term", 1)
     
     # factor -> id factor2 reptVariableOrFunc | intLit | floatLit | ( arithExpr ) | not factor | sign factor 
     def factor(self):
@@ -500,9 +496,7 @@ class Past:
             self.nextToken()
             self.createLeaf("id")
             self.factor2()
-            self.createLeaf("$eps")
             self.reptVariableOrFunc()
-            self.createSubtree("indiceList", -1)
         elif self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("factor ", "intLit ")
             self.nextToken()
@@ -533,10 +527,14 @@ class Past:
             self.updateDerivation("factor2 ", "( aParams ) ")
             self.nextToken()
             self.aParams()
+            self.createSubtree("funcCall", 2)
             self.match({TokenType.CLOSEPAR})
         else:
             self.updateDerivation("factor2 ", "rept-idnest1 ")
+            self.createLeaf("$eps")
             self.rept_idnest1()
+            self.createSubtree("indiceList", -1)
+            self.createSubtree("var", 2)
     
     # variable -> id variable2 
     def variable(self):
@@ -718,6 +716,7 @@ class Past:
         if self.matchCurr(first["EXPR"]):
             self.updateDerivation("aParams ", "expr rept-aParams1 ")
             self.expr()
+            self.createSubtree("expr", 1)
             self.rept_aParams1()
         else:
             self.updateDerivation("aParams ", "")
@@ -756,6 +755,7 @@ class Past:
         self.updateDerivation("aParamsTail ", ", expr ")
         self.match({TokenType.COMMA})
         self.expr()
+        self.createSubtree("expr", 1)
     
     # assignOp -> = 
     def assignOp(self):

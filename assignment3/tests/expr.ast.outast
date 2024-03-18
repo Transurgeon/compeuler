@@ -14,45 +14,30 @@ program
     ├── returnType
     │   └── void
     └── funcBody
-        ├── factor
-        │   ├── id
-        │   └── indiceList
-        ├── arithExpr
-        │   ├── rightTerm
-        │   └── rightRecArith
-        └── while
-            ├── relExpr
-            │   ├── <
-            │   ├── factor
-            │   │   ├── id
-            │   │   └── indiceList
-            │   └── arithExpr
-            │       ├── rightTerm
-            │       └── rightRecArith
-            │           ├── -
-            │           ├── factor
-            │           │   └── int
-            │           └── rightTerm
-            └── statBlock
-                ├── var
-                │   ├── id
-                │   └── indiceList
-                ├── statement
-                │   └── assign
-                │       ├── =
-                │       ├── factor
-                │       │   └── int
-                │       └── arithExpr
-                │           ├── rightTerm
-                │           └── rightRecArith
-                ├── var
-                │   ├── id
-                │   └── indiceList
-                └── statement
-                    └── assign
-                        ├── =
-                        ├── factor
-                        │   └── int
-                        └── arithExpr
-                            ├── rightTerm
-                            └── rightRecArith
+        ├── term
+        │   └── var
+        │       ├── id
+        │       └── indiceList
+        ├── term
+        │   └── multOp
+        │       ├── *
+        │       └── factor
+        │           └── int
+        ├── +
+        └── statement
+            └── while
+                ├── relExpr
+                │   ├── term
+                │   │   └── int
+                │   ├── ==
+                │   └── term
+                │       └── int
+                └── statBlock
+                    └── statement
+                        └── assign
+                            ├── var
+                            │   ├── id
+                            │   └── indiceList
+                            ├── =
+                            └── term
+                                └── int

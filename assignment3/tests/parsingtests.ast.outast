@@ -31,113 +31,90 @@ program
 │   ├── returnType
 │   │   └── integer
 │   └── funcBody
-│       └── id
+│       └── statement
+│           └── id
 └── function
     ├── id
     ├── funcParams
     ├── returnType
     │   └── float
     └── funcBody
-        ├── factor
-        │   ├── id
-        │   └── indiceList
-        ├── arithExpr
-        │   ├── rightTerm
-        │   └── rightRecArith
         ├── relExpr
+        │   ├── term
+        │   │   └── var
+        │   │       ├── id
+        │   │       └── indiceList
         │   ├── >
-        │   ├── factor
-        │   │   ├── id
-        │   │   └── indiceList
-        │   └── arithExpr
-        │       ├── rightTerm
-        │       └── rightRecArith
+        │   └── term
+        │       └── var
+        │           ├── id
+        │           └── indiceList
         ├── statBlock
         │   ├── id
-        │   ├── factor
-        │   │   ├── id
-        │   │   ├── factor
-        │   │   │   └── int
-        │   │   ├── arithExpr
-        │   │   │   ├── rightTerm
-        │   │   │   └── rightRecArith
-        │   │   ├── indice
-        │   │   ├── factor
-        │   │   │   └── int
-        │   │   ├── arithExpr
-        │   │   │   ├── rightTerm
-        │   │   │   └── rightRecArith
-        │   │   ├── indice
-        │   │   └── indiceList
-        │   ├── arithExpr
-        │   │   ├── rightTerm
-        │   │   └── rightRecArith
-        │   ├── factor
-        │   │   ├── id
-        │   │   ├── factor
-        │   │   │   └── int
-        │   │   ├── arithExpr
-        │   │   │   ├── rightTerm
-        │   │   │   └── rightRecArith
-        │   │   ├── indice
-        │   │   └── indiceList
-        │   ├── arithExpr
-        │   │   ├── rightTerm
-        │   │   └── rightRecArith
-        │   ├── factor
-        │   │   ├── id
-        │   │   ├── factor
-        │   │   │   └── int
-        │   │   ├── arithExpr
-        │   │   │   ├── rightTerm
-        │   │   │   └── rightRecArith
-        │   │   ├── indice
-        │   │   └── indiceList
+        │   ├── expr
+        │   │   └── term
+        │   │       └── var
+        │   │           ├── id
+        │   │           └── indiceList
+        │   │               ├── term
+        │   │               │   └── int
+        │   │               ├── indice
+        │   │               ├── term
+        │   │               │   └── int
+        │   │               └── indice
+        │   ├── expr
+        │   │   └── term
+        │   │       └── var
+        │   │           ├── id
+        │   │           └── indiceList
+        │   │               ├── term
+        │   │               │   └── int
+        │   │               └── indice
         │   └── statement
-        │       └── arithExpr
-        │           ├── rightTerm
-        │           └── rightRecArith
-        ├── statBlock
-        ├── factor
-        │   ├── id
-        │   └── indiceList
-        ├── arithExpr
-        │   ├── rightTerm
-        │   └── rightRecArith
-        ├── while
-        │   ├── relExpr
-        │   │   ├── >
-        │   │   ├── factor
-        │   │   │   ├── id
-        │   │   │   └── indiceList
-        │   │   └── arithExpr
-        │   │       ├── rightTerm
-        │   │       └── rightRecArith
+        │       └── expr
+        │           └── term
+        │               └── var
+        │                   ├── id
+        │                   └── indiceList
+        │                       ├── term
+        │                       │   └── int
+        │                       └── indice
+        ├── statement
         │   └── statBlock
-        ├── factor
-        │   ├── id
-        │   └── indiceList
-        ├── arithExpr
-        │   ├── rightTerm
-        │   └── rightRecArith
-        ├── while
-        │   ├── relExpr
-        │   │   ├── <
-        │   │   ├── factor
-        │   │   │   ├── id
-        │   │   │   └── indiceList
-        │   │   └── arithExpr
-        │   │       ├── rightTerm
-        │   │       └── rightRecArith
-        │   └── statBlock
-        │       ├── id
-        │       ├── factor
-        │       │   ├── id
-        │       │   └── indiceList
-        │       └── statement
-        │           └── arithExpr
-        │               ├── rightTerm
-        │               └── rightRecArith
-        └── var
-            ├── id
-            └── indiceList
+        ├── statement
+        │   └── while
+        │       ├── relExpr
+        │       │   ├── term
+        │       │   │   └── var
+        │       │   │       ├── id
+        │       │   │       └── indiceList
+        │       │   ├── >
+        │       │   └── term
+        │       │       └── var
+        │       │           ├── id
+        │       │           └── indiceList
+        │       └── statBlock
+        ├── statement
+        │   └── while
+        │       ├── relExpr
+        │       │   ├── term
+        │       │   │   └── var
+        │       │   │       ├── id
+        │       │   │       └── indiceList
+        │       │   ├── <
+        │       │   └── term
+        │       │       └── var
+        │       │           ├── id
+        │       │           └── indiceList
+        │       └── statBlock
+        │           ├── id
+        │           └── statement
+        │               └── expr
+        │                   └── term
+        │                       └── var
+        │                           ├── id
+        │                           └── indiceList
+        └── statement
+            └── var
+                ├── id
+                └── indiceList

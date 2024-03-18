@@ -1,0 +1,216 @@
+START                       -> prog S1
+prog                        -> P1 rept-prog0 P2
+rept-prog0                  -> structOrImplOrFunc R1 rept-prog0 | EPSILON 
+
+S1 : push(createFamily(Start, pop)
+P1 : push(epsilon)
+R1: push(Node(structOr...))
+P2: push(createFamily(prog, popuntile))
+
+--- Struct Tree ---
+
+structOrImplOrFunc          -> structDecl S1 | implDef | funcDef 
+structDecl                  -> struct id D1 D2 opt-structDecl2 D3 { E1 rept-structDecl4 D4 } ; 
+opt-structDecl2             -> inherits id O1 rept-opt-structDecl22 | EPSILON 
+rept-opt-structDecl22       -> , id R1 rept-opt-structDecl22 | EPSILON 
+rept-structDecl4            -> visibility V1  memberDecl V2 rept-structDecl4 | EPSILON 
+memberDecl                  -> funcDecl M1| varDecl M1
+
+S1 : push(createFamily(structDecl, pop,pop,pop))
+D1 : push(createNode(id))
+D2 : push(epsilon)
+D3 : push(createFamily(inheritsList, popuntile))
+D4 : push(createFamily(memberList, popuntile))
+O1 : push(createNode(id))
+R1 : push(createNode(id))
+V1 : push(CreateNode(visibility))
+V2 : push(createFamily(memberDecl, pop,pop))
+M1 : push(createNode(funcDecl)) | push(createNode(funcDecl))
+E1 : push(epsilon)
+
+
+--- Func Decl Tree ---
+memberDecl                  -> funcDecl M1| varDecl M1
+funcDecl                    -> funcHead ;
+funcHead                    -> func id F1 ( F0 fParams F2 ) arrow returnType F3
+fParams                     -> id FP1 : type FP2 R1 rept-fParams3 FP3 FP4  rept-fParams4 | EPSILON 
+rept-fParams3               -> arraySize rept-fParams3 | EPSILON 
+arraySize                   -> [ arraySizeTail 
+arraySizeTail               -> intLit A1 ] | ] 
+rept-fParams4               -> fParamsTail RP1 rept-fParams4 | EPSILON 
+fParamsTail                 -> , id A2 : type A3  A4 rept-fParamsTail4 A5
+rept-fParamsTail4           -> arraySize rept-fParamsTail4 | EPSILON 
+
+M1: push(createFamily(funcDecl, pop, pop, pop))
+F0: push(epsilon)
+F1: push(createNode(id))
+F2: push(createFamily(fparamsList, popuntile))
+F3: push(createNode(type))
+FP1: push(createNode(id))
+FP2: push(createNode(type))
+FP3: push(creatFamily(DimList, popuntile))
+FP4: push(createFamily(fparams,pop,pop,pop))
+A1: push(createNode(num))
+R1: push(epsilon)
+A2: push(createNode(id))
+A3: push(createNode(type))
+A4: push(epsilon)
+A5: push(creatFamily(DimList, popuntile))
+RP1: push(createFamily(fparams, pop,pop,pop))
+
+
+-- Var decl Tree --
+memberDecl                  -> funcDecl M1| varDecl M1
+varDecl                     -> let id V1 : type V2 E1 rept-varDecl4 V3 ; 
+rept-varDecl4               -> arraySize rept-varDecl4 | EPSILON 
+
+M1: push(createFamily(varDecl, pop, pop, pop))
+V1: push(createNode(id))
+V2: push(createNode(type))
+V3: push(createFamily(Dimlist, popuntile))
+E1: push(epsilon)
+
+
+-- Impl Def Tree --
+structOrImplOrFunc          -> structDecl | implDef S1 | funcDef 
+implDef                     -> impl id I1 { E1 rept-implDef3 I2 } 
+rept-implDef3               -> funcDef F1 rept-implDef3 | EPSILON 
+
+S1: push(createFamily(impldef,pop,pop))
+I1: push(createNode(id))
+I2: push(createFamily(funcList, popuntile))
+E1: push(epsilon)
+F1: push(createNode(funcdef))
+
+-- Func def Tree --
+rept-implDef3               -> funcDef G1 rept-implDef3 | EPSILON 
+funcDef                     -> funcHead  E1 funcBody F1
+funcHead                    -> func id F1 ( F0 fParams F2 ) arrow returnType F3   (refer to funcDecl Tree)
+funcBody                    -> { rept-funcBody1 } 
+rept-funcBody1              -> varDeclOrStat V1 rept-funcBody1 | EPSILON 
+
+G1: push(createFamily(funcdef, pop, pop, pop, pop))
+E1: push(epsilon)
+F1: push(createFamily(statBlock, popuntile))
+V1: push(varDeclOrStat)  **change next step
+
+-- VarDeclOrStat Tree --
+rept-funcBody1              -> varDeclOrStat rept-funcBody1 | EPSILON 
+varDeclOrStat               -> varDecl | statement S1
+varDecl                     -> let id V1 : type V2 E1 rept-varDecl4 V3 ;   (already done check var decl tree)
+
+S1: push(createNode(statement))  ** to change next
+
+-- Statement tree --
+varDeclOrStat               -> varDecl | statement S1
+statement                   -> if ( relExpr R1 ) then E1 statBlock SB1 else E2 statBlock SB2 I1 ; | while ( relExpr R1 ) E1 statBlock SB1 W1 ; | read ( variable V1 ) V2; | write ( expr EX1) WR1 ; | return ( expr EX1 ) RE1; | id L1 statement2
+statement2            		-> rept-idnest1 V1 statement3 | ( aParams P1 ) statement4 
+statement3            		-> . id I1 statement2 B1| assignOp expr E1 A1; 
+statement4            		-> . id I1 statement2 B1| ; F1 
+statBlock                   -> { rept-statBlock1 } | statement M1 | EPSILON 
+rept-statBlock1             -> statement M1 rept-statBlock1 | EPSILON 
+rept-idnest1                -> indice rept-idnest1 | EPSILON 
+indice                      -> [ arithExpr A1 ] 
+
+
+-- if stat --
+S1: push)createFamily(statement, pop)
+I1: push(createFamily(ifStat, pop,pop,pop))
+R1: push(createNode(relExpr)) ** to change
+SB1: push(createFamily(statBlock, popuntile))
+E1: push(epsilon)
+E2: push(epsilon)
+M1: push(createFamily(statement, pop))
+SB1: push(createFamily(statBlock, popuntile))
+
+-- while stat --
+W1: push(createFamily(whileStat, pop ,pop)
+-- read stat --
+V1: push(createNode(variable)) ** to change
+V2: push(createFamily(readStat, pop))
+
+-- write stat -- 
+EX1: push(createNode(expr)) ** to change
+WR1: push(createFamily(writestat,pop))
+
+-- return stat --
+EX1: push(createNode(expr)) ** to change
+RE1: push(createFamily(return,pop))
+
+-- assign stat --
+L1: push(createNode(id))
+
+A1: push(createFamily(assignStat,pop,pop))  ** modify to have variable
+
+-- functionCall stat --
+L1: push(createNode(id))
+P1: push(createNode(aParams)) ** to change
+F1: push(createFamily(functionCall,pop,pop)) ** to change
+
+
+-- Expr Tree --
+expr                        -> arithExpr exprTail 
+exprTail                    -> relOp R1 arithExpr R2| EPSILON 
+relOp                       -> eq | neq | lt | gt | leq | geq 
+arithExpr                   -> term T1 rightrec-arithExpr 
+rightrec-arithExpr          -> EPSILON A1| A1 addOp term T1 O1  rightrec-arithExpr 
+
+    -- arith expr --
+    A1: push(createFamily(arithExpr), pop)
+    T1: push(createNode(term)) ** to change
+    O1: push(createFamily(addOp, pop, pop))
+
+    -- rel expr --
+    R1: push(createNode(relOp))
+    R2: push(createFamily(relExpr,pop,pop,pop))
+
+-- Term Tree --
+
+term                        -> factor rightrec-term 
+factor                      -> id I1 factor2 reptVariableOrFunc F1| intLit N1 F1| floatLit N1 F1| ( arithExpr A1) F1| not factor N2 | sign factor S2
+factor2              		-> ( aParams A1 )FC1 | E1 rept-idnest1 R1 V1
+reptVariableOrFunc    		-> idnest reptVariableOrFunc | EPSILON 
+rightrec-term               -> EPSILON T1| T1 multOp factor F1 M1 rightrec-term
+
+    -- Mult Op --
+    M1: push(createFamily(multOp,pop,pop))
+    T1: push(createFamily(term,pop))
+    F1: push(createFamily(factor, pop)
+    
+    -- Factor --
+    V1: push(createNode(variable)) ** to change
+    N1: push(createNode(num))
+    A1: push(createFamily(arithExpr, pop))
+    N2: push(createFamily(not, pop))
+    S2: push(createFamily(sign, pop))
+
+idnest                      -> . id I1 idnestTail B1
+idnestTail                  -> E1 rept-idnest1 R1 V1 | ( aParams )A1 FC1 
+rept-idnest1                -> indice  rept-idnest1 | EPSILON 
+indice                      -> [ arithExpr I2 ] 
+
+    -- variable --
+    I1: push(createNode(id))
+    A1: push(createNode(aParams))
+    FC1: push(createFamily(functionCall,pop,pop))
+    E1: push(epsilon)
+    I2: push(createFamily(arithExpr,pop))
+    R1: push(createFamily(indiceList, popuntile))
+    V1: push(createFamily(variable,pop,pop))
+    B1: push(createFamily(dot, pop, pop))
+
+
+    -- aParams -- 
+
+    aParams                     -> expr EX1 rept-aParams1 P | EPSILON P  ** change other aParams by adding epsilon before
+    aParamsTail                 -> , expr EX1
+    rept-aParams1               -> aParamsTail rept-aParams1 | EPSILON 
+
+
+    EX1: push(createFamily(expr,pop))
+
+
+
+
+
+
