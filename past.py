@@ -438,6 +438,7 @@ class Past:
             self.createSubtree("relExpr", 3)
         else:
             self.updateDerivation("expr2 ", "")
+            self.createSubtree("arithExpr", 1)
     
     # relExpr -> arithExpr relOp arithExpr 
     def relExpr(self):
@@ -459,6 +460,7 @@ class Past:
             self.updateDerivation("rightrec-arithExpr ", "addOp term rightrec-arithExpr ")
             self.addOp()
             self.term()
+            self.createSubtree("addOp", 3)
             self.rightrec_arithExpr()
         else:
             self.updateDerivation("rightrec-arithExpr ", "")
@@ -479,15 +481,12 @@ class Past:
     def rightrec_term(self):
         if self.matchCurr(first["MULTOP"]):
             self.updateDerivation("rightrec-term ", "multOp factor rightrec-term ")
-            self.createSubtree("term", 1)
             self.multOp()
             self.factor()
-            self.createSubtree("factor", 1)
-            self.createSubtree("multOp", 2)
+            self.createSubtree("multOp", 3)
             self.rightrec_term()
         else:
             self.updateDerivation("rightrec-term ", "")
-            self.createSubtree("term", 1)
     
     # factor -> id factor2 reptVariableOrFunc | intLit | floatLit | ( arithExpr ) | not factor | sign factor 
     def factor(self):
@@ -513,12 +512,11 @@ class Past:
         elif self.matchCurr({TokenType.NOT}):
             self.updateDerivation("factor ", "not factor ")
             self.nextToken()
-            self.createLeaf("not")
             self.factor()
+            self.createLeaf("not")
         elif self.matchCurr(first["SIGN"]):
             self.updateDerivation("factor ", "sign factor ")
             self.sign()
-            self.createSubtree("sign", 1)
             self.factor()
     
     # factor2 -> ( aParams ) | rept-idnest1 

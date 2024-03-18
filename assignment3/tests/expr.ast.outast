@@ -14,24 +14,20 @@ program
     ├── returnType
     │   └── void
     └── funcBody
-        ├── term
-        │   └── var
-        │       ├── id
-        │       └── indiceList
-        ├── term
-        │   └── multOp
-        │       ├── *
-        │       └── factor
-        │           └── int
-        ├── +
         └── statement
             └── while
                 ├── relExpr
-                │   ├── term
+                │   ├── addOp
+                │   │   ├── multOp
+                │   │   │   ├── var
+                │   │   │   │   ├── id
+                │   │   │   │   └── indiceList
+                │   │   │   ├── *
+                │   │   │   └── int
+                │   │   ├── +
                 │   │   └── int
                 │   ├── ==
-                │   └── term
-                │       └── int
+                │   └── int
                 └── statBlock
                     └── statement
                         └── assign
@@ -39,5 +35,5 @@ program
                             │   ├── id
                             │   └── indiceList
                             ├── =
-                            └── term
+                            └── arithExpr
                                 └── int

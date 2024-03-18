@@ -40,77 +40,67 @@ program
     │   └── float
     └── funcBody
         ├── relExpr
-        │   ├── term
-        │   │   └── var
-        │   │       ├── id
-        │   │       └── indiceList
+        │   ├── var
+        │   │   ├── id
+        │   │   └── indiceList
         │   ├── >
-        │   └── term
-        │       └── var
-        │           ├── id
-        │           └── indiceList
+        │   └── var
+        │       ├── id
+        │       └── indiceList
         ├── statBlock
         │   ├── id
         │   ├── expr
-        │   │   └── term
+        │   │   └── arithExpr
         │   │       └── var
         │   │           ├── id
         │   │           └── indiceList
-        │   │               ├── term
-        │   │               │   └── int
+        │   │               ├── int
         │   │               ├── indice
-        │   │               ├── term
-        │   │               │   └── int
+        │   │               ├── int
         │   │               └── indice
         │   ├── expr
-        │   │   └── term
+        │   │   └── arithExpr
         │   │       └── var
         │   │           ├── id
         │   │           └── indiceList
-        │   │               ├── term
-        │   │               │   └── int
+        │   │               ├── int
         │   │               └── indice
         │   └── statement
         │       └── expr
-        │           └── term
+        │           └── arithExpr
         │               └── var
         │                   ├── id
         │                   └── indiceList
-        │                       ├── term
-        │                       │   └── int
+        │                       ├── int
         │                       └── indice
         ├── statement
         │   └── statBlock
         ├── statement
         │   └── while
         │       ├── relExpr
-        │       │   ├── term
-        │       │   │   └── var
-        │       │   │       ├── id
-        │       │   │       └── indiceList
+        │       │   ├── var
+        │       │   │   ├── id
+        │       │   │   └── indiceList
         │       │   ├── >
-        │       │   └── term
-        │       │       └── var
-        │       │           ├── id
-        │       │           └── indiceList
+        │       │   └── var
+        │       │       ├── id
+        │       │       └── indiceList
         │       └── statBlock
         ├── statement
         │   └── while
         │       ├── relExpr
-        │       │   ├── term
-        │       │   │   └── var
-        │       │   │       ├── id
-        │       │   │       └── indiceList
+        │       │   ├── var
+        │       │   │   ├── id
+        │       │   │   └── indiceList
         │       │   ├── <
-        │       │   └── term
-        │       │       └── var
-        │       │           ├── id
-        │       │           └── indiceList
+        │       │   └── var
+        │       │       ├── id
+        │       │       └── indiceList
         │       └── statBlock
         │           ├── id
         │           └── statement
         │               └── expr
-        │                   └── term
+        │                   └── arithExpr
         │                       └── var
         │                           ├── id
         │                           └── indiceList

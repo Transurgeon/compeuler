@@ -25,5 +25,5 @@ program
             │   └── float
             └── funcBody
                 └── statement
-                    └── term
+                    └── arithExpr
                         └── int
