@@ -32,72 +32,71 @@ program
 │   │   └── integer
 │   └── funcBody
 │       ├── id
-│       └── statement
-│           └── aParams
+│       └── aParams
 └── function
     ├── id
     ├── funcParams
     ├── returnType
     │   └── float
     └── funcBody
-        ├── relExpr
-        │   ├── var
-        │   │   ├── id
-        │   │   └── indiceList
-        │   ├── >
-        │   └── var
-        │       ├── id
-        │       └── indiceList
-        ├── statBlock
-        │   ├── id
-        │   └── aParams
-        │       ├── arithExpr
-        │       │   └── var
-        │       │       ├── id
-        │       │       └── indiceList
-        │       │           ├── int
-        │       │           └── int
-        │       ├── arithExpr
-        │       │   └── var
-        │       │       ├── id
-        │       │       └── indiceList
-        │       │           └── int
-        │       └── arithExpr
-        │           └── var
-        │               ├── id
-        │               └── indiceList
-        │                   └── int
-        ├── statement
-        │   └── statBlock
-        ├── statement
-        │   └── while
-        │       ├── relExpr
-        │       │   ├── var
-        │       │   │   ├── id
-        │       │   │   └── indiceList
-        │       │   ├── >
-        │       │   └── var
-        │       │       ├── id
-        │       │       └── indiceList
-        │       └── statBlock
-        ├── statement
-        │   └── while
-        │       ├── relExpr
-        │       │   ├── var
-        │       │   │   ├── id
-        │       │   │   └── indiceList
-        │       │   ├── <
-        │       │   └── var
-        │       │       ├── id
-        │       │       └── indiceList
-        │       └── statBlock
+        ├── IF
+        │   └── relExpr
+        │       ├── var
+        │       │   ├── id
+        │       │   └── indiceList
+        │       ├── >
+        │       └── var
         │           ├── id
-        │           └── aParams
-        │               └── arithExpr
-        │                   └── var
-        │                       ├── id
-        │                       └── indiceList
-        └── statement
+        │           └── indiceList
+        ├── THEN
+        │   └── statBlock
+        │       ├── id
+        │       └── aParams
+        │           ├── arithExpr
+        │           │   └── var
+        │           │       ├── id
+        │           │       └── indiceList
+        │           │           ├── int
+        │           │           └── int
+        │           ├── arithExpr
+        │           │   └── var
+        │           │       ├── id
+        │           │       └── indiceList
+        │           │           └── int
+        │           └── arithExpr
+        │               └── var
+        │                   ├── id
+        │                   └── indiceList
+        │                       └── int
+        ├── ELSE
+        │   └── statBlock
+        ├── while
+        │   ├── relExpr
+        │   │   ├── var
+        │   │   │   ├── id
+        │   │   │   └── indiceList
+        │   │   ├── >
+        │   │   └── var
+        │   │       ├── id
+        │   │       └── indiceList
+        │   └── statBlock
+        ├── while
+        │   ├── relExpr
+        │   │   ├── var
+        │   │   │   ├── id
+        │   │   │   └── indiceList
+        │   │   ├── <
+        │   │   └── var
+        │   │       ├── id
+        │   │       └── indiceList
+        │   └── statBlock
+        │       ├── id
+        │       └── aParams
+        │           └── arithExpr
+        │               └── var
+        │                   ├── id
+        │                   └── indiceList
+        └── READ
             └── var
                 ├── id
                 └── indiceList

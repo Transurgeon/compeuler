@@ -14,33 +14,24 @@ program
     ├── returnType
     │   └── void
     └── funcBody
-        └── statement
-            └── while
-                ├── relExpr
-                │   ├── addOp
-                │   │   ├── multOp
-                │   │   │   ├── var
-                │   │   │   │   ├── id
-                │   │   │   │   └── indiceList
-                │   │   │   ├── *
-                │   │   │   └── int
-                │   │   ├── +
-                │   │   └── int
-                │   ├── ==
-                │   └── int
-                └── statBlock
-                    └── assign
-                        ├── var
-                        │   ├── dot
-                        │   │   ├── var
-                        │   │   │   ├── id
-                        │   │   │   └── indiceList
-                        │   │   │       ├── int
-                        │   │   │       └── int
-                        │   │   └── id
-                        │   └── indiceList
-                        │       ├── int
-                        │       └── int
-                        ├── =
-                        └── arithExpr
-                            └── int
+        ├── IF
+        │   └── relExpr
+        │       ├── var
+        │       │   ├── id
+        │       │   └── indiceList
+        │       ├── >
+        │       └── int
+        ├── THEN
+        │   └── statBlock
+        │       └── assign
+        │           ├── id
+        │           ├── =
+        │           └── arithExpr
+        │               └── int
+        └── ELSE
+            └── statBlock
+                └── assign
+                    ├── id
+                    ├── =
+                    └── arithExpr
+                        └── int

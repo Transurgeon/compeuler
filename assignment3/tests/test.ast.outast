@@ -24,6 +24,6 @@ program
             ├── returnType
             │   └── float
             └── funcBody
-                └── statement
+                └── RETURN
                     └── arithExpr
                         └── int

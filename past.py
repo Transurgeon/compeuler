@@ -271,7 +271,6 @@ class Past:
         elif self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("varDeclOrStat ", "statement ")
             self.statement()
-            self.createSubtree("statement", 1)
     
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
@@ -308,11 +307,14 @@ class Past:
             self.nextToken()
             self.match({TokenType.OPENPAR})
             self.relExpr()
+            self.createSubtree("IF", 1)
             self.match({TokenType.CLOSEPAR})
             self.match({TokenType.THEN})
             self.statBlock()
+            self.createSubtree("THEN", 1)
             self.match({TokenType.ELSE})
             self.statBlock()
+            self.createSubtree("ELSE", 1)
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WHILE}):
             self.updateDerivation("statement ", "while ( relExpr ) statBlock ;\n")
@@ -329,6 +331,7 @@ class Past:
             self.match({TokenType.OPENPAR})
             self.variable()
             self.match({TokenType.CLOSEPAR})
+            self.createSubtree("READ", 1)
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.WRITE}):
             self.updateDerivation("statement ", "write ( expr ) ;\n")
@@ -336,6 +339,7 @@ class Past:
             self.match({TokenType.OPENPAR})
             self.expr()
             self.match({TokenType.CLOSEPAR})
+            self.createSubtree("WRITE", 1)
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.RETURN}):
             self.updateDerivation("statement ", "return ( expr ) ;\n")
@@ -343,6 +347,7 @@ class Past:
             self.match({TokenType.OPENPAR})
             self.expr()
             self.match({TokenType.CLOSEPAR})
+            self.createSubtree("RETURN", 1)
             self.match({TokenType.SEMI})
        
         
