@@ -31,8 +31,9 @@ program
 │   ├── returnType
 │   │   └── integer
 │   └── funcBody
+│       ├── id
 │       └── statement
-│           └── id
+│           └── aParams
 └── function
     ├── id
     ├── funcParams
@@ -49,30 +50,27 @@ program
         │       └── indiceList
         ├── statBlock
         │   ├── id
-        │   ├── expr
-        │   │   └── arithExpr
-        │   │       └── var
-        │   │           ├── id
-        │   │           └── indiceList
-        │   │               ├── int
-        │   │               ├── indice
-        │   │               ├── int
-        │   │               └── indice
-        │   ├── expr
-        │   │   └── arithExpr
-        │   │       └── var
-        │   │           ├── id
-        │   │           └── indiceList
-        │   │               ├── int
-        │   │               └── indice
-        │   └── statement
-        │       └── expr
-        │           └── arithExpr
-        │               └── var
-        │                   ├── id
-        │                   └── indiceList
-        │                       ├── int
-        │                       └── indice
+        │   └── aParams
+        │       ├── arithExpr
+        │       │   └── var
+        │       │       ├── id
+        │       │       └── indiceList
+        │       │           ├── int
+        │       │           ├── indice
+        │       │           ├── int
+        │       │           └── indice
+        │       ├── arithExpr
+        │       │   └── var
+        │       │       ├── id
+        │       │       └── indiceList
+        │       │           ├── int
+        │       │           └── indice
+        │       └── arithExpr
+        │           └── var
+        │               ├── id
+        │               └── indiceList
+        │                   ├── int
+        │                   └── indice
         ├── statement
         │   └── statBlock
         ├── statement
@@ -98,12 +96,11 @@ program
         │       │       └── indiceList
         │       └── statBlock
         │           ├── id
-        │           └── statement
-        │               └── expr
-        │                   └── arithExpr
-        │                       └── var
-        │                           ├── id
-        │                           └── indiceList
+        │           └── aParams
+        │               └── arithExpr
+        │                   └── var
+        │                       ├── id
+        │                       └── indiceList
         └── statement
             └── var
                 ├── id

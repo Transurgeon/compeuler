@@ -410,15 +410,16 @@ class Past:
         elif self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("statBlock ", "statement ")
             self.statement()
+            self.createSubtree("statBlock", 1)
         else:
             self.updateDerivation("statBlock ", "")
+            self.createLeaf("statBlock")
     
     # rept-statBlock1 -> statement rept-statBlock1 | EPSILON 
     def rept_statBlock1(self):
         if self.matchCurr(first["STATEMENT"]):
             self.updateDerivation("rept-statBlock1 ", "statement rept-statBlock1 ")
             self.statement()
-            self.createSubtree("statement", 1)
             self.rept_statBlock1()
         else:
             self.updateDerivation("rept-statBlock1 ", "")
@@ -508,6 +509,7 @@ class Past:
             self.updateDerivation("factor ", "( arithExpr ) ")
             self.nextToken()
             self.arithExpr()
+            self.createSubtree("arithExpr", 1)
             self.match({TokenType.CLOSEPAR})
         elif self.matchCurr({TokenType.NOT}):
             self.updateDerivation("factor ", "not factor ")
@@ -621,13 +623,17 @@ class Past:
         self.updateDerivation("idnest ", ". id idnest2 ")
         self.match({TokenType.DOT})
         self.match({TokenType.ID})
+        self.createLeaf("id")
         self.idnest2()
     
     # idnest2 -> ( aParams ) | rept-idnest1 
     def idnest2(self):
         if self.matchCurr(first["REPTIDNEST1"]):
             self.updateDerivation("idnest2 ", "rept-idnest1 ")
+            self.createLeaf("$eps")
             self.rept_idnest1()
+            self.createSubtree("indiceList", -1)
+            self.createSubtree("var", 2)
         else:
             self.updateDerivation("idnest2 ", "( aParams ) ")
             self.match({TokenType.OPENPAR})
@@ -713,11 +719,13 @@ class Past:
     def aParams(self):
         if self.matchCurr(first["EXPR"]):
             self.updateDerivation("aParams ", "expr rept-aParams1 ")
+            self.createLeaf("$eps")
             self.expr()
-            self.createSubtree("expr", 1)
             self.rept_aParams1()
+            self.createSubtree("aParams", -1)
         else:
             self.updateDerivation("aParams ", "")
+            self.createLeaf("aParams")
     
     # rept-aParams1 -> aParamsTail rept-aParams1 | EPSILON 
     def rept_aParams1(self):
@@ -753,7 +761,6 @@ class Past:
         self.updateDerivation("aParamsTail ", ", expr ")
         self.match({TokenType.COMMA})
         self.expr()
-        self.createSubtree("expr", 1)
     
     # assignOp -> = 
     def assignOp(self):
