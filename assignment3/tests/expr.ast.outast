@@ -28,10 +28,19 @@ program
         │           ├── =
         │           └── arithExpr
         │               └── int
-        └── ELSE
-            └── statBlock
-                └── assign
-                    ├── id
-                    ├── =
-                    └── arithExpr
-                        └── int
+        ├── ELSE
+        │   └── statBlock
+        │       └── assign
+        │           ├── id
+        │           ├── =
+        │           └── arithExpr
+        │               └── int
+        ├── WRITE
+        │   └── arithExpr
+        │       └── addOp
+        │           ├── int
+        │           ├── +
+        │           └── int
+        └── RETURN
+            └── arithExpr
+                └── int

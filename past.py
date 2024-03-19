@@ -181,6 +181,7 @@ class Past:
             self.updateDerivation("rept-structDecl4 ", "visibility memberDecl rept-structDecl4 ")
             self.visibility()
             self.memberDecl()
+            self.createSubtree("memberDecl", 2)
             self.rept_structDecl4()
         else:
             self.updateDerivation("rept-structDecl4 ", "")
@@ -215,6 +216,7 @@ class Past:
     # visibility -> public | private 
     def visibility(self):
         visib = self.currToken.lexeme
+        self.createLeaf(visib)
         self.match({TokenType.PUBLIC, TokenType.PRIVATE})
         self.updateDerivation("visibility ", visib + " ")
         
@@ -231,6 +233,7 @@ class Past:
     def funcDecl(self):
         self.updateDerivation("funcDecl ", "funcHead ;\n")
         self.funcHead()
+        self.createSubtree("funcDecl", 3)
         self.match({TokenType.SEMI})
     
     # funcHead -> func id ( fParams ) arrow returnType 
@@ -324,7 +327,7 @@ class Past:
             self.match({TokenType.CLOSEPAR})
             self.statBlock()
             self.match({TokenType.SEMI})
-            self.createSubtree("while", 2)
+            self.createSubtree("WHILE", 2)
         elif self.matchCurr({TokenType.READ}):
             self.updateDerivation("statement ", "read ( variable ) ;\n")
             self.nextToken()

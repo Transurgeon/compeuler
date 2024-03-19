@@ -6,11 +6,13 @@ program
 │   │   ├── id
 │   │   └── id
 │   └── memberList
-│       └── varDecl
-│           ├── id
-│           ├── int
-│           └── arraySize
-│               └── intLit
+│       └── memberDecl
+│           ├── public
+│           └── varDecl
+│               ├── id
+│               ├── int
+│               └── arraySize
+│                   └── intLit
 └── impl
     ├── id
     └── funcList

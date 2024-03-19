@@ -70,7 +70,7 @@ program
         │                       └── int
         ├── ELSE
         │   └── statBlock
-        ├── while
+        ├── WHILE
         │   ├── relExpr
         │   │   ├── var
         │   │   │   ├── id
@@ -80,7 +80,7 @@ program
         │   │       ├── id
         │   │       └── indiceList
         │   └── statBlock
-        ├── while
+        ├── WHILE
         │   ├── relExpr
         │   │   ├── var
         │   │   │   ├── id
