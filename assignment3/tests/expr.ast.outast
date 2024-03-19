@@ -1,14 +1,14 @@
 program
 └── function
-    ├── id
+    ├── a
     ├── funcParams
     │   ├── param
-    │   │   ├── id
+    │   │   ├── de
     │   │   ├── integer
     │   │   └── arraySize
     │   │       └── emptySize
     │   └── param
-    │       ├── id
+    │       ├── b
     │       ├── integer
     │       └── arraySize
     ├── returnType

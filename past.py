@@ -141,8 +141,9 @@ class Past:
     # structDecl -> struct id opt-structDecl2 { rept-structDecl4 } ; 
     def structDecl(self):
         self.updateDerivation("structDecl ", "struct id opt-structDecl2 { rept-structDecl4 } ;\n")
-        self.matchSequence([TokenType.STRUCT, TokenType.ID])
-        self.createLeaf("id")
+        self.match({TokenType.STRUCT})
+        self.createLeaf(self.currToken.lexeme)
+        self.match({TokenType.ID})
         self.createLeaf("$eps")
         self.opt_structDecl2()
         self.createSubtree("inherits", -1)
@@ -158,8 +159,8 @@ class Past:
         if self.matchCurr({TokenType.INHERITS}):
             self.updateDerivation("opt-structDecl2 ", "inherits id rept-opt-structDecl22 ")
             self.nextToken()
+            self.createLeaf(self.currToken.lexeme)
             self.match({TokenType.ID})
-            self.createLeaf("id")
             self.rept_opt_structDecl22()
         else:
             self.updateDerivation("opt-structDecl2 ", "")
@@ -189,8 +190,9 @@ class Past:
     # implDef -> impl id { rept-implDef3 }
     def implDef(self):
         self.updateDerivation("implDef ", "impl id { rept-implDef3 } ")
-        self.matchSequence([TokenType.IMPL, TokenType.ID, TokenType.OPENCUBR])
-        self.createLeaf("id")
+        self.match({TokenType.IMPL})
+        self.createLeaf(self.currToken.lexeme)
+        self.matchSequence([TokenType.ID, TokenType.OPENCUBR])
         self.createLeaf("$eps")
         self.rept_implDef3()
         self.createSubtree("funcList", -1)
@@ -239,8 +241,9 @@ class Past:
     # funcHead -> func id ( fParams ) arrow returnType 
     def funcHead(self):
         self.updateDerivation("funcHead ", "func id ( fParams ) arrow returnType ")
-        self.matchSequence([TokenType.FUNC, TokenType.ID, TokenType.OPENPAR])
-        self.createLeaf("id")
+        self.match({TokenType.FUNC})
+        self.createLeaf(self.currToken.lexeme)
+        self.matchSequence([TokenType.ID, TokenType.OPENPAR])
         self.createLeaf("$eps")
         self.fParams()
         self.createSubtree("funcParams", -1)
@@ -278,8 +281,9 @@ class Past:
     # varDecl -> let id : type rept-varDecl4 ; 
     def varDecl(self):
         self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ;\n")
-        self.matchSequence([TokenType.LET, TokenType.ID, TokenType.COLON])
-        self.createLeaf("id")
+        self.match({TokenType.LET})
+        self.createLeaf(self.currToken.lexeme)
+        self.matchSequence([TokenType.ID, TokenType.COLON])
         self.type()
         self.createLeaf("$eps")
         self.rept_varDecl4()
@@ -647,8 +651,8 @@ class Past:
     def idnest(self):
         self.updateDerivation("idnest ", ". id idnest2 ")
         self.match({TokenType.DOT})
+        self.createLeaf(self.currToken.lexeme)
         self.match({TokenType.ID})
-        self.createLeaf("id")
         self.idnest2()
     
     # idnest2 -> ( aParams ) | rept-idnest1 
@@ -711,8 +715,8 @@ class Past:
     def fParams(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("fParams ", "id : type rept-fParams3 rept-fParams4 ")
+            self.createLeaf(self.currToken.lexeme)
             self.matchSequence([TokenType.ID, TokenType.COLON])
-            self.createLeaf("id")
             self.type()
             self.createLeaf("$eps")
             self.rept_fParams3()
@@ -764,8 +768,9 @@ class Past:
     # fParamsTail -> , id : type rept-fParamsTail4 
     def fParamsTail(self):
         self.updateDerivation("fParamsTail ", ", id : type rept-fParamsTail4 ")
-        self.matchSequence([TokenType.COMMA, TokenType.ID, TokenType.COLON])
-        self.createLeaf("id")
+        self.match({TokenType.COMMA})
+        self.createLeaf(self.currToken.lexeme)
+        self.matchSequence([TokenType.ID, TokenType.COLON])
         self.type()
         self.createLeaf("$eps")
         self.rept_fParamsTail4()

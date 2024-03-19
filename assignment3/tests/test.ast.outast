@@ -1,15 +1,15 @@
 program
 ├── struct
-│   ├── id
+│   ├── shrek
 │   ├── inherits
-│   │   ├── id
+│   │   ├── shriek
 │   │   ├── id
 │   │   └── id
 │   └── memberList
 │       └── memberDecl
 │           ├── public
 │           └── varDecl
-│               ├── id
+│               ├── adamo
 │               ├── int
 │               └── arraySize
 │                   └── intLit
