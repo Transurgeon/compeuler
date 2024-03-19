@@ -1,5 +1,5 @@
 func a ( de : integer [], b : integer ) -> void {
     while ( a * 5 + 3 == 4 ) {
-        x.a = 4;
+        x[2][2].a[2][2] = 4;
     };
 }

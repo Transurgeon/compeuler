@@ -302,6 +302,7 @@ class Past:
             self.nextToken()
             self.createLeaf("id")
             self.statement2()
+            self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.IF}):
             self.updateDerivation("statement ", "if ( relExpr ) then statBlock else statBlock ;\n")
             self.nextToken()
@@ -343,57 +344,73 @@ class Past:
             self.expr()
             self.match({TokenType.CLOSEPAR})
             self.match({TokenType.SEMI})
+       
         
-    # statement2 -> ( aParams ) statement4 | rept-idnest1 statement3 
+    # statement2 -> . id statement2 | ( aParams ) statement3 | indice rept-idnest1 statement4 | assignOp expr
     def statement2(self):
-        if self.matchCurr(first["REPTIDNEST1"]) or self.matchCurr(first["STATEMENT3"]):
-            self.updateDerivation("statement2 ", "rept-idnest1 statement3 ")
+        if self.matchCurr({TokenType.DOT}):
+            self.updateDerivation("statement2 ", ". id statement2 ")
+            self.nextToken()
+            self.match({TokenType.ID})
+            self.createLeaf("id")
+            self.createSubtree("dot", 2)
+            self.statement2()
+        elif self.matchCurr({TokenType.OPENPAR}):
+            self.updateDerivation("statement2 ", "( aParams ) statement3 ")
+            self.match({TokenType.OPENPAR})
+            self.aParams()
+            self.match({TokenType.CLOSEPAR})
+            self.statement3()
+        elif self.matchCurr(first["INDICE"]):
+            self.updateDerivation("statement2 ", "indice rept-idnest1 statement4 ")
             self.createLeaf("$eps")
             self.rept_idnest1()
             self.createSubtree("indiceList", -1)
             self.createSubtree("var", 2)
-            self.statement3()
-        elif self.matchCurr({TokenType.OPENPAR}):
-            self.updateDerivation("statement2 ", "( aParams ) statement4 ")
-            self.match({TokenType.OPENPAR})
-            self.aParams()
-            self.match({TokenType.CLOSEPAR})
             self.statement4()
-    
-    # statement3 -> . id statement2 | assignOp expr ; 
-    def statement3(self):
-        if self.matchCurr({TokenType.DOT}):
-            self.updateDerivation("statement3 ", ". id statement2 ")
-            self.nextToken()
-            self.match({TokenType.ID})
-            self.createLeaf("id")
-            self.statement2()
-            self.createSubtree("dot", 2) # need to look into case when combined with assign
         elif self.matchCurr(first["ASSIGNOP"]):
             self.updateDerivation("statement3 ", "assignOp expr ;\n")
             self.assignOp()
             self.createLeaf("=")
             self.expr()
             self.createSubtree("assign", 3)
-            self.match({TokenType.SEMI})
     
-    # statement4 -> . id statement2 | ; 
+
+    # statement3 -> . id statement2 | EPSILON
+    def statement3(self):
+        if self.matchCurr({TokenType.DOT}):
+            self.updateDerivation("statement3 ", ". id statement2 ")
+            self.nextToken()
+            self.match({TokenType.ID})
+            self.createLeaf("id")
+            self.createSubtree("dot", 2)
+            self.statement2()
+        else:
+            self.updateDerivation("statement3 ", " ")
+
+
+    # statement4 -> . id statement2 | assignOp expr
     def statement4(self):
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement4 ", ". id statement2 ")
             self.nextToken()
             self.match({TokenType.ID})
+            self.createLeaf("id")
+            self.createSubtree("dot", 2)
             self.statement2()
-        elif self.matchCurr({TokenType.SEMI}):
-            self.updateDerivation("statement4 ", ";\n")
-            self.nextToken()
+        elif self.matchCurr(first["ASSIGNOP"]):
+            self.updateDerivation("statement4 ", "assignOp expr ;\n")
+            self.assignOp()
+            self.createLeaf("=")
+            self.expr()
+            self.createSubtree("assign", 3)
+        
     
     # rept-idnest1 -> indice rept-idnest1 | EPSILON
     def rept_idnest1(self):
         if self.matchCurr(first["INDICE"]):
             self.updateDerivation("rept-idnest1 ", "indice rept-idnest1 ")
             self.indice()
-            self.createLeaf("indice") # Will need to change to expr subtree
             self.rept_idnest1()
         else:
             self.updateDerivation("rept-idnest1 ", "")

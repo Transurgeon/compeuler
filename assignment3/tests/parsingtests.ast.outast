@@ -56,21 +56,17 @@ program
         │       │       ├── id
         │       │       └── indiceList
         │       │           ├── int
-        │       │           ├── indice
-        │       │           ├── int
-        │       │           └── indice
+        │       │           └── int
         │       ├── arithExpr
         │       │   └── var
         │       │       ├── id
         │       │       └── indiceList
-        │       │           ├── int
-        │       │           └── indice
+        │       │           └── int
         │       └── arithExpr
         │           └── var
         │               ├── id
         │               └── indiceList
-        │                   ├── int
-        │                   └── indice
+        │                   └── int
         ├── statement
         │   └── statBlock
         ├── statement

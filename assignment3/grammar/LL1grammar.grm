@@ -46,7 +46,7 @@
 
 <funcHead> ::= 'func' 'id' '(' <fParams> ')' 'arrow' <returnType>   
 
-<statement> ::= 'id' <statement-Id-nest> ';'  
+<statement> ::= 'id' <statement2> ';'  
 <statement> ::= 'if' '(' <relExpr> ')' 'then' <statBlock> 'else' <statBlock> ';'   
 <statement> ::= 'while' '(' <relExpr> ')' <statBlock> ';'   
 <statement> ::= 'read' '(' <variable> ')' ';'   
@@ -54,16 +54,16 @@
 <statement> ::= 'return' '(' <expr> ')' ';'   
 
 
-<statement-Id-nest> ::= '.' 'id' <statement-Id-nest>   
-<statement-Id-nest> ::= '(' <aParams> ')' <statement-Id-nest2>  
-<statement-Id-nest> ::= <indice> <rept-idnest1> <statement-Id-nest3>  
-<statement-Id-nest> ::= <assignOp>  <expr>   
+<statement2> ::= '.' 'id' <statement2>   
+<statement2> ::= '(' <aParams> ')' <statement3>  
+<statement2> ::= <indice> <rept-idnest1> <statement4>  
+<statement2> ::= <assignOp>  <expr>   
 
-<statement-Id-nest2> ::= EPSILON
-<statement-Id-nest2> ::= '.' 'id' <statement-Id-nest>   
+<statement3> ::= EPSILON
+<statement3> ::= '.' 'id' <statement2>   
 
-<statement-Id-nest3> ::= <assignOp>  <expr>    
-<statement-Id-nest3> ::= '.' 'id' <statement-Id-nest>   
+<statement4> ::= <assignOp>  <expr>    
+<statement4> ::= '.' 'id' <statement2>   
 
 <rept-idnest1> ::= <indice> <rept-idnest1>   
 <rept-idnest1> ::= EPSILON
