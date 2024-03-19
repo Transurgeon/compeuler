@@ -305,8 +305,8 @@ class Past:
     def statement(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("statement ", "id statement2 ")
+            self.createLeaf(self.currToken.lexeme)
             self.nextToken()
-            self.createLeaf("id")
             self.statement2()
             self.match({TokenType.SEMI})
         elif self.matchCurr({TokenType.IF}):
@@ -363,8 +363,8 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement2 ", ". id statement2 ")
             self.nextToken()
+            self.createLeaf(self.currToken.lexeme)
             self.match({TokenType.ID})
-            self.createLeaf("id")
             self.createSubtree("dot", 2)
             self.statement2()
         elif self.matchCurr({TokenType.OPENPAR}):
@@ -393,8 +393,8 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement3 ", ". id statement2 ")
             self.nextToken()
+            self.createLeaf(self.currToken.lexeme)
             self.match({TokenType.ID})
-            self.createLeaf("id")
             self.createSubtree("dot", 2)
             self.statement2()
         else:
@@ -406,8 +406,8 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement4 ", ". id statement2 ")
             self.nextToken()
+            self.createLeaf(self.currToken.lexeme)
             self.match({TokenType.ID})
-            self.createLeaf("id")
             self.createSubtree("dot", 2)
             self.statement2()
         elif self.matchCurr(first["ASSIGNOP"]):
@@ -522,18 +522,18 @@ class Past:
     def factor(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("factor ", "id factor2 reptVariableOrFunc ")
+            self.createLeaf(self.currToken.lexeme)
             self.nextToken()
-            self.createLeaf("id")
             self.factor2()
             self.reptVariableOrFunc()
         elif self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("factor ", "intLit ")
+            self.createLeaf(self.currToken.lexeme)
             self.nextToken()
-            self.createLeaf("int")
         elif self.matchCurr({TokenType.FLOATNUM}):
             self.updateDerivation("factor ", "floatLit ")
+            self.createLeaf(self.currToken.lexeme)
             self.nextToken()
-            self.createLeaf("float")
         elif self.matchCurr({TokenType.OPENPAR}):
             self.updateDerivation("factor ", "( arithExpr ) ")
             self.nextToken()
@@ -568,8 +568,8 @@ class Past:
     # variable -> id variable2 
     def variable(self):
         self.updateDerivation("variable ", "id variable2 ")
-        self.matchCurr({TokenType.ID})
-        self.createLeaf("id")
+        self.createLeaf(self.currToken.lexeme)
+        self.match({TokenType.ID})
         self.variable2()
         
     # variable2 -> ( aParams ) varIdnest | rept-idnest1 reptvariable

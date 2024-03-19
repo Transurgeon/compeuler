@@ -33,70 +33,838 @@ program
 │   └── funcBody
 │       ├── id
 │       └── aParams
-└── function
+├── function
+│   ├── id
+│   ├── funcParams
+│   ├── returnType
+│   │   └── float
+│   └── funcBody
+│       ├── IF
+│       │   └── relExpr
+│       │       ├── var
+│       │       │   ├── id
+│       │       │   └── indiceList
+│       │       ├── >
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── THEN
+│       │   └── statBlock
+│       │       ├── id
+│       │       └── aParams
+│       │           ├── arithExpr
+│       │           │   └── var
+│       │           │       ├── id
+│       │           │       └── indiceList
+│       │           │           ├── 34
+│       │           │           └── 44
+│       │           ├── arithExpr
+│       │           │   └── var
+│       │           │       ├── id
+│       │           │       └── indiceList
+│       │           │           └── 5
+│       │           └── arithExpr
+│       │               └── var
+│       │                   ├── id
+│       │                   └── indiceList
+│       │                       └── 6
+│       ├── ELSE
+│       │   └── statBlock
+│       ├── WHILE
+│       │   ├── relExpr
+│       │   │   ├── var
+│       │   │   │   ├── id
+│       │   │   │   └── indiceList
+│       │   │   ├── >
+│       │   │   └── var
+│       │   │       ├── id
+│       │   │       └── indiceList
+│       │   └── statBlock
+│       ├── WHILE
+│       │   ├── relExpr
+│       │   │   ├── var
+│       │   │   │   ├── id
+│       │   │   │   └── indiceList
+│       │   │   ├── <
+│       │   │   └── var
+│       │   │       ├── id
+│       │   │       └── indiceList
+│       │   └── statBlock
+│       │       ├── id
+│       │       └── aParams
+│       │           └── arithExpr
+│       │               └── var
+│       │                   ├── id
+│       │                   └── indiceList
+│       ├── READ
+│       │   └── var
+│       │       ├── id
+│       │       └── indiceList
+│       ├── varDecl
+│       │   ├── id
+│       │   ├── float
+│       │   └── arraySize
+│       ├── id
+│       ├── aParams
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── varDecl
+│       │   ├── id
+│       │   ├── id
+│       │   └── arraySize
+│       ├── id
+│       ├── aParams
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── varDecl
+│       │   ├── id
+│       │   ├── id
+│       │   └── arraySize
+│       │       ├── emptySize
+│       │       └── emptySize
+│       ├── assign
+│       │   ├── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── 6
+│       ├── varDecl
+│       │   ├── id
+│       │   ├── integer
+│       │   └── arraySize
+│       │       └── emptySize
+│       ├── id
+│       ├── aParams
+│       │   └── relExpr
+│       │       ├── var
+│       │       │   ├── id
+│       │       │   └── indiceList
+│       │       ├── >
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── multOp
+│       │           ├── 8
+│       │           ├── *
+│       │           └── 4
+│       ├── assign
+│       │   ├── id
+│       │   ├── =
+│       │   └── relExpr
+│       │       ├── multOp
+│       │       │   ├── arithExpr
+│       │       │   │   └── addOp
+│       │       │   │       ├── 1
+│       │       │   │       ├── +
+│       │       │   │       └── 1
+│       │       │   ├── *
+│       │       │   └── 1
+│       │       ├── >
+│       │       └── 1
+│       ├── id
+│       ├── assign
+│       │   ├── =
+│       │   ├── arithExpr
+│       │   │   └── multOp
+│       │   │       ├── arithExpr
+│       │   │       │   └── addOp
+│       │   │       │       ├── 4
+│       │   │       │       ├── -
+│       │   │       │       └── 7
+│       │   │       ├── /
+│       │   │       └── arithExpr
+│       │   │           └── addOp
+│       │   │               ├── 2
+│       │   │               ├── +
+│       │   │               └── 3
+│       │   └── arithExpr
+│       │       └── addOp
+│       │           ├── +
+│       │           ├── -
+│       │           └── arithExpr
+│       │               └── 4
+│       ├── id
+│       └── assign
+│           ├── =
+│           ├── arithExpr
+│           │   └── multOp
+│           │       ├── 4
+│           │       ├── *
+│           │       └── 5
+│           └── arithExpr
+│               └── not
+├── function
+│   ├── a
+│   ├── funcParams
+│   ├── returnType
+│   │   └── void
+│   └── funcBody
+│       ├── dot
+│       │   ├── id
+│       │   └── id
+│       ├── aParams
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── assign
+│       │   ├── dot
+│       │   │   ├── aParams
+│       │   │   │   └── arithExpr
+│       │   │   │       └── var
+│       │   │   │           ├── id
+│       │   │   │           └── indiceList
+│       │   │   └── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── dot
+│       │   ├── aParams
+│       │   │   └── arithExpr
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   └── id
+│       ├── aParams
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── id
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── dot
+│       │   │   ├── var
+│       │   │   │   ├── id
+│       │   │   │   └── indiceList
+│       │   │   │       └── var
+│       │   │   │           ├── id
+│       │   │   │           └── indiceList
+│       │   │   └── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── var
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── indiceList
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── id
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── dot
+│       │   │   ├── var
+│       │   │   │   ├── id
+│       │   │   │   └── indiceList
+│       │   │   │       ├── var
+│       │   │   │       │   ├── id
+│       │   │   │       │   └── indiceList
+│       │   │   │       └── var
+│       │   │   │           ├── id
+│       │   │   │           └── indiceList
+│       │   │   └── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── var
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── indiceList
+│       │   │   │   │       ├── var
+│       │   │   │   │       │   ├── id
+│       │   │   │   │       │   └── indiceList
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── aParams
+│       │   │   │   │   └── arithExpr
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── aParams
+│       │   │   │   │   └── arithExpr
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── aParams
+│       │   │   │   │   └── arithExpr
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── id
+│       ├── assign
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── aParams
+│       │   │   │   │   └── arithExpr
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
+│       ├── dot
+│       │   ├── var
+│       │   │   ├── id
+│       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   └── id
+│       ├── dot
+│       │   ├── var
+│       │   │   ├── dot
+│       │   │   │   ├── aParams
+│       │   │   │   │   └── arithExpr
+│       │   │   │   │       └── var
+│       │   │   │   │           ├── id
+│       │   │   │   │           └── indiceList
+│       │   │   │   └── id
+│       │   │   └── indiceList
+│       │   │       └── var
+│       │   │           ├── id
+│       │   │           └── indiceList
+│       │   └── id
+│       └── assign
+│           ├── var
+│           │   ├── dot
+│           │   │   ├── aParams
+│           │   │   │   └── arithExpr
+│           │   │   │       └── var
+│           │   │   │           ├── id
+│           │   │   │           └── indiceList
+│           │   │   └── id
+│           │   └── indiceList
+│           │       ├── var
+│           │       │   ├── id
+│           │       │   └── indiceList
+│           │       └── var
+│           │           ├── id
+│           │           └── indiceList
+│           ├── =
+│           └── arithExpr
+│               └── var
+│                   ├── id
+│                   └── indiceList
+├── function
+│   ├── a
+│   ├── funcParams
+│   │   ├── param
+│   │   │   ├── de
+│   │   │   ├── integer
+│   │   │   └── arraySize
+│   │   │       └── emptySize
+│   │   └── param
+│   │       ├── b
+│   │       ├── integer
+│   │       └── arraySize
+│   ├── returnType
+│   │   └── void
+│   └── funcBody
+│       ├── varDecl
+│       │   ├── a
+│       │   ├── integer
+│       │   └── arraySize
+│       ├── assign
+│       │   ├── c
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── 5
+│       └── WHILE
+│           ├── relExpr
+│           │   ├── var
+│           │   │   ├── a
+│           │   │   └── indiceList
+│           │   ├── <
+│           │   └── addOp
+│           │       ├── var
+│           │       │   ├── b
+│           │       │   └── indiceList
+│           │       ├── -
+│           │       └── 5
+│           └── statBlock
+│               ├── WHILE
+│               │   ├── relExpr
+│               │   │   ├── var
+│               │   │   │   ├── a
+│               │   │   │   └── indiceList
+│               │   │   ├── <
+│               │   │   └── addOp
+│               │   │       ├── addOp
+│               │   │       │   ├── var
+│               │   │       │   │   ├── b
+│               │   │       │   │   └── indiceList
+│               │   │       │   ├── -
+│               │   │       │   └── var
+│               │   │       │       ├── r
+│               │   │       │       └── indiceList
+│               │   │       ├── -
+│               │   │       └── 9
+│               │   └── statBlock
+│               │       └── assign
+│               │           ├── var
+│               │           │   ├── b
+│               │           │   └── indiceList
+│               │           │       └── var
+│               │           │           ├── h
+│               │           │           └── indiceList
+│               │           ├── =
+│               │           └── arithExpr
+│               │               └── var
+│               │                   ├── r
+│               │                   └── indiceList
+│               │                       └── addOp
+│               │                           ├── var
+│               │                           │   ├── a
+│               │                           │   └── indiceList
+│               │                           ├── +
+│               │                           └── 5
+│               ├── IF
+│               │   └── relExpr
+│               │       ├── var
+│               │       │   ├── a
+│               │       │   └── indiceList
+│               │       │       └── var
+│               │       │           ├── r
+│               │       │           └── indiceList
+│               │       ├── >
+│               │       └── var
+│               │           ├── t
+│               │           └── indiceList
+│               │               └── addOp
+│               │                   ├── var
+│               │                   │   ├── n
+│               │                   │   └── indiceList
+│               │                   ├── +
+│               │                   └── 7
+│               ├── THEN
+│               │   └── statBlock
+│               │       └── assign
+│               │           ├── m
+│               │           ├── =
+│               │           └── arithExpr
+│               │               └── var
+│               │                   ├── p
+│               │                   └── indiceList
+│               │                       └── var
+│               │                           ├── l
+│               │                           └── indiceList
+│               └── ELSE
+│                   └── statBlock
+├── function
+│   ├── a
+│   ├── funcParams
+│   │   ├── param
+│   │   │   ├── de
+│   │   │   ├── integer
+│   │   │   └── arraySize
+│   │   │       └── emptySize
+│   │   └── param
+│   │       ├── b
+│   │       ├── integer
+│   │       └── arraySize
+│   ├── returnType
+│   │   └── void
+│   └── funcBody
+│       ├── READ
+│       │   └── var
+│       │       ├── id
+│       │       └── indiceList
+│       ├── g
+│       ├── assign
+│       │   ├── =
+│       │   ├── arithExpr
+│       │   │   └── multOp
+│       │   │       ├── arithExpr
+│       │   │       │   └── addOp
+│       │   │       │       ├── 5
+│       │   │       │       ├── -
+│       │   │       │       └── 8
+│       │   │       ├── /
+│       │   │       └── arithExpr
+│       │   │           └── addOp
+│       │   │               ├── 6
+│       │   │               ├── +
+│       │   │               └── 8
+│       │   └── arithExpr
+│       │       └── addOp
+│       │           ├── +
+│       │           ├── -
+│       │           └── arithExpr
+│       │               └── 7
+│       ├── assign
+│       │   ├── pop
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── multOp
+│       │           ├── 6
+│       │           ├── *
+│       │           └── 9
+│       ├── rtt3
+│       └── assign
+│           ├── =
+│           ├── arithExpr
+│           │   └── multOp
+│           │       ├── 5
+│           │       ├── *
+│           │       └── 5
+│           └── arithExpr
+│               └── not
+├── impl
+│   ├── id
+│   └── funcList
+│       └── function
+│           ├── id
+│           ├── funcParams
+│           │   └── param
+│           │       ├── id
+│           │       ├── float
+│           │       └── arraySize
+│           ├── returnType
+│           │   └── float
+│           └── funcBody
+│               └── RETURN
+│                   └── arithExpr
+│                       └── 5
+├── impl
+│   ├── id
+│   └── funcList
+│       ├── function
+│       │   ├── id
+│       │   ├── funcParams
+│       │   │   └── param
+│       │   │       ├── id
+│       │   │       ├── float
+│       │   │       └── arraySize
+│       │   ├── returnType
+│       │   │   └── float
+│       │   └── funcBody
+│       │       ├── varDecl
+│       │       │   ├── id
+│       │       │   ├── float
+│       │       │   └── arraySize
+│       │       ├── assign
+│       │       │   ├── id
+│       │       │   ├── =
+│       │       │   └── arithExpr
+│       │       │       └── var
+│       │       │           ├── id
+│       │       │           └── indiceList
+│       │       ├── assign
+│       │       │   ├── id
+│       │       │   ├── =
+│       │       │   └── arithExpr
+│       │       │       └── addOp
+│       │       │           ├── multOp
+│       │       │           │   ├── var
+│       │       │           │   │   ├── id
+│       │       │           │   │   └── indiceList
+│       │       │           │   ├── *
+│       │       │           │   └── var
+│       │       │           │       ├── id
+│       │       │           │       └── indiceList
+│       │       │           ├── +
+│       │       │           └── var
+│       │       │               ├── id
+│       │       │               └── indiceList
+│       │       ├── assign
+│       │       │   ├── id
+│       │       │   ├── =
+│       │       │   └── arithExpr
+│       │       │       └── addOp
+│       │       │           ├── multOp
+│       │       │           │   ├── var
+│       │       │           │   │   ├── id
+│       │       │           │   │   └── indiceList
+│       │       │           │   ├── *
+│       │       │           │   └── var
+│       │       │           │       ├── id
+│       │       │           │       └── indiceList
+│       │       │           ├── +
+│       │       │           └── var
+│       │       │               ├── id
+│       │       │               └── indiceList
+│       │       └── RETURN
+│       │           └── arithExpr
+│       │               └── var
+│       │                   ├── id
+│       │                   └── indiceList
+│       └── function
+│           ├── id
+│           ├── funcParams
+│           │   ├── param
+│           │   │   ├── id
+│           │   │   ├── float
+│           │   │   └── arraySize
+│           │   ├── param
+│           │   │   ├── id
+│           │   │   ├── float
+│           │   │   └── arraySize
+│           │   └── param
+│           │       ├── id
+│           │       ├── float
+│           │       └── arraySize
+│           ├── returnType
+│           │   └── id
+│           └── funcBody
+│               ├── varDecl
+│               │   ├── id
+│               │   ├── id
+│               │   └── arraySize
+│               ├── assign
+│               │   ├── dot
+│               │   │   ├── id
+│               │   │   └── id
+│               │   ├── =
+│               │   └── arithExpr
+│               │       └── var
+│               │           ├── id
+│               │           └── indiceList
+│               ├── assign
+│               │   ├── dot
+│               │   │   ├── id
+│               │   │   └── id
+│               │   ├── =
+│               │   └── arithExpr
+│               │       └── var
+│               │           ├── id
+│               │           └── indiceList
+│               ├── assign
+│               │   ├── dot
+│               │   │   ├── id
+│               │   │   └── id
+│               │   ├── =
+│               │   └── arithExpr
+│               │       └── var
+│               │           ├── id
+│               │           └── indiceList
+│               └── RETURN
+│                   └── arithExpr
+│                       └── var
+│                           ├── id
+│                           └── indiceList
+└── impl
     ├── id
-    ├── funcParams
-    ├── returnType
-    │   └── float
-    └── funcBody
-        ├── IF
-        │   └── relExpr
-        │       ├── var
+    └── funcList
+        ├── function
+        │   ├── id
+        │   ├── funcParams
+        │   │   ├── param
+        │   │   │   ├── id
+        │   │   │   ├── float
+        │   │   │   └── arraySize
+        │   │   └── param
+        │   │       ├── id
+        │   │       ├── float
+        │   │       └── arraySize
+        │   ├── returnType
+        │   │   └── id
+        │   └── funcBody
+        │       ├── varDecl
         │       │   ├── id
-        │       │   └── indiceList
-        │       ├── >
-        │       └── var
-        │           ├── id
-        │           └── indiceList
-        ├── THEN
-        │   └── statBlock
-        │       ├── id
-        │       └── aParams
-        │           ├── arithExpr
-        │           │   └── var
-        │           │       ├── id
-        │           │       └── indiceList
-        │           │           ├── int
-        │           │           └── int
-        │           ├── arithExpr
-        │           │   └── var
-        │           │       ├── id
-        │           │       └── indiceList
-        │           │           └── int
+        │       │   ├── id
+        │       │   └── arraySize
+        │       ├── assign
+        │       │   ├── dot
+        │       │   │   ├── id
+        │       │   │   └── id
+        │       │   ├── =
+        │       │   └── arithExpr
+        │       │       └── var
+        │       │           ├── id
+        │       │           └── indiceList
+        │       ├── assign
+        │       │   ├── dot
+        │       │   │   ├── id
+        │       │   │   └── id
+        │       │   ├── =
+        │       │   └── arithExpr
+        │       │       └── var
+        │       │           ├── id
+        │       │           └── indiceList
+        │       └── RETURN
         │           └── arithExpr
         │               └── var
         │                   ├── id
         │                   └── indiceList
-        │                       └── int
-        ├── ELSE
-        │   └── statBlock
-        ├── WHILE
-        │   ├── relExpr
-        │   │   ├── var
-        │   │   │   ├── id
-        │   │   │   └── indiceList
-        │   │   ├── >
-        │   │   └── var
-        │   │       ├── id
-        │   │       └── indiceList
-        │   └── statBlock
-        ├── WHILE
-        │   ├── relExpr
-        │   │   ├── var
-        │   │   │   ├── id
-        │   │   │   └── indiceList
-        │   │   ├── <
-        │   │   └── var
-        │   │       ├── id
-        │   │       └── indiceList
-        │   └── statBlock
-        │       ├── id
-        │       └── aParams
-        │           └── arithExpr
-        │               └── var
-        │                   ├── id
-        │                   └── indiceList
-        └── READ
-            └── var
-                ├── id
-                └── indiceList
+        └── function
+            ├── id
+            ├── funcParams
+            │   └── param
+            │       ├── id
+            │       ├── float
+            │       └── arraySize
+            ├── returnType
+            │   └── float
+            └── funcBody
+                ├── varDecl
+                │   ├── id
+                │   ├── float
+                │   └── arraySize
+                ├── assign
+                │   ├── id
+                │   ├── =
+                │   └── arithExpr
+                │       └── 4.9
+                ├── assign
+                │   ├── id
+                │   ├── =
+                │   └── arithExpr
+                │       └── addOp
+                │           ├── multOp
+                │           │   ├── var
+                │           │   │   ├── id
+                │           │   │   └── indiceList
+                │           │   ├── *
+                │           │   └── var
+                │           │       ├── id
+                │           │       └── indiceList
+                │           ├── +
+                │           └── var
+                │               ├── id
+                │               └── indiceList
+                └── RETURN
+                    └── arithExpr
+                        └── var
+                            ├── id
+                            └── indiceList

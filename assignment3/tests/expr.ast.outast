@@ -17,30 +17,30 @@ program
         ├── IF
         │   └── relExpr
         │       ├── var
-        │       │   ├── id
+        │       │   ├── x
         │       │   └── indiceList
         │       ├── >
-        │       └── int
+        │       └── 5
         ├── THEN
         │   └── statBlock
         │       └── assign
-        │           ├── id
+        │           ├── x
         │           ├── =
         │           └── arithExpr
-        │               └── int
+        │               └── 5
         ├── ELSE
         │   └── statBlock
         │       └── assign
-        │           ├── id
+        │           ├── x
         │           ├── =
         │           └── arithExpr
-        │               └── int
+        │               └── 6
         ├── WRITE
         │   └── arithExpr
         │       └── addOp
-        │           ├── int
+        │           ├── 5
         │           ├── +
-        │           └── int
+        │           └── 5
         └── RETURN
             └── arithExpr
-                └── int
+                └── 5

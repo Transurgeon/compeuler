@@ -28,4 +28,4 @@ program
             └── funcBody
                 └── RETURN
                     └── arithExpr
-                        └── int
+                        └── 5
