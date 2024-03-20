@@ -4,6 +4,7 @@ from first_follow import first, follow
 from typing import List, Set
 from anytree import Node, RenderTree
 from anytree.exporter import UniqueDotExporter
+from siementic import *
 
 class Past:
     def __init__(self, lexer: LexFridman) -> None:
@@ -73,8 +74,19 @@ class Past:
     
     #####################################
     # AST tree generation
-    def createLeaf(self, name: str):
-        self.stack.append(Node(name))
+    def createNode(self, name: str, type: str):
+        match type:
+            case "id":
+                return IdNode(name)
+            case "numeric":
+                return NumericNode(name)
+            case "type":
+                return TypeNode(name)
+            case _:
+                return Node(name)
+                
+    def createLeaf(self, name: str, type = ""):
+        self.stack.append(self.createNode(name, type))
 
     def createSubtree(self, name: str, pops: int):
         childs = []
@@ -142,7 +154,7 @@ class Past:
     def structDecl(self):
         self.updateDerivation("structDecl ", "struct id opt-structDecl2 { rept-structDecl4 } ;\n")
         self.match({TokenType.STRUCT})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.match({TokenType.ID})
         self.createLeaf("$eps")
         self.opt_structDecl2()
@@ -159,7 +171,7 @@ class Past:
         if self.matchCurr({TokenType.INHERITS}):
             self.updateDerivation("opt-structDecl2 ", "inherits id rept-opt-structDecl22 ")
             self.nextToken()
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.match({TokenType.ID})
             self.rept_opt_structDecl22()
         else:
@@ -191,7 +203,7 @@ class Past:
     def implDef(self):
         self.updateDerivation("implDef ", "impl id { rept-implDef3 } ")
         self.match({TokenType.IMPL})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.matchSequence([TokenType.ID, TokenType.OPENCUBR])
         self.createLeaf("$eps")
         self.rept_implDef3()
@@ -242,7 +254,7 @@ class Past:
     def funcHead(self):
         self.updateDerivation("funcHead ", "func id ( fParams ) arrow returnType ")
         self.match({TokenType.FUNC})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.matchSequence([TokenType.ID, TokenType.OPENPAR])
         self.createLeaf("$eps")
         self.fParams()
@@ -282,7 +294,7 @@ class Past:
     def varDecl(self):
         self.updateDerivation("varDecl ", "let id : type rept-varDecl4 ;\n")
         self.match({TokenType.LET})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.matchSequence([TokenType.ID, TokenType.COLON])
         self.type()
         self.createLeaf("$eps")
@@ -305,7 +317,7 @@ class Past:
     def statement(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("statement ", "id statement2 ")
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.nextToken()
             self.statement2()
             self.match({TokenType.SEMI})
@@ -363,7 +375,7 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement2 ", ". id statement2 ")
             self.nextToken()
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.match({TokenType.ID})
             self.createSubtree("dot", 2)
             self.statement2()
@@ -393,7 +405,7 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement3 ", ". id statement2 ")
             self.nextToken()
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.match({TokenType.ID})
             self.createSubtree("dot", 2)
             self.statement2()
@@ -406,7 +418,7 @@ class Past:
         if self.matchCurr({TokenType.DOT}):
             self.updateDerivation("statement4 ", ". id statement2 ")
             self.nextToken()
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.match({TokenType.ID})
             self.createSubtree("dot", 2)
             self.statement2()
@@ -522,17 +534,17 @@ class Past:
     def factor(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("factor ", "id factor2 reptVariableOrFunc ")
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.nextToken()
             self.factor2()
             self.reptVariableOrFunc()
         elif self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("factor ", "intLit ")
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "numeric")
             self.nextToken()
         elif self.matchCurr({TokenType.FLOATNUM}):
             self.updateDerivation("factor ", "floatLit ")
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "numeric")
             self.nextToken()
         elif self.matchCurr({TokenType.OPENPAR}):
             self.updateDerivation("factor ", "( arithExpr ) ")
@@ -568,7 +580,7 @@ class Past:
     # variable -> id variable2 
     def variable(self):
         self.updateDerivation("variable ", "id variable2 ")
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.match({TokenType.ID})
         self.variable2()
         
@@ -651,7 +663,7 @@ class Past:
     def idnest(self):
         self.updateDerivation("idnest ", ". id idnest2 ")
         self.match({TokenType.DOT})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.match({TokenType.ID})
         self.idnest2()
     
@@ -697,7 +709,7 @@ class Past:
     # type -> integer | float | id 
     def type(self):
         type = self.currToken.lexeme
-        self.createLeaf(type)
+        self.createLeaf(type, "type")
         self.match({TokenType.INTEGER, TokenType.FLOAT, TokenType.ID})
         self.updateDerivation("type ", type + " ")
     
@@ -715,7 +727,7 @@ class Past:
     def fParams(self):
         if self.matchCurr({TokenType.ID}):
             self.updateDerivation("fParams ", "id : type rept-fParams3 rept-fParams4 ")
-            self.createLeaf(self.currToken.lexeme)
+            self.createLeaf(self.currToken.lexeme, "id")
             self.matchSequence([TokenType.ID, TokenType.COLON])
             self.type()
             self.createLeaf("$eps")
@@ -769,7 +781,7 @@ class Past:
     def fParamsTail(self):
         self.updateDerivation("fParamsTail ", ", id : type rept-fParamsTail4 ")
         self.match({TokenType.COMMA})
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "id")
         self.matchSequence([TokenType.ID, TokenType.COLON])
         self.type()
         self.createLeaf("$eps")
