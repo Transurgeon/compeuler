@@ -88,6 +88,10 @@ class Past:
                 return MultNode(name)
             case "relation":
                 return RelationNode(name)
+            case "visibility":
+                return VisibilityNode(name)
+            case "assign":
+                return AssignNode(name)
             case _:
                 return Node(name)
                 
@@ -238,7 +242,7 @@ class Past:
     # visibility -> public | private 
     def visibility(self):
         visib = self.currToken.lexeme
-        self.createLeaf(visib)
+        self.createLeaf(visib, "visibility")
         self.match({TokenType.PUBLIC, TokenType.PRIVATE})
         self.updateDerivation("visibility ", visib + " ")
         
@@ -392,6 +396,7 @@ class Past:
             self.match({TokenType.OPENPAR})
             self.aParams()
             self.match({TokenType.CLOSEPAR})
+            self.createSubtree("funcCall", 2)
             self.statement3()
         elif self.matchCurr(first["INDICE"]):
             self.updateDerivation("statement2 ", "indice rept-idnest1 statement4 ")
@@ -401,9 +406,8 @@ class Past:
             self.createSubtree("var", 2)
             self.statement4()
         elif self.matchCurr(first["ASSIGNOP"]):
-            self.updateDerivation("statement3 ", "assignOp expr ;\n")
+            self.updateDerivation("statement2 ", "assignOp expr ;\n")
             self.assignOp()
-            self.createLeaf("=")
             self.expr()
             self.createSubtree("assign", 3)
     
@@ -433,7 +437,6 @@ class Past:
         elif self.matchCurr(first["ASSIGNOP"]):
             self.updateDerivation("statement4 ", "assignOp expr ;\n")
             self.assignOp()
-            self.createLeaf("=")
             self.expr()
             self.createSubtree("assign", 3)
         
@@ -674,6 +677,7 @@ class Past:
         self.createLeaf(self.currToken.lexeme, "id")
         self.match({TokenType.ID})
         self.idnest2()
+        self.createSubtree("dot", 2)
     
     # idnest2 -> ( aParams ) | rept-idnest1 
     def idnest2(self):
@@ -688,6 +692,7 @@ class Past:
             self.match({TokenType.OPENPAR})
             self.aParams()
             self.match({TokenType.CLOSEPAR})
+            self.createSubtree("funcCall", 2)
     
     # indice -> [ arithExpr ] 
     def indice(self):
@@ -815,6 +820,7 @@ class Past:
     # assignOp -> = 
     def assignOp(self):
         self.updateDerivation("assignOp ", "= ")
+        self.createLeaf("=", "assign")
         self.match({TokenType.ASSIGN})
     
     # relOp -> eq | neq | lt | gt | leq | geq 

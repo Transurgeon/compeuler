@@ -31,8 +31,9 @@ program
 │   ├── returnType
 │   │   └── integer
 │   └── funcBody
-│       ├── id
-│       └── aParams
+│       └── funcCall
+│           ├── id
+│           └── aParams
 ├── function
 │   ├── id
 │   ├── funcParams
@@ -50,24 +51,25 @@ program
 │       │           └── indiceList
 │       ├── THEN
 │       │   └── statBlock
-│       │       ├── id
-│       │       └── aParams
-│       │           ├── arithExpr
-│       │           │   └── var
-│       │           │       ├── id
-│       │           │       └── indiceList
-│       │           │           ├── 34
-│       │           │           └── 44
-│       │           ├── arithExpr
-│       │           │   └── var
-│       │           │       ├── id
-│       │           │       └── indiceList
-│       │           │           └── 5
-│       │           └── arithExpr
-│       │               └── var
-│       │                   ├── id
-│       │                   └── indiceList
-│       │                       └── 6
+│       │       └── funcCall
+│       │           ├── id
+│       │           └── aParams
+│       │               ├── arithExpr
+│       │               │   └── var
+│       │               │       ├── id
+│       │               │       └── indiceList
+│       │               │           ├── 34
+│       │               │           └── 44
+│       │               ├── arithExpr
+│       │               │   └── var
+│       │               │       ├── id
+│       │               │       └── indiceList
+│       │               │           └── 5
+│       │               └── arithExpr
+│       │                   └── var
+│       │                       ├── id
+│       │                       └── indiceList
+│       │                           └── 6
 │       ├── ELSE
 │       │   └── statBlock
 │       ├── WHILE
@@ -90,12 +92,13 @@ program
 │       │   │       ├── id
 │       │   │       └── indiceList
 │       │   └── statBlock
-│       │       ├── id
-│       │       └── aParams
-│       │           └── arithExpr
-│       │               └── var
-│       │                   ├── id
-│       │                   └── indiceList
+│       │       └── funcCall
+│       │           ├── id
+│       │           └── aParams
+│       │               └── arithExpr
+│       │                   └── var
+│       │                       ├── id
+│       │                       └── indiceList
 │       ├── READ
 │       │   └── var
 │       │       ├── id
@@ -104,22 +107,24 @@ program
 │       │   ├── id
 │       │   ├── float
 │       │   └── arraySize
-│       ├── id
-│       ├── aParams
-│       │   └── arithExpr
-│       │       └── var
-│       │           ├── id
-│       │           └── indiceList
+│       ├── funcCall
+│       │   ├── id
+│       │   └── aParams
+│       │       └── arithExpr
+│       │           └── var
+│       │               ├── id
+│       │               └── indiceList
 │       ├── varDecl
 │       │   ├── id
 │       │   ├── id
 │       │   └── arraySize
-│       ├── id
-│       ├── aParams
-│       │   └── arithExpr
-│       │       └── var
-│       │           ├── id
-│       │           └── indiceList
+│       ├── funcCall
+│       │   ├── id
+│       │   └── aParams
+│       │       └── arithExpr
+│       │           └── var
+│       │               ├── id
+│       │               └── indiceList
 │       ├── varDecl
 │       │   ├── id
 │       │   ├── id
@@ -136,16 +141,17 @@ program
 │       │   ├── integer
 │       │   └── arraySize
 │       │       └── emptySize
-│       ├── id
-│       ├── aParams
-│       │   └── relExpr
-│       │       ├── var
-│       │       │   ├── id
-│       │       │   └── indiceList
-│       │       ├── >
-│       │       └── var
-│       │           ├── id
-│       │           └── indiceList
+│       ├── funcCall
+│       │   ├── id
+│       │   └── aParams
+│       │       └── relExpr
+│       │           ├── var
+│       │           │   ├── id
+│       │           │   └── indiceList
+│       │           ├── >
+│       │           └── var
+│       │               ├── id
+│       │               └── indiceList
 │       ├── assign
 │       │   ├── id
 │       │   ├── =
@@ -206,37 +212,41 @@ program
 │   ├── returnType
 │   │   └── void
 │   └── funcBody
-│       ├── dot
-│       │   ├── id
-│       │   └── id
-│       ├── aParams
-│       │   └── arithExpr
-│       │       └── var
-│       │           ├── id
-│       │           └── indiceList
-│       ├── id
+│       ├── funcCall
+│       │   ├── dot
+│       │   │   ├── id
+│       │   │   └── id
+│       │   └── aParams
+│       │       └── arithExpr
+│       │           └── var
+│       │               ├── id
+│       │               └── indiceList
 │       ├── assign
 │       │   ├── dot
-│       │   │   ├── aParams
-│       │   │   │   └── arithExpr
-│       │   │   │       └── var
-│       │   │   │           ├── id
-│       │   │   │           └── indiceList
+│       │   │   ├── funcCall
+│       │   │   │   ├── id
+│       │   │   │   └── aParams
+│       │   │   │       └── arithExpr
+│       │   │   │           └── var
+│       │   │   │               ├── id
+│       │   │   │               └── indiceList
 │       │   │   └── id
 │       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
 │       │           └── indiceList
-│       ├── id
-│       ├── dot
-│       │   ├── aParams
-│       │   │   └── arithExpr
-│       │   │       └── var
-│       │   │           ├── id
-│       │   │           └── indiceList
-│       │   └── id
-│       ├── aParams
+│       ├── funcCall
+│       │   ├── dot
+│       │   │   ├── funcCall
+│       │   │   │   ├── id
+│       │   │   │   └── aParams
+│       │   │   │       └── arithExpr
+│       │   │   │           └── var
+│       │   │   │               ├── id
+│       │   │   │               └── indiceList
+│       │   │   └── id
+│       │   └── aParams
 │       ├── assign
 │       │   ├── var
 │       │   │   ├── dot
@@ -343,15 +353,16 @@ program
 │       │       └── var
 │       │           ├── id
 │       │           └── indiceList
-│       ├── id
 │       ├── assign
 │       │   ├── var
 │       │   │   ├── dot
-│       │   │   │   ├── aParams
-│       │   │   │   │   └── arithExpr
-│       │   │   │   │       └── var
-│       │   │   │   │           ├── id
-│       │   │   │   │           └── indiceList
+│       │   │   │   ├── funcCall
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── aParams
+│       │   │   │   │       └── arithExpr
+│       │   │   │   │           └── var
+│       │   │   │   │               ├── id
+│       │   │   │   │               └── indiceList
 │       │   │   │   └── id
 │       │   │   └── indiceList
 │       │   │       └── var
@@ -362,42 +373,18 @@ program
 │       │       └── var
 │       │           ├── id
 │       │           └── indiceList
-│       ├── id
 │       ├── assign
 │       │   ├── var
 │       │   │   ├── dot
-│       │   │   │   ├── aParams
-│       │   │   │   │   └── arithExpr
-│       │   │   │   │       └── var
-│       │   │   │   │           ├── id
-│       │   │   │   │           └── indiceList
+│       │   │   │   ├── funcCall
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── aParams
+│       │   │   │   │       └── arithExpr
+│       │   │   │   │           └── var
+│       │   │   │   │               ├── id
+│       │   │   │   │               └── indiceList
 │       │   │   │   └── id
 │       │   │   └── indiceList
-│       │   │       ├── var
-│       │   │       │   ├── id
-│       │   │       │   └── indiceList
-│       │   │       └── var
-│       │   │           ├── id
-│       │   │           └── indiceList
-│       │   ├── =
-│       │   └── arithExpr
-│       │       └── var
-│       │           ├── id
-│       │           └── indiceList
-│       ├── id
-│       ├── assign
-│       │   ├── var
-│       │   │   ├── dot
-│       │   │   │   ├── aParams
-│       │   │   │   │   └── arithExpr
-│       │   │   │   │       └── var
-│       │   │   │   │           ├── id
-│       │   │   │   │           └── indiceList
-│       │   │   │   └── id
-│       │   │   └── indiceList
-│       │   │       ├── var
-│       │   │       │   ├── id
-│       │   │       │   └── indiceList
 │       │   │       ├── var
 │       │   │       │   ├── id
 │       │   │       │   └── indiceList
@@ -409,20 +396,18 @@ program
 │       │       └── var
 │       │           ├── id
 │       │           └── indiceList
-│       ├── id
 │       ├── assign
 │       │   ├── var
 │       │   │   ├── dot
-│       │   │   │   ├── aParams
-│       │   │   │   │   └── arithExpr
-│       │   │   │   │       └── var
-│       │   │   │   │           ├── id
-│       │   │   │   │           └── indiceList
+│       │   │   │   ├── funcCall
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── aParams
+│       │   │   │   │       └── arithExpr
+│       │   │   │   │           └── var
+│       │   │   │   │               ├── id
+│       │   │   │   │               └── indiceList
 │       │   │   │   └── id
 │       │   │   └── indiceList
-│       │   │       ├── var
-│       │   │       │   ├── id
-│       │   │       │   └── indiceList
 │       │   │       ├── var
 │       │   │       │   ├── id
 │       │   │       │   └── indiceList
@@ -437,42 +422,73 @@ program
 │       │       └── var
 │       │           ├── id
 │       │           └── indiceList
-│       ├── dot
-│       │   ├── var
-│       │   │   ├── id
-│       │   │   └── indiceList
-│       │   │       ├── var
-│       │   │       │   ├── id
-│       │   │       │   └── indiceList
-│       │   │       ├── var
-│       │   │       │   ├── id
-│       │   │       │   └── indiceList
-│       │   │       └── var
-│       │   │           ├── id
-│       │   │           └── indiceList
-│       │   └── id
-│       ├── dot
+│       ├── assign
 │       │   ├── var
 │       │   │   ├── dot
-│       │   │   │   ├── aParams
-│       │   │   │   │   └── arithExpr
-│       │   │   │   │       └── var
-│       │   │   │   │           ├── id
-│       │   │   │   │           └── indiceList
+│       │   │   │   ├── funcCall
+│       │   │   │   │   ├── id
+│       │   │   │   │   └── aParams
+│       │   │   │   │       └── arithExpr
+│       │   │   │   │           └── var
+│       │   │   │   │               ├── id
+│       │   │   │   │               └── indiceList
 │       │   │   │   └── id
 │       │   │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
+│       │   │       ├── var
+│       │   │       │   ├── id
+│       │   │       │   └── indiceList
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   └── id
+│       │   ├── =
+│       │   └── arithExpr
+│       │       └── var
+│       │           ├── id
+│       │           └── indiceList
 │       └── assign
 │           ├── var
 │           │   ├── dot
-│           │   │   ├── aParams
-│           │   │   │   └── arithExpr
-│           │   │   │       └── var
-│           │   │   │           ├── id
-│           │   │   │           └── indiceList
+│           │   │   ├── funcCall
+│           │   │   │   ├── dot
+│           │   │   │   │   ├── var
+│           │   │   │   │   │   ├── dot
+│           │   │   │   │   │   │   ├── funcCall
+│           │   │   │   │   │   │   │   ├── dot
+│           │   │   │   │   │   │   │   │   ├── var
+│           │   │   │   │   │   │   │   │   │   ├── id
+│           │   │   │   │   │   │   │   │   │   └── indiceList
+│           │   │   │   │   │   │   │   │   │       ├── var
+│           │   │   │   │   │   │   │   │   │       │   ├── id
+│           │   │   │   │   │   │   │   │   │       │   └── indiceList
+│           │   │   │   │   │   │   │   │   │       ├── var
+│           │   │   │   │   │   │   │   │   │       │   ├── id
+│           │   │   │   │   │   │   │   │   │       │   └── indiceList
+│           │   │   │   │   │   │   │   │   │       └── var
+│           │   │   │   │   │   │   │   │   │           ├── id
+│           │   │   │   │   │   │   │   │   │           └── indiceList
+│           │   │   │   │   │   │   │   │   └── id
+│           │   │   │   │   │   │   │   └── aParams
+│           │   │   │   │   │   │   │       └── arithExpr
+│           │   │   │   │   │   │   │           └── var
+│           │   │   │   │   │   │   │               ├── id
+│           │   │   │   │   │   │   │               └── indiceList
+│           │   │   │   │   │   │   └── id
+│           │   │   │   │   │   └── indiceList
+│           │   │   │   │   │       └── var
+│           │   │   │   │   │           ├── id
+│           │   │   │   │   │           └── indiceList
+│           │   │   │   │   └── id
+│           │   │   │   └── aParams
+│           │   │   │       └── arithExpr
+│           │   │   │           └── var
+│           │   │   │               ├── id
+│           │   │   │               └── indiceList
 │           │   │   └── id
 │           │   └── indiceList
 │           │       ├── var

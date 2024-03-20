@@ -25,7 +25,14 @@ class MultNode(Node):
 class RelationNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-        
+    
+class VisibilityNode(Node):
+    def __init__(self, name, parent=None, children=None, **kwargs):
+        super().__init__(name, parent, children, **kwargs)
+
+class AssignNode(Node):
+    def __init__(self, name, parent=None, children=None, **kwargs):
+        super().__init__(name, parent, children, **kwargs)   
 #####################################
 # Subtree nodes
 
