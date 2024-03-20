@@ -82,13 +82,19 @@ class Past:
                 return NumericNode(name)
             case "type":
                 return TypeNode(name)
+            case "add":
+                return AddNode(name)
+            case "mult":
+                return MultNode(name)
+            case "relation":
+                return RelationNode(name)
             case _:
                 return Node(name)
                 
     def createLeaf(self, name: str, type = ""):
         self.stack.append(self.createNode(name, type))
 
-    def createSubtree(self, name: str, pops: int):
+    def createSubtree(self, name: str, pops: int, type = ""):
         childs = []
         if pops == -1:
             node = self.stack.pop()
@@ -99,7 +105,9 @@ class Past:
             for _ in range(pops):
                 childs.append(self.stack.pop())
         childs.reverse()
-        self.stack.append(Node(name, children=childs))
+        sub = self.createNode(name, type)
+        sub.children = childs
+        self.stack.append(sub)
 
     def printTree(self, root: Node):
         name, _ = self.lex.filename.split(".")
@@ -822,19 +830,19 @@ class Past:
         }
         self.match(relationOperators)
         self.updateDerivation("addOp ", oper + " ")
-        self.createLeaf(oper)
+        self.createLeaf(oper, "relation")
     
     # addOp -> + | - | or 
     def addOp(self):
         oper = self.currToken.lexeme
         self.match({TokenType.PLUS, TokenType.MINUS, TokenType.OR})
         self.updateDerivation("addOp ", oper + " ")
-        self.createLeaf(oper)
+        self.createLeaf(oper, "add")
     
     # multOp -> * | / | and 
     def multOp(self):
         oper = self.currToken.lexeme
         self.match({TokenType.MULT, TokenType.DIV, TokenType.AND})
         self.updateDerivation("multOp ", oper + " ")
-        self.createLeaf(oper)
+        self.createLeaf(oper, "mult")
     
