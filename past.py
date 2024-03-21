@@ -75,6 +75,7 @@ class Past:
     #####################################
     # AST tree generation
     def createNode(self, name: str, type: str):
+        # leaf nodes have different names
         match type:
             case "id":
                 return IdNode(name)
@@ -92,6 +93,10 @@ class Past:
                 return VisibilityNode(name)
             case "assign":
                 return AssignNode(name)
+            case "not":
+                return NotNode(name)
+            case "sign":
+                return SignNode(name)
         match name:
             case "arraySize":
                 return ArraySizeNode(name)
@@ -105,10 +110,62 @@ class Past:
                 return VarDeclNode(name)
             case "memberDecl":
                 return MemberDeclNode(name)
+            case "funcDecl":
+                return FuncDeclNode(name)
             case "function":
                 return FunctionNode(name)
+            case "funcParams":
+                return FuncParamsNode(name)
+            case "funcBody":
+                return FuncBodyNode(name)
+            case "funcCall":
+                return FuncCallNode(name)
             case "inherits":
                 return InheritNode(name)
+            case "program":
+                return ProgramNode(name)
+            case "memberList":
+                return MemberListNode(name)
+            case "returnType":
+                return ReturnTypeNode(name)
+            case "IF":
+                return IfNode(name)
+            case "THEN":
+                return ThenNode(name)
+            case "ELSE":
+                return ElseNode(name)
+            case "WHILE":
+                return WhileNode(name)
+            case "READ":
+                return ReadNode(name)
+            case "WRITE":
+                return WriteNode(name)
+            case "RETURN":
+                return ReturnNode(name)
+            case "dot":
+                return DotNode(name)
+            case "indiceList":
+                return IndiceListNode(name)
+            case "var":
+                return VariableNode(name)
+            case "statBlock":
+                return StatBlockNode(name)
+            case "relExpr":
+                return RelExprNode(name)
+            case "arithExpr":
+                return ArithExprNode(name)
+            case "addOp":
+                return AddOpNode(name)
+            case "multOp":
+                return MultOpNode(name)
+            case "emptySize":
+                return EmptySizeNode(name)
+            case "void":
+                return VoidNode(name)
+            case "param":
+                return ParamNode(name)
+            case "aParams":
+                return ArgParamNode(name)
             case _:
                 return Node(name)
                 
@@ -538,7 +595,7 @@ class Past:
     # sign -> + | - 
     def sign(self):
         self.updateDerivation("sign ", self.currToken.lexeme)
-        self.createLeaf(self.currToken.lexeme)
+        self.createLeaf(self.currToken.lexeme, "sign")
         self.match({TokenType.PLUS, TokenType.MINUS})
         
     # term -> factor rightrec-term 
@@ -729,8 +786,8 @@ class Past:
     def arraySize2(self):
         if self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("arraySize2 ", "intLit ] ")
+            self.createLeaf(self.currToken.lexeme, "numeric")
             self.nextToken()
-            self.createLeaf("intLit")
             self.match({TokenType.CLOSESQBR})
         else:
             self.updateDerivation("arraySize2 ", "] ")
