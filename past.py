@@ -92,6 +92,23 @@ class Past:
                 return VisibilityNode(name)
             case "assign":
                 return AssignNode(name)
+        match name:
+            case "arraySize":
+                return ArraySizeNode(name)
+            case "funcList":
+                return FuncListNode(name)
+            case "impl":
+                return ImplNode(name)
+            case "struct":
+                return StructNode(name)
+            case "varDecl":
+                return VarDeclNode(name)
+            case "memberDecl":
+                return MemberDeclNode(name)
+            case "function":
+                return FunctionNode(name)
+            case "inherits":
+                return InheritNode(name)
             case _:
                 return Node(name)
                 
@@ -193,9 +210,9 @@ class Past:
     def rept_opt_structDecl22(self):
         if self.matchCurr({TokenType.COMMA}):
             self.updateDerivation("rept-opt-structDecl22 ", ", id rept-opt-structDecl22 ")
-            self.nextToken()
+            self.nextToken()        
+            self.createLeaf(self.currToken.lexeme, "id")
             self.match({TokenType.ID})
-            self.createLeaf("id")
             self.rept_opt_structDecl22()
         else:
             self.updateDerivation("rept-opt-structDecl22 ", "")
@@ -623,8 +640,9 @@ class Past:
     # varIdnest -> . id varIdnest2 
     def varIdnest(self):
         self.updateDerivation("varIdnest ", ". id varIdnest2 ")
-        self.matchSequence([TokenType.DOT, TokenType.ID])
-        self.createLeaf("id")
+        self.match({TokenType.DOT})
+        self.createLeaf(self.currToken.lexeme, "id")
+        self.match({TokenType.ID})
         self.varIdnest2()
         self.createSubtree("dot", 2)
     
