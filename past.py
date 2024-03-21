@@ -91,10 +91,6 @@ class Past:
                 return RelationNode(name)
             case "visibility":
                 return VisibilityNode(name)
-            case "assign":
-                return AssignNode(name)
-            case "not":
-                return NotNode(name)
             case "sign":
                 return SignNode(name)
         match name:
@@ -106,6 +102,8 @@ class Past:
                 return ImplNode(name)
             case "struct":
                 return StructNode(name)
+            case "assign":
+                return AssignNode(name)
             case "varDecl":
                 return VarDeclNode(name)
             case "memberDecl":
@@ -144,6 +142,8 @@ class Past:
                 return ReturnNode(name)
             case "dot":
                 return DotNode(name)
+            case "not":
+                return NotNode(name)
             case "indiceList":
                 return IndiceListNode(name)
             case "var":
@@ -483,7 +483,7 @@ class Past:
             self.updateDerivation("statement2 ", "assignOp expr ;\n")
             self.assignOp()
             self.expr()
-            self.createSubtree("assign", 3)
+            self.createSubtree("assign", 2)
     
 
     # statement3 -> . id statement2 | EPSILON
@@ -512,7 +512,7 @@ class Past:
             self.updateDerivation("statement4 ", "assignOp expr ;\n")
             self.assignOp()
             self.expr()
-            self.createSubtree("assign", 3)
+            self.createSubtree("assign", 2)
         
     
     # rept-idnest1 -> indice rept-idnest1 | EPSILON
@@ -895,7 +895,6 @@ class Past:
     # assignOp -> = 
     def assignOp(self):
         self.updateDerivation("assignOp ", "= ")
-        self.createLeaf("=", "assign")
         self.match({TokenType.ASSIGN})
     
     # relOp -> eq | neq | lt | gt | leq | geq 

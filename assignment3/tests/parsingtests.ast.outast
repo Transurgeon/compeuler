@@ -27,7 +27,7 @@ program
 │   │       ├── id
 │   │       ├── integer
 │   │       └── arraySize
-│   │           └── intLit
+│   │           └── 10
 │   ├── returnType
 │   │   └── integer
 │   └── funcBody
@@ -133,7 +133,6 @@ program
 │       │       └── emptySize
 │       ├── assign
 │       │   ├── id
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── 6
 │       ├── varDecl
@@ -154,7 +153,6 @@ program
 │       │               └── indiceList
 │       ├── assign
 │       │   ├── id
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── multOp
 │       │           ├── 8
@@ -162,7 +160,6 @@ program
 │       │           └── 4
 │       ├── assign
 │       │   ├── id
-│       │   ├── =
 │       │   └── relExpr
 │       │       ├── multOp
 │       │       │   ├── arithExpr
@@ -176,7 +173,6 @@ program
 │       │       └── 1
 │       ├── id
 │       ├── assign
-│       │   ├── =
 │       │   ├── arithExpr
 │       │   │   └── multOp
 │       │   │       ├── arithExpr
@@ -198,7 +194,6 @@ program
 │       │               └── 4
 │       ├── id
 │       └── assign
-│           ├── =
 │           ├── arithExpr
 │           │   └── multOp
 │           │       ├── 4
@@ -231,7 +226,6 @@ program
 │       │   │   │               ├── id
 │       │   │   │               └── indiceList
 │       │   │   └── id
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -256,7 +250,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -270,7 +263,6 @@ program
 │       │   │   │           ├── id
 │       │   │   │           └── indiceList
 │       │   │   └── id
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -289,7 +281,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -306,7 +297,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -323,7 +313,6 @@ program
 │       │   │   │           ├── id
 │       │   │   │           └── indiceList
 │       │   │   └── id
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -348,7 +337,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -368,7 +356,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -391,7 +378,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -417,7 +403,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -446,7 +431,6 @@ program
 │       │   │       └── var
 │       │   │           ├── id
 │       │   │           └── indiceList
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── var
 │       │           ├── id
@@ -497,7 +481,6 @@ program
 │           │       └── var
 │           │           ├── id
 │           │           └── indiceList
-│           ├── =
 │           └── arithExpr
 │               └── var
 │                   ├── id
@@ -523,7 +506,6 @@ program
 │       │   └── arraySize
 │       ├── assign
 │       │   ├── c
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── 5
 │       └── WHILE
@@ -564,7 +546,6 @@ program
 │               │           │       └── var
 │               │           │           ├── h
 │               │           │           └── indiceList
-│               │           ├── =
 │               │           └── arithExpr
 │               │               └── var
 │               │                   ├── r
@@ -597,7 +578,6 @@ program
 │               │   └── statBlock
 │               │       └── assign
 │               │           ├── m
-│               │           ├── =
 │               │           └── arithExpr
 │               │               └── var
 │               │                   ├── p
@@ -628,7 +608,6 @@ program
 │       │       └── indiceList
 │       ├── g
 │       ├── assign
-│       │   ├── =
 │       │   ├── arithExpr
 │       │   │   └── multOp
 │       │   │       ├── arithExpr
@@ -650,7 +629,6 @@ program
 │       │               └── 7
 │       ├── assign
 │       │   ├── pop
-│       │   ├── =
 │       │   └── arithExpr
 │       │       └── multOp
 │       │           ├── 6
@@ -658,7 +636,6 @@ program
 │       │           └── 9
 │       ├── rtt3
 │       └── assign
-│           ├── =
 │           ├── arithExpr
 │           │   └── multOp
 │           │       ├── 5
@@ -701,14 +678,12 @@ program
 │       │       │   └── arraySize
 │       │       ├── assign
 │       │       │   ├── id
-│       │       │   ├── =
 │       │       │   └── arithExpr
 │       │       │       └── var
 │       │       │           ├── id
 │       │       │           └── indiceList
 │       │       ├── assign
 │       │       │   ├── id
-│       │       │   ├── =
 │       │       │   └── arithExpr
 │       │       │       └── addOp
 │       │       │           ├── multOp
@@ -725,7 +700,6 @@ program
 │       │       │               └── indiceList
 │       │       ├── assign
 │       │       │   ├── id
-│       │       │   ├── =
 │       │       │   └── arithExpr
 │       │       │       └── addOp
 │       │       │           ├── multOp
@@ -771,7 +745,6 @@ program
 │               │   ├── dot
 │               │   │   ├── id
 │               │   │   └── id
-│               │   ├── =
 │               │   └── arithExpr
 │               │       └── var
 │               │           ├── id
@@ -780,7 +753,6 @@ program
 │               │   ├── dot
 │               │   │   ├── id
 │               │   │   └── id
-│               │   ├── =
 │               │   └── arithExpr
 │               │       └── var
 │               │           ├── id
@@ -789,7 +761,6 @@ program
 │               │   ├── dot
 │               │   │   ├── id
 │               │   │   └── id
-│               │   ├── =
 │               │   └── arithExpr
 │               │       └── var
 │               │           ├── id
@@ -824,7 +795,6 @@ program
         │       │   ├── dot
         │       │   │   ├── id
         │       │   │   └── id
-        │       │   ├── =
         │       │   └── arithExpr
         │       │       └── var
         │       │           ├── id
@@ -833,7 +803,6 @@ program
         │       │   ├── dot
         │       │   │   ├── id
         │       │   │   └── id
-        │       │   ├── =
         │       │   └── arithExpr
         │       │       └── var
         │       │           ├── id
@@ -859,12 +828,10 @@ program
                 │   └── arraySize
                 ├── assign
                 │   ├── id
-                │   ├── =
                 │   └── arithExpr
                 │       └── 4.9
                 ├── assign
                 │   ├── id
-                │   ├── =
                 │   └── arithExpr
                 │       └── addOp
                 │           ├── multOp

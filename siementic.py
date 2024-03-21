@@ -31,11 +31,7 @@ class RelationNode(Node):
 class VisibilityNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-
-class AssignNode(Node):
-    def __init__(self, name, parent=None, children=None, **kwargs):
-        super().__init__(name, parent, children, **kwargs)
-
+        
 #####################################
 # Subtree nodes
 class ArraySizeNode(Node):
@@ -53,7 +49,11 @@ class ImplNode(Node):
 class StructNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-   
+ 
+class AssignNode(Node):
+    def __init__(self, name, parent=None, children=None, **kwargs):
+        super().__init__(name, parent, children, **kwargs)
+  
 class VarDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)

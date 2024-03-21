@@ -25,14 +25,12 @@ program
         │   └── statBlock
         │       └── assign
         │           ├── x
-        │           ├── =
         │           └── arithExpr
         │               └── 5
         ├── ELSE
         │   └── statBlock
         │       └── assign
         │           ├── x
-        │           ├── =
         │           └── arithExpr
         │               └── 6
         ├── WRITE

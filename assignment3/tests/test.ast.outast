@@ -12,7 +12,7 @@ program
 │               ├── adamo
 │               ├── int
 │               └── arraySize
-│                   └── intLit
+│                   └── 5
 └── impl
     ├── id
     └── funcList
