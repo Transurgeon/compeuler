@@ -10,6 +10,7 @@ class Node(anytree.Node):
             child.accept(visitor)
         visitor.visit(self)
 
+
 #####################################
 # Leaf nodes
 class IdNode(Node):
@@ -39,7 +40,8 @@ class RelationNode(Node):
 class VisibilityNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-        
+    
+    
 #####################################
 # Subtree nodes
 class ArraySizeNode(Node):
@@ -57,6 +59,8 @@ class ImplNode(Node):
 class StructNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.symbol_table = PrettyTable()
+        self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
  
 class AssignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -65,6 +69,8 @@ class AssignNode(Node):
 class VarDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.symbol_table = PrettyTable()
+        self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
 
 class MemberDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -73,6 +79,8 @@ class MemberDeclNode(Node):
 class FunctionNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.symbol_table = PrettyTable()
+        self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         
 class InheritNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -81,6 +89,8 @@ class InheritNode(Node):
 class ProgramNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.symbol_table = PrettyTable()
+        self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
 
 class MemberListNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -189,6 +199,7 @@ class ParamNode(Node):
 class ArgParamNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+
 
 #####################################
 # Default Visitor Pattern and empty visit members
@@ -373,13 +384,17 @@ class Visitor:
     def visit(self, node):
         pass
 
+
 #####################################
 # Symbol Table Concrete Visitor
 class SymbolTableVisitor(Visitor):
     def __init__(self):
         super().__init__()
-        self.symbol_table = {}
-        
+        self.output = ""
+
+    def add_row(self, node, name, kind, type, offset, link):
+        node.symbol_table.add_row([name, kind, type, offset, link])
+
     @visitor.on('node')
     def visit(self, node):
         pass
@@ -390,14 +405,41 @@ class SymbolTableVisitor(Visitor):
 
     @visitor.when(FunctionNode)
     def visit(self, node):
-        print(node)
-        print("inside function", node.children[0].name)
+        id, params, returnType, body = node.children
+        # add func params to the symbol table
+        for p in params.children:
+            p_name, p_type, p_array = p.children
+            p_arraySize = ""
+            for s in p_array.children:
+                p_arraySize += "[]" if s.name == "emptySize" else "[" + s.name + "]"
+            self.add_row(node, p_name.name, "parameter", p_type.name + p_arraySize, 0, "")
+        # add variable declarations to the symbol table
+        for v in body.children:
+            if v.name == "varDecl":
+                v_name, v_type, v_array = v.children
+                v_arraySize = ""
+                for s in v_array.children:
+                    v_arraySize += "[]" if s.name == "emptySize" else "[" + s.name + "]"
+                self.add_row(node, v_name.name, "variable", v_type.name + v_arraySize, 0, "")
+        # update function node's symbol table and append to output
+        title = "Table Name: " + id.name + ", Returns: " + returnType.children[0].name
+        self.output += node.symbol_table.get_string(title=title) + "\n"
     
     @visitor.when(ProgramNode)
     def visit(self, node):
-        print(node)
-        print("inside visitor pattern")
-    
-    @visitor.when(StructNode)
+        self.output += "Table Name: global table" + "\n"
+        print(self.output)
+        
+    @visitor.when(VarDeclNode)
+    def visit(self, node):
+        pass
+
+#####################################
+# Type Checking Concrete Visitor
+class TypeCheckingVisitor(Visitor):
+    def __init__(self):
+        super().__init__()
+
+    @visitor.on('node')
     def visit(self, node):
         pass

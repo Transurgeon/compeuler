@@ -1,0 +1,58 @@
+program
+├── function
+│   ├── a
+│   ├── funcParams
+│   │   ├── param
+│   │   │   ├── de
+│   │   │   ├── integer
+│   │   │   └── arraySize
+│   │   │       ├── 2
+│   │   │       ├── emptySize
+│   │   │       └── emptySize
+│   │   └── param
+│   │       ├── b
+│   │       ├── integer
+│   │       └── arraySize
+│   ├── returnType
+│   │   └── integer
+│   └── funcBody
+│       ├── varDecl
+│       │   ├── i
+│       │   ├── integer
+│       │   └── arraySize
+│       ├── varDecl
+│       │   ├── j
+│       │   ├── integer
+│       │   └── arraySize
+│       └── assign
+│           ├── x
+│           └── arithExpr
+│               └── addOp
+│                   ├── var
+│                   │   ├── x
+│                   │   └── indiceList
+│                   ├── +
+│                   └── 5
+└── function
+    ├── cc
+    ├── funcParams
+    │   ├── param
+    │   │   ├── df
+    │   │   ├── integer
+    │   │   └── arraySize
+    │   │       └── emptySize
+    │   └── param
+    │       ├── l
+    │       ├── integer
+    │       └── arraySize
+    ├── returnType
+    │   └── void
+    └── funcBody
+        ├── varDecl
+        │   ├── i
+        │   ├── integer
+        │   └── arraySize
+        └── varDecl
+            ├── j
+            ├── integer
+            └── arraySize

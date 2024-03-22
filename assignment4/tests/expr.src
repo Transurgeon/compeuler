@@ -1,7 +1,10 @@
-func a ( de : integer [], b : integer ) -> void {
-    if (x > 5) 
-    then {x = 5;}
-    else {x = 6;};
-    write(5+5);
-    return(5);
+func a ( de : integer [2][][], b : integer ) -> integer {
+  let i: integer;
+  let j: integer;
+  x = x + 5;
+}
+
+func cc ( df : integer [], l : integer ) -> void {
+  let i: integer;
+  let j: integer;
 }
