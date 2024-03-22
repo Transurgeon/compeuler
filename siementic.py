@@ -1,6 +1,15 @@
-from anytree import Node
+import anytree
+import visitor
 from prettytable import PrettyTable
 table = PrettyTable()
+
+#####################################
+# Node class
+class Node(anytree.Node):
+    def accept(self, visitor):
+        for child in self.children:
+            child.accept(visitor)
+        visitor.visit(self)
 
 #####################################
 # Leaf nodes
@@ -184,5 +193,183 @@ class ArgParamNode(Node):
 
 #####################################
 # Visitor Pattern and its subclasses
-class Visitor():
-    pass
+class Visitor:
+    @visitor.on('node')
+    def visit(self, node):
+        pass
+
+    @visitor.when(IdNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(NumericNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(TypeNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(AddNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(MultNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(RelationNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(VisibilityNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ArraySizeNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FuncListNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ImplNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(StructNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(AssignNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(VarDeclNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(MemberDeclNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FunctionNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(InheritNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ProgramNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(MemberListNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FuncDeclNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FuncParamsNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ReturnTypeNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FuncBodyNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(IfNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ThenNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ElseNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(WhileNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ReadNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(WriteNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ReturnNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(DotNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FuncCallNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(IndiceListNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(VariableNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(StatBlockNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(RelExprNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ArithExprNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(AddOpNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(MultOpNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(NotNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(SignNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(EmptySizeNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(VoidNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ParamNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(ArgParamNode)
+    def visit(self, node):
+        pass
