@@ -40,8 +40,8 @@ class RelationNode(Node):
 class VisibilityNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-    
-    
+  
+   
 #####################################
 # Subtree nodes
 class ArraySizeNode(Node):
@@ -402,9 +402,17 @@ class SymbolTableVisitor(Visitor):
     def visit(self, node):
         pass
     
+    @visitor.when(ProgramNode)
+    def visit(self, node):
+        for c in node.children:
+            node.symbol_table.add_row(c.table_entry)
+        title = "Global table" 
+        self.output += node.symbol_table.get_string(title=title) + "\n"
+        
     @visitor.when(StructNode)
     def visit(self, node):
-        pass
+        id, inherits, memberList = node.children
+        node.table_entry = [id.name, "struct", None, 0, None]
 
     @visitor.when(FunctionNode)
     def visit(self, node):
@@ -420,15 +428,12 @@ class SymbolTableVisitor(Visitor):
         node.table_entry = [id.name, "function", returnType.children[0].name, 0, "Table " + id.name]
         title = "Table Name: " + id.name + ", Returns: " + returnType.children[0].name
         self.output += node.symbol_table.get_string(title=title) + "\n"
-    
-    @visitor.when(ProgramNode)
+
+    @visitor.when(ImplNode)
     def visit(self, node):
-        for c in node.children:
-            if len(c.table_entry) == 5:
-                node.symbol_table.add_row(c.table_entry)
-        title = "Global table" 
-        self.output += node.symbol_table.get_string(title=title) + "\n"
-        
+        id, funcList = node.children
+        node.table_entry = [id.name, "impl", None, 0, None]
+    
     @visitor.when(VarDeclNode)
     def visit(self, node):
         v_name, v_type, v_array = node.children
@@ -439,7 +444,7 @@ class SymbolTableVisitor(Visitor):
 
     @visitor.when(MemberDeclNode)
     def visit(self, node):
-        pass 
+        pass
 
     @visitor.when(ParamNode)
     def visit(self, node):
