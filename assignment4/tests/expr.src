@@ -5,6 +5,6 @@ func a ( de : integer [2][][], b : integer ) -> integer {
 }
 
 func cc ( df : integer [], l : integer ) -> void {
-  let i: integer;
+  let i: integer[];
   let j: integer;
 }

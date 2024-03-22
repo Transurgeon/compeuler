@@ -197,6 +197,13 @@ class Past:
         name, _ = self.lex.filename.split(".")
         UniqueDotExporter(root).to_picture(name + ".dot.png")
             
+    def printSymbolTables(self, root):
+        sym_visitor = SymbolTableVisitor()
+        root.accept(sym_visitor)
+        name, _ = self.lex.filename.split(".")
+        fout = open(name + ".outsymboltables", "w")
+        fout.write(sym_visitor.output)
+
     #####################################
     # GRAMMAR RULES 
     # START -> prog 
@@ -205,9 +212,9 @@ class Past:
         self.prog()
         self.derivation += "Parsing Completed Successfully"
         root = self.stack.pop()
-        self.printTree(root) # for A3
+        # self.printTree(root) # for A3
         self.exportGraph(root) # for A3
-        root.accept(SymbolTableVisitor())
+        self.printSymbolTables(root)
         
     # prog -> rept-prog0 
     def prog(self):
