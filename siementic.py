@@ -1,7 +1,6 @@
 import anytree
 import visitor
 from prettytable import PrettyTable
-table = PrettyTable()
 
 #####################################
 # Node class
@@ -192,7 +191,7 @@ class ArgParamNode(Node):
         super().__init__(name, parent, children, **kwargs)
 
 #####################################
-# Visitor Pattern and its subclasses
+# Default Visitor Pattern and empty visit members
 class Visitor:
     @visitor.on('node')
     def visit(self, node):
@@ -371,5 +370,34 @@ class Visitor:
         pass
 
     @visitor.when(ArgParamNode)
+    def visit(self, node):
+        pass
+
+#####################################
+# Symbol Table Concrete Visitor
+class SymbolTableVisitor(Visitor):
+    def __init__(self):
+        super().__init__()
+        self.symbol_table = {}
+        
+    @visitor.on('node')
+    def visit(self, node):
+        pass
+    
+    @visitor.when(StructNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(FunctionNode)
+    def visit(self, node):
+        print(node)
+        print("inside function", node.children[0].name)
+    
+    @visitor.when(ProgramNode)
+    def visit(self, node):
+        print(node)
+        print("inside visitor pattern")
+    
+    @visitor.when(StructNode)
     def visit(self, node):
         pass

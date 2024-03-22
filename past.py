@@ -1,8 +1,8 @@
 from lexer import LexFridman
 from kento import Token, TokenType
 from first_follow import first, follow
-from typing import List, Set
-from anytree import Node, RenderTree
+from typing import List
+from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
 from siementic import *
 
@@ -205,8 +205,9 @@ class Past:
         self.prog()
         self.derivation += "Parsing Completed Successfully"
         root = self.stack.pop()
-        self.printTree(root)
-        self.exportGraph(root)
+        # self.printTree(root) # for A3
+        # self.exportGraph(root) # for A3
+        root.accept(SymbolTableVisitor())
         
     # prog -> rept-prog0 
     def prog(self):
