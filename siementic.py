@@ -104,6 +104,7 @@ class MemberListNode(Node):
 class FuncDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.table_entry = []
 
 class FuncParamsNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -412,7 +413,20 @@ class SymbolTableVisitor(Visitor):
     @visitor.when(StructNode)
     def visit(self, node):
         id, inherits, memberList = node.children
+        # add inherits string to title if it exists
+        inherit_string = inherits.children[0].name if inherits.children else ""
+        # add members to struct symbol table
+        for m in memberList.children:
+            node.symbol_table.add_row(m.table_entry)
+        # update output and table entry
         node.table_entry = [id.name, "struct", None, 0, None]
+        title = "Table Name: " + id.name + ", Inherits: " + inherit_string
+        self.output += node.symbol_table.get_string(title=title) + "\n"
+        
+    @visitor.when(FuncDeclNode)
+    def visit(self, node):
+        id, params, returnType = node.children
+        node.table_entry = [id.name, "funcDecl", returnType.children[0].name, 0, None]
 
     @visitor.when(FunctionNode)
     def visit(self, node):
@@ -444,7 +458,11 @@ class SymbolTableVisitor(Visitor):
 
     @visitor.when(MemberDeclNode)
     def visit(self, node):
-        pass
+        visib, decl = node.children
+        # add visibility to members for the kind column
+        new_entry = decl.table_entry
+        new_entry[1] = visib.name + " " + new_entry[1]
+        node.table_entry = new_entry
 
     @visitor.when(ParamNode)
     def visit(self, node):
