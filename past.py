@@ -79,8 +79,10 @@ class Past:
         match type:
             case "id":
                 return IdNode(name)
-            case "numeric":
-                return NumericNode(name)
+            case "int":
+                return IntNode(name)
+            case "float":
+                return FloatNode(name)
             case "type":
                 return TypeNode(name)
             case "add":
@@ -204,6 +206,10 @@ class Past:
         fout = open(name + ".outsymboltables", "w")
         fout.write(sym_visitor.output)
 
+    def printSemanticErrors(self, root):
+        type_check = TypeCheckingVisitor()
+        root.accept(type_check)
+
     #####################################
     # GRAMMAR RULES 
     # START -> prog 
@@ -215,6 +221,7 @@ class Past:
         # self.printTree(root) # for A3
         self.exportGraph(root) # for A3
         self.printSymbolTables(root)
+        self.printSemanticErrors(root)
         
     # prog -> rept-prog0 
     def prog(self):
@@ -633,11 +640,11 @@ class Past:
             self.reptVariableOrFunc()
         elif self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("factor ", "intLit ")
-            self.createLeaf(self.currToken.lexeme, "numeric")
+            self.createLeaf(self.currToken.lexeme, "int")
             self.nextToken()
         elif self.matchCurr({TokenType.FLOATNUM}):
             self.updateDerivation("factor ", "floatLit ")
-            self.createLeaf(self.currToken.lexeme, "numeric")
+            self.createLeaf(self.currToken.lexeme, "float")
             self.nextToken()
         elif self.matchCurr({TokenType.OPENPAR}):
             self.updateDerivation("factor ", "( arithExpr ) ")
@@ -794,7 +801,7 @@ class Past:
     def arraySize2(self):
         if self.matchCurr({TokenType.INTNUM}):
             self.updateDerivation("arraySize2 ", "intLit ] ")
-            self.createLeaf(self.currToken.lexeme, "numeric")
+            self.createLeaf(self.currToken.lexeme, "int")
             self.nextToken()
             self.match({TokenType.CLOSESQBR})
         else:

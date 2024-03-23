@@ -16,19 +16,26 @@ class Node(anytree.Node):
 class IdNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
-class NumericNode(Node):
+class IntNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = "int"
+
+class FloatNode(Node):
+    def __init__(self, name, parent=None, children=None, **kwargs):
+        super().__init__(name, parent, children, **kwargs)
+        self.type = "float"
 
 class TypeNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-        
+
 class AddNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-        
+
 class MultNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
@@ -36,11 +43,11 @@ class MultNode(Node):
 class RelationNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-    
+
 class VisibilityNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-  
+
    
 #####################################
 # Subtree nodes
@@ -70,7 +77,8 @@ class StructNode(Node):
 class AssignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-  
+        self.type = ""
+
 class VarDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
@@ -147,10 +155,12 @@ class WriteNode(Node):
 class ReturnNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class DotNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class FuncCallNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -163,6 +173,7 @@ class IndiceListNode(Node):
 class VariableNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class StatBlockNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -171,18 +182,22 @@ class StatBlockNode(Node):
 class RelExprNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class ArithExprNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class AddOpNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class MultOpNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class NotNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -221,10 +236,14 @@ class Visitor:
     def visit(self, node):
         pass
 
-    @visitor.when(NumericNode)
+    @visitor.when(IntNode)
     def visit(self, node):
         pass
 
+    @visitor.when(FloatNode)
+    def visit(self, node):
+        pass
+    
     @visitor.when(TypeNode)
     def visit(self, node):
         pass
@@ -490,7 +509,52 @@ class SymbolTableVisitor(Visitor):
 class TypeCheckingVisitor(Visitor):
     def __init__(self):
         super().__init__()
+        self.errors = ""
 
     @visitor.on('node')
+    def visit(self, node):
+        pass
+    
+    @visitor.when(MultOpNode)
+    def visit(self, node):
+        left, _, right = node.children
+        if left.type == right.type:
+            node.type = left.type
+        else:
+            print("error")
+     
+    @visitor.when(AddOpNode)
+    def visit(self, node):
+        left, _, right = node.children
+        if left.type == right.type:
+            node.type = left.type
+        else:
+            print("error")
+    
+    @visitor.when(ArithExprNode)
+    def visit(self, node):
+        pass
+    
+    @visitor.when(RelExprNode)
+    def visit(self, node):
+        pass
+
+    @visitor.when(VariableNode)
+    def visit(self, node):
+        pass
+    
+    @visitor.when(AssignNode)
+    def visit(self, node):
+        left, right = node.children
+        if left.type == right.type:
+            node.type = left.type
+        else:
+            print("error")
+        
+    @visitor.when(DotNode)
+    def visit(self, node):
+        pass
+    
+    @visitor.when(ReturnNode)
     def visit(self, node):
         pass
