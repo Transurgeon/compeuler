@@ -56,8 +56,8 @@ class ImplNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
         self.symbol_table = PrettyTable()
-        self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
-        self.table_entry = []
+        self.table_output = ""
+        self.struct_name = ""
 
 class StructNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -65,6 +65,7 @@ class StructNode(Node):
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         self.table_entry = []
+        self.table_output = ""
  
 class AssignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -86,6 +87,7 @@ class FunctionNode(Node):
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         self.table_entry = []
+        self.table_output = ""
         
 class InheritNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -405,10 +407,18 @@ class SymbolTableVisitor(Visitor):
     
     @visitor.when(ProgramNode)
     def visit(self, node):
+        struct_dict = {}
         for c in node.children:
-            node.symbol_table.add_row(c.table_entry)
-        title = "Global table" 
-        self.output += node.symbol_table.get_string(title=title) + "\n"
+            if c.name == "struct":
+                node.symbol_table.add_row(c.table_entry)
+                struct_dict[c.table_entry[0]] = c.table_output
+            elif c.name == "impl":
+                self.output += struct_dict[c.struct_name] + c.table_output
+            else:
+                node.symbol_table.add_row(c.table_entry)
+                self.output += c.table_output
+        title = "Global table"
+        self.output = node.symbol_table.get_string(title=title) + "\n" + self.output
         
     @visitor.when(StructNode)
     def visit(self, node):
@@ -419,9 +429,9 @@ class SymbolTableVisitor(Visitor):
         for m in memberList.children:
             node.symbol_table.add_row(m.table_entry)
         # update output and table entry
-        node.table_entry = [id.name, "struct", None, 0, None]
+        node.table_entry = [id.name, "struct", None, 0, "Table " + id.name]
         title = "Table Name: " + id.name + ", Inherits: " + inherit_string
-        self.output += node.symbol_table.get_string(title=title) + "\n"
+        node.table_output += node.symbol_table.get_string(title=title) + "\n"
         
     @visitor.when(FuncDeclNode)
     def visit(self, node):
@@ -441,12 +451,14 @@ class SymbolTableVisitor(Visitor):
         # update function node's symbol table and append to output
         node.table_entry = [id.name, "function", returnType.children[0].name, 0, "Table " + id.name]
         title = "Table Name: " + id.name + ", Returns: " + returnType.children[0].name
-        self.output += node.symbol_table.get_string(title=title) + "\n"
+        node.table_output += node.symbol_table.get_string(title=title) + "\n"
 
     @visitor.when(ImplNode)
     def visit(self, node):
         id, funcList = node.children
-        node.table_entry = [id.name, "impl", None, 0, None]
+        node.struct_name = id.name
+        for f in funcList.children:
+            node.table_output += f.table_output
     
     @visitor.when(VarDeclNode)
     def visit(self, node):
