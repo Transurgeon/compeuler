@@ -78,98 +78,101 @@ class Past:
         # leaf nodes have different names
         match type:
             case "id":
-                return IdNode(name)
+                node = IdNode(name)
             case "int":
-                return IntNode(name)
+                node = IntNode(name)
             case "float":
-                return FloatNode(name)
+                node = FloatNode(name)
             case "type":
-                return TypeNode(name)
+                node = TypeNode(name)
             case "add":
-                return AddNode(name)
+                node = AddNode(name)
             case "mult":
-                return MultNode(name)
+                node = MultNode(name)
             case "relation":
-                return RelationNode(name)
+                node = RelationNode(name)
             case "visibility":
-                return VisibilityNode(name)
+                node = VisibilityNode(name)
             case "sign":
-                return SignNode(name)
-        match name:
-            case "arraySize":
-                return ArraySizeNode(name)
-            case "funcList":
-                return FuncListNode(name)
-            case "impl":
-                return ImplNode(name)
-            case "struct":
-                return StructNode(name)
-            case "assign":
-                return AssignNode(name)
-            case "varDecl":
-                return VarDeclNode(name)
-            case "memberDecl":
-                return MemberDeclNode(name)
-            case "funcDecl":
-                return FuncDeclNode(name)
-            case "function":
-                return FunctionNode(name)
-            case "funcParams":
-                return FuncParamsNode(name)
-            case "funcBody":
-                return FuncBodyNode(name)
-            case "funcCall":
-                return FuncCallNode(name)
-            case "inherits":
-                return InheritNode(name)
-            case "program":
-                return ProgramNode(name)
-            case "memberList":
-                return MemberListNode(name)
-            case "returnType":
-                return ReturnTypeNode(name)
-            case "IF":
-                return IfNode(name)
-            case "THEN":
-                return ThenNode(name)
-            case "ELSE":
-                return ElseNode(name)
-            case "WHILE":
-                return WhileNode(name)
-            case "READ":
-                return ReadNode(name)
-            case "WRITE":
-                return WriteNode(name)
-            case "RETURN":
-                return ReturnNode(name)
-            case "dot":
-                return DotNode(name)
-            case "not":
-                return NotNode(name)
-            case "indiceList":
-                return IndiceListNode(name)
-            case "var":
-                return VariableNode(name)
-            case "statBlock":
-                return StatBlockNode(name)
-            case "relExpr":
-                return RelExprNode(name)
-            case "arithExpr":
-                return ArithExprNode(name)
-            case "addOp":
-                return AddOpNode(name)
-            case "multOp":
-                return MultOpNode(name)
-            case "emptySize":
-                return EmptySizeNode(name)
-            case "void":
-                return VoidNode(name)
-            case "param":
-                return ParamNode(name)
-            case "aParams":
-                return ArgParamNode(name)
+                node = SignNode(name)
             case _:
-                return Node(name)
+                match name:
+                    case "arraySize":
+                        node = ArraySizeNode(name)
+                    case "funcList":
+                        node = FuncListNode(name)
+                    case "impl":
+                        node = ImplNode(name)
+                    case "struct":
+                        node = StructNode(name)
+                    case "assign":
+                        node = AssignNode(name)
+                    case "varDecl":
+                        node = VarDeclNode(name)
+                    case "memberDecl":
+                        node = MemberDeclNode(name)
+                    case "funcDecl":
+                        node = FuncDeclNode(name)
+                    case "function":
+                        node = FunctionNode(name)
+                    case "funcParams":
+                        node = FuncParamsNode(name)
+                    case "funcBody":
+                        node = FuncBodyNode(name)
+                    case "funcCall":
+                        node = FuncCallNode(name)
+                    case "inherits":
+                        node = InheritNode(name)
+                    case "program":
+                        node = ProgramNode(name)
+                    case "memberList":
+                        node = MemberListNode(name)
+                    case "node =Type":
+                        node = ReturnTypeNode(name)
+                    case "IF":
+                        node = IfNode(name)
+                    case "THEN":
+                        node = ThenNode(name)
+                    case "ELSE":
+                        node = ElseNode(name)
+                    case "WHILE":
+                        node = WhileNode(name)
+                    case "READ":
+                        node = ReadNode(name)
+                    case "WRITE":
+                        node = WriteNode(name)
+                    case "RETURN":
+                        node = ReturnNode(name)
+                    case "dot":
+                        node = DotNode(name)
+                    case "not":
+                        node = NotNode(name)
+                    case "indiceList":
+                        node = IndiceListNode(name)
+                    case "var":
+                        node = VariableNode(name)
+                    case "statBlock":
+                        node = StatBlockNode(name)
+                    case "relExpr":
+                        node = RelExprNode(name)
+                    case "arithExpr":
+                        node = ArithExprNode(name)
+                    case "addOp":
+                        node = AddOpNode(name)
+                    case "multOp":
+                        node = MultOpNode(name)
+                    case "emptySize":
+                        node = EmptySizeNode(name)
+                    case "void":
+                        node = VoidNode(name)
+                    case "param":
+                        node = ParamNode(name)
+                    case "aParams":
+                        node = ArgParamNode(name)
+                    case _:
+                        node = Node(name)
+        node.line = self.currToken.line
+        return node
                 
     def createLeaf(self, name: str, type = ""):
         self.stack.append(self.createNode(name, type))

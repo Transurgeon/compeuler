@@ -510,18 +510,37 @@ class TypeCheckingVisitor(Visitor):
     def __init__(self):
         super().__init__()
         self.errors = ""
-
+        self.global_table = PrettyTable()
+        self.func_table = {}
+        self.struct_table = {}
+        self.local_scope = {}
+        
     @visitor.on('node')
     def visit(self, node):
         pass
     
+    # symbol table dictionaries
+    @visitor.when(ProgramNode)
+    def visit(self, node):
+        pass
+    
+    @visitor.when(StructNode)
+    def visit(self, node):
+        pass
+    
+    @visitor.when(FunctionNode)
+    def visit(self, node):
+        pass
+    
+    # type checking visitors
     @visitor.when(MultOpNode)
     def visit(self, node):
         left, _, right = node.children
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error")
+            print("error on line: ", node.line)
+            print("mismatch between nodes of type: ", left.name, right.name)
      
     @visitor.when(AddOpNode)
     def visit(self, node):
@@ -529,7 +548,8 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error")
+            print("error on line: ", node.line)
+            print("mismatch between nodes of type: ", left.name, right.name)
     
     @visitor.when(ArithExprNode)
     def visit(self, node):
@@ -537,7 +557,12 @@ class TypeCheckingVisitor(Visitor):
     
     @visitor.when(RelExprNode)
     def visit(self, node):
-        pass
+        left, _, right = node.children
+        if left.type == right.type:
+            node.type = left.type
+        else:
+            print("error on line: ", node.line)
+            print("mismatch between nodes of type: ", left.name, right.name)
 
     @visitor.when(VariableNode)
     def visit(self, node):
@@ -549,7 +574,8 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error")
+            print("error on line: ", node.line)
+            print("mismatch between nodes of type: ", left.name, right.name)
         
     @visitor.when(DotNode)
     def visit(self, node):
