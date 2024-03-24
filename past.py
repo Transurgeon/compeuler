@@ -212,6 +212,9 @@ class Past:
     def printSemanticErrors(self, root):
         type_check = TypeCheckingVisitor()
         root.accept(type_check)
+        name, _ = self.lex.filename.split(".")
+        fout = open(name + ".outsemanticerrors", "w")
+        fout.write(type_check.errors)
 
     #####################################
     # GRAMMAR RULES 

@@ -1,7 +1,7 @@
 func a ( de : integer [2][][], b : integer ) -> integer {
   let i: integer;
   let j: integer;
-  x = x + 5;
+  i = j + 5;
 }
 
 func cc ( df : integer [], l : integer ) -> void {

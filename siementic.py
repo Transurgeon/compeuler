@@ -21,7 +21,7 @@ class IdNode(Node):
 class IntNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
-        self.type = "int"
+        self.type = "integer"
 
 class FloatNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -73,6 +73,8 @@ class StructNode(Node):
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         self.table_entry = []
         self.table_output = ""
+        self.struct_name = ""
+        self.type_dict = {}
  
 class AssignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -96,6 +98,7 @@ class FunctionNode(Node):
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         self.table_entry = []
         self.table_output = ""
+        self.type_dict = {}
         
 class InheritNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -106,6 +109,7 @@ class ProgramNode(Node):
         super().__init__(name, parent, children, **kwargs)
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
+        self.type_dict = {}
 
 class MemberListNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -430,7 +434,7 @@ class SymbolTableVisitor(Visitor):
         for c in node.children:
             if c.name == "struct":
                 node.symbol_table.add_row(c.table_entry)
-                struct_dict[c.table_entry[0]] = c.table_output
+                struct_dict[c.struct_name] = c.table_output
             elif c.name == "impl":
                 self.output += struct_dict[c.struct_name] + c.table_output
             else:
@@ -447,8 +451,10 @@ class SymbolTableVisitor(Visitor):
         # add members to struct symbol table
         for m in memberList.children:
             node.symbol_table.add_row(m.table_entry)
+            node.type_dict[m.table_entry[0]] = m.table_entry[2]
         # update output and table entry
         node.table_entry = [id.name, "struct", None, 0, "Table " + id.name]
+        node.struct_name = id.name
         title = "Table Name: " + id.name + ", Inherits: " + inherit_string
         node.table_output += node.symbol_table.get_string(title=title) + "\n"
         
@@ -463,10 +469,12 @@ class SymbolTableVisitor(Visitor):
         # add func params to the symbol table
         for p in params.children:
             node.symbol_table.add_row(p.table_entry)
+            node.type_dict[p.table_entry[0]] = p.table_entry[2]
         # add variable declarations to the symbol table
         for v in body.children:
             if v.name == "varDecl":
                 node.symbol_table.add_row(v.table_entry)
+                node.type_dict[v.table_entry[0]] = v.table_entry[2]
         # update function node's symbol table and append to output
         node.table_entry = [id.name, "function", returnType.children[0].name, 0, "Table " + id.name]
         title = "Table Name: " + id.name + ", Returns: " + returnType.children[0].name
@@ -511,27 +519,45 @@ class TypeCheckingVisitor(Visitor):
         super().__init__()
         self.errors = ""
         self.global_table = PrettyTable()
-        self.func_table = {}
         self.struct_table = {}
-        self.local_scope = {}
+        self.func_table = {}
+        self.struct_scope = {}
+        
+    def get_entry_type(self, entry_name):
+        try:
+            type = self.func_table[entry_name]
+            return type
+        except:
+            pass
+        
+        try:
+            type = self.struct_scope[entry_name]
+            return type
+        except:
+            pass
         
     @visitor.on('node')
     def visit(self, node):
         pass
     
-    # symbol table dictionaries
+    # retrieve symbol table dictionaries
     @visitor.when(ProgramNode)
     def visit(self, node):
-        pass
+        self.global_table = node.symbol_table
     
     @visitor.when(StructNode)
     def visit(self, node):
-        pass
+        self.struct_table[node.struct_name] = node.type_dict
     
     @visitor.when(FunctionNode)
     def visit(self, node):
-        pass
+        print(node.type_dict)
+        self.func_table = node.type_dict
     
+    @visitor.when(ImplNode)
+    def visit(self, node):
+        self.struct_scope = self.struct_table[node.struct_name]
+
     # type checking visitors
     @visitor.when(MultOpNode)
     def visit(self, node):
@@ -539,8 +565,8 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error on line: ", node.line)
-            print("mismatch between nodes of type: ", left.name, right.name)
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
      
     @visitor.when(AddOpNode)
     def visit(self, node):
@@ -548,12 +574,12 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error on line: ", node.line)
-            print("mismatch between nodes of type: ", left.name, right.name)
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
     
     @visitor.when(ArithExprNode)
     def visit(self, node):
-        pass
+        node.type = node.children[0].type
     
     @visitor.when(RelExprNode)
     def visit(self, node):
@@ -561,12 +587,13 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error on line: ", node.line)
-            print("mismatch between nodes of type: ", left.name, right.name)
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
 
     @visitor.when(VariableNode)
     def visit(self, node):
-        pass
+        id, indiceList = node.children
+        node.type = self.get_entry_type(id.name)
     
     @visitor.when(AssignNode)
     def visit(self, node):
@@ -574,8 +601,8 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
-            print("error on line: ", node.line)
-            print("mismatch between nodes of type: ", left.name, right.name)
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
         
     @visitor.when(DotNode)
     def visit(self, node):
