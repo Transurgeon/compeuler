@@ -75,6 +75,7 @@ class StructNode(Node):
         self.table_output = ""
         self.struct_name = ""
         self.type_dict = {}
+        self.curr_offset = 0
  
 class AssignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -85,6 +86,7 @@ class VarDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
         self.table_entry = []
+        self.mem_size = 0
 
 class MemberDeclNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -99,6 +101,7 @@ class FunctionNode(Node):
         self.table_entry = []
         self.table_output = ""
         self.type_dict = {}
+        self.curr_offset = 0
         
 class InheritNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -473,6 +476,9 @@ class SymbolTableVisitor(Visitor):
         # add variable declarations to the symbol table
         for v in body.children:
             if v.name == "varDecl":
+                # update both the current offset and the table entry
+                node.curr_offset = node.curr_offset + v.mem_size
+                v.table_entry[3] = node.curr_offset
                 node.symbol_table.add_row(v.table_entry)
                 node.type_dict[v.table_entry[0]] = v.table_entry[2]
         # update function node's symbol table and append to output
@@ -493,7 +499,11 @@ class SymbolTableVisitor(Visitor):
         v_arraySize = ""
         for s in v_array.children:
             v_arraySize += "[]" if s.name == "emptySize" else "[" + s.name + "]"
-        node.table_entry = [v_name.name, "variable", v_type.name + v_arraySize, 0, None]
+        if v_type.name == "integer":
+            node.mem_size = 4
+        elif v_type.name == "float":
+            node.mem_size = 8
+        node.table_entry = [v_name.name, "variable", v_type.name + v_arraySize, node.mem_size, None]
 
     @visitor.when(MemberDeclNode)
     def visit(self, node):
@@ -522,20 +532,7 @@ class TypeCheckingVisitor(Visitor):
         self.struct_table = {}
         self.func_table = {}
         self.struct_scope = {}
-        
-    def get_entry_type(self, entry_name):
-        try:
-            type = self.func_table[entry_name]
-            return type
-        except:
-            pass
-        
-        try:
-            type = self.struct_scope[entry_name]
-            return type
-        except:
-            pass
-        
+
     @visitor.on('node')
     def visit(self, node):
         pass
@@ -551,7 +548,6 @@ class TypeCheckingVisitor(Visitor):
     
     @visitor.when(FunctionNode)
     def visit(self, node):
-        print(node.type_dict)
         self.func_table = node.type_dict
     
     @visitor.when(ImplNode)
@@ -593,7 +589,7 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(VariableNode)
     def visit(self, node):
         id, indiceList = node.children
-        node.type = self.get_entry_type(id.name)
+        pass
     
     @visitor.when(AssignNode)
     def visit(self, node):
@@ -611,3 +607,9 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(ReturnNode)
     def visit(self, node):
         pass
+    
+
+#####################################
+# Code Generation Visitor
+class CodeGenerationVisitor(Visitor):
+    pass
