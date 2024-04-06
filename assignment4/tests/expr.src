@@ -1,6 +1,9 @@
 func a ( de : integer [2][][], b : integer ) -> integer {
   let i: integer;
   let j: integer;
+  let k: integer[5][2][3];
+  let b: float;
+  let c: float[2];
   i = j + 5;
 }
 

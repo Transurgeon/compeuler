@@ -497,12 +497,16 @@ class SymbolTableVisitor(Visitor):
     def visit(self, node):
         v_name, v_type, v_array = node.children
         v_arraySize = ""
-        for s in v_array.children:
-            v_arraySize += "[]" if s.name == "emptySize" else "[" + s.name + "]"
         if v_type.name == "integer":
             node.mem_size = 4
         elif v_type.name == "float":
             node.mem_size = 8
+        for s in v_array.children:
+            if s.name == "emptySize":
+                v_arraySize += "[]" 
+            else:
+                v_arraySize += "[" + s.name + "]"
+                node.mem_size *= int(s.name)
         node.table_entry = [v_name.name, "variable", v_type.name + v_arraySize, node.mem_size, None]
 
     @visitor.when(MemberDeclNode)
