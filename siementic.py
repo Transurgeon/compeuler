@@ -82,6 +82,7 @@ class StructNode(Node):
         super().__init__(name, parent, children, **kwargs)
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
+        self.symbol_data = []
         self.table_entry = []
         self.table_output = ""
         self.struct_name = ""
@@ -109,6 +110,7 @@ class FunctionNode(Node):
         super().__init__(name, parent, children, **kwargs)
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
+        self.symbol_data = []
         self.table_entry = []
         self.table_output = ""
         self.type_dict = {}
@@ -123,6 +125,7 @@ class ProgramNode(Node):
         super().__init__(name, parent, children, **kwargs)
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
+        self.symbol_data = []
         self.type_dict = {}
 
 class MemberListNode(Node):
@@ -447,13 +450,16 @@ class SymbolTableVisitor(Visitor):
         struct_dict = {}
         for c in node.children:
             if c.name == "struct":
-                node.symbol_table.add_row(c.table_entry)
+                node.symbol_data.append(c.table_entry)
                 struct_dict[c.struct_name] = c.table_output
             elif c.name == "impl":
                 self.output += struct_dict[c.struct_name] + c.table_output
             else:
-                node.symbol_table.add_row(c.table_entry)
+                node.symbol_data.append(c.table_entry)
                 self.output += c.table_output
+        # update symbol table with data
+        node.symbol_table.add_rows(node.symbol_data)
+        # update output
         title = "Global table"
         self.output = node.symbol_table.get_string(title=title) + "\n" + self.output
         
@@ -464,8 +470,10 @@ class SymbolTableVisitor(Visitor):
         inherit_string = inherits.children[0].name if inherits.children else ""
         # add members to struct symbol table
         for m in memberList.children:
-            node.symbol_table.add_row(m.table_entry)
+            node.symbol_data.append(m.table_entry)
             node.type_dict[m.table_entry[0]] = m.table_entry[2]
+        # update symbol table with data
+        node.symbol_table.add_rows(node.symbol_data)
         # update output and table entry
         node.table_entry = [id.name, "struct", None, 0, "Table " + id.name]
         node.struct_name = id.name
@@ -482,7 +490,7 @@ class SymbolTableVisitor(Visitor):
         id, params, returnType, body = node.children
         # add func params to the symbol table
         for p in params.children:
-            node.symbol_table.add_row(p.table_entry)
+            node.symbol_data.append(p.table_entry)
             node.type_dict[p.table_entry[0]] = p.table_entry[2]
         # add variable declarations to the symbol table
         for v in body.children:
@@ -490,8 +498,10 @@ class SymbolTableVisitor(Visitor):
                 # update both the current offset and the table entry
                 node.curr_offset = node.curr_offset + v.mem_size
                 v.table_entry[3] = node.curr_offset
-                node.symbol_table.add_row(v.table_entry)
+                node.symbol_data.append(v.table_entry)
                 node.type_dict[v.table_entry[0]] = v.table_entry[2]
+        # update symbol table with data
+        node.symbol_table.add_rows(node.symbol_data)
         # update function node's symbol table and append to output
         node.table_entry = [id.name, "function", returnType.children[0].name, 0, "Table " + id.name]
         title = "Table Name: " + id.name + ", Returns: " + returnType.children[0].name
