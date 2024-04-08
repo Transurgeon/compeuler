@@ -5,11 +5,22 @@ from prettytable import PrettyTable
 #####################################
 # Node class
 class Node(anytree.Node):
+    """
     def accept(self, visitor):
         for child in self.children:
             child.accept(visitor)
         visitor.visit(self)
-
+    """
+    def accept(self, visitor):
+        # allow for pre visit children node function calls
+        method_name = 'pre_visit_' + type(self).__name__
+        visit_method = getattr(visitor, method_name, None)
+        if visit_method:
+            visit_method(self)
+        # otherwise accept the children the standard way
+        for child in self.children:
+            child.accept(visitor)
+        visitor.visit(self)
 
 #####################################
 # Leaf nodes
@@ -541,18 +552,30 @@ class TypeCheckingVisitor(Visitor):
     def visit(self, node):
         pass
     
+    def pre_visit_ProgramNode(self, node):
+        self.global_table = node.symbol_table
+    
     # retrieve symbol table dictionaries
     @visitor.when(ProgramNode)
     def visit(self, node):
         self.global_table = node.symbol_table
     
+    def pre_visit_StructNode(self, node):
+        self.struct_table[node.struct_name] = node.type_dict
+    
     @visitor.when(StructNode)
     def visit(self, node):
         self.struct_table[node.struct_name] = node.type_dict
     
+    def pre_visit_FunctionNode(self, node):
+        self.func_table = node.type_dict
+    
     @visitor.when(FunctionNode)
     def visit(self, node):
         self.func_table = node.type_dict
+
+    def pre_visit_ImplNode(self, node):
+        self.struct_scope = self.struct_table[node.struct_name]
     
     @visitor.when(ImplNode)
     def visit(self, node):
@@ -593,6 +616,7 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(VariableNode)
     def visit(self, node):
         id, indiceList = node.children
+        print(self.func_table)
         pass
     
     @visitor.when(AssignNode)
