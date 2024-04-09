@@ -86,7 +86,6 @@ class StructNode(Node):
         self.table_entry = []
         self.table_output = ""
         self.struct_name = ""
-        self.type_dict = {}
         self.curr_offset = 0
  
 class AssignNode(Node):
@@ -113,7 +112,6 @@ class FunctionNode(Node):
         self.symbol_data = []
         self.table_entry = []
         self.table_output = ""
-        self.type_dict = {}
         self.curr_offset = 0
         
 class InheritNode(Node):
@@ -126,7 +124,6 @@ class ProgramNode(Node):
         self.symbol_table = PrettyTable()
         self.symbol_table.field_names = ['Name', 'Kind', 'Type', 'Offset', 'Link']
         self.symbol_data = []
-        self.type_dict = {}
 
 class MemberListNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -471,7 +468,6 @@ class SymbolTableVisitor(Visitor):
         # add members to struct symbol table
         for m in memberList.children:
             node.symbol_data.append(m.table_entry)
-            node.type_dict[m.table_entry[0]] = m.table_entry[2]
         # update symbol table with data
         node.symbol_table.add_rows(node.symbol_data)
         # update output and table entry
@@ -491,7 +487,6 @@ class SymbolTableVisitor(Visitor):
         # add func params to the symbol table
         for p in params.children:
             node.symbol_data.append(p.table_entry)
-            node.type_dict[p.table_entry[0]] = p.table_entry[2]
         # add variable declarations to the symbol table
         for v in body.children:
             if v.name == "varDecl":
@@ -499,7 +494,6 @@ class SymbolTableVisitor(Visitor):
                 node.curr_offset = node.curr_offset + v.mem_size
                 v.table_entry[3] = node.curr_offset
                 node.symbol_data.append(v.table_entry)
-                node.type_dict[v.table_entry[0]] = v.table_entry[2]
         # update symbol table with data
         node.symbol_table.add_rows(node.symbol_data)
         # update function node's symbol table and append to output
@@ -553,44 +547,42 @@ class TypeCheckingVisitor(Visitor):
     def __init__(self):
         super().__init__()
         self.errors = ""
-        self.global_table = PrettyTable()
-        self.struct_table = {}
-        self.func_table = {}
-        self.struct_scope = {}
+        self.global_scope = []
+        self.struct_scope = []
+        self.func_scope = []
 
     @visitor.on('node')
     def visit(self, node):
         pass
     
+    # pre visit nodes to get symbol table information
     def pre_visit_ProgramNode(self, node):
-        self.global_table = node.symbol_table
-    
-    # retrieve symbol table dictionaries
-    @visitor.when(ProgramNode)
-    def visit(self, node):
-        self.global_table = node.symbol_table
+        self.global_scope = node.symbol_data
     
     def pre_visit_StructNode(self, node):
-        self.struct_table[node.struct_name] = node.type_dict
-    
-    @visitor.when(StructNode)
-    def visit(self, node):
-        self.struct_table[node.struct_name] = node.type_dict
+        self.struct_scope = node.symbol_data
     
     def pre_visit_FunctionNode(self, node):
-        self.func_table = node.type_dict
+        self.func_scope = node.symbol_data
     
-    @visitor.when(FunctionNode)
-    def visit(self, node):
-        self.func_table = node.type_dict
-
     def pre_visit_ImplNode(self, node):
-        self.struct_scope = self.struct_table[node.struct_name]
+        pass
     
-    @visitor.when(ImplNode)
-    def visit(self, node):
-        self.struct_scope = self.struct_table[node.struct_name]
-
+    # helper function to get type of variable in data
+    def get_var_dtype(self, name):
+        # check for matching dtype in function scope first
+        for row in self.func_scope:
+            if row[0] == name:
+                return row[2]
+        # check for matching dtype in struct scope second
+        for row in self.struct_scope:
+            if row[0] == name:
+                return row[2]
+        # finally check for matching dtype in global scope
+        for row in self.global_scope:
+            if row[0] == name:
+                return row[2]
+        
     # type checking visitors
     @visitor.when(MultOpNode)
     def visit(self, node):
@@ -612,7 +604,8 @@ class TypeCheckingVisitor(Visitor):
     
     @visitor.when(ArithExprNode)
     def visit(self, node):
-        node.type = node.children[0].type
+        # self.errors += str(node.children[0]) + "\n"
+        pass
     
     @visitor.when(RelExprNode)
     def visit(self, node):
@@ -626,8 +619,7 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(VariableNode)
     def visit(self, node):
         id, indiceList = node.children
-        print(self.func_table)
-        pass
+        node.type = self.get_var_dtype(id.name)
     
     @visitor.when(AssignNode)
     def visit(self, node):
@@ -635,6 +627,7 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
+            self.errors += left.type + " " + right.type + "\n"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
         
@@ -645,9 +638,3 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(ReturnNode)
     def visit(self, node):
         pass
-    
-
-#####################################
-# Code Generation Visitor
-class CodeGenerationVisitor(Visitor):
-    pass
