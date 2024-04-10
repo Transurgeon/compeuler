@@ -183,6 +183,7 @@ class DotNode(Node):
 class FuncCallNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class IndiceListNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -224,6 +225,7 @@ class NotNode(Node):
 class SignNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
+        self.type = ""
 
 class EmptySizeNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -582,6 +584,7 @@ class TypeCheckingVisitor(Visitor):
         for row in self.global_scope:
             if row[0] == name:
                 return row[2]
+        return "variable undeclared in function scope"
         
     # type checking visitors
     @visitor.when(MultOpNode)
@@ -604,8 +607,7 @@ class TypeCheckingVisitor(Visitor):
     
     @visitor.when(ArithExprNode)
     def visit(self, node):
-        # self.errors += str(node.children[0]) + "\n"
-        pass
+        node.type = node.children[0].type
     
     @visitor.when(RelExprNode)
     def visit(self, node):
@@ -633,8 +635,27 @@ class TypeCheckingVisitor(Visitor):
         
     @visitor.when(DotNode)
     def visit(self, node):
-        pass
+        left, right = node.children
+        node.type = self.get_var_dtype(right.name)
     
     @visitor.when(ReturnNode)
     def visit(self, node):
         pass
+
+    @visitor.when(IdNode)
+    def visit(self, node):
+        node.type = self.get_var_dtype(node.name)
+        
+    @visitor.when(FuncCallNode)
+    def visit(self, node):
+        func, paramList = node.children
+        func_params = [child.type for child in paramList.children]
+        self.errors += str(func_params) + "\n"
+        
+        # check for functions declared in class scope
+        if node.parent.name == 'dot':
+            self.errors += str(node.parent) + "\n"
+            
+        # check for free functions declared in function scope
+        else:
+            pass
