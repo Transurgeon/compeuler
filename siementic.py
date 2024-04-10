@@ -439,6 +439,8 @@ class SymbolTableVisitor(Visitor):
     def __init__(self):
         super().__init__()
         self.output = ""
+        self.errors = ""
+        self.warnings = ""
 
     @visitor.on('node')
     def visit(self, node):
@@ -584,7 +586,7 @@ class TypeCheckingVisitor(Visitor):
         for row in self.global_scope:
             if row[0] == name:
                 return row[2]
-        return "variable undeclared in function scope"
+        return "variable undeclared error"
         
     # type checking visitors
     @visitor.when(MultOpNode)
@@ -593,6 +595,7 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
+            node.type = "typeerror"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
      
@@ -602,6 +605,7 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
+            node.type = "typeerror"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
     
@@ -615,6 +619,7 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
+            node.type = "typeerror"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
 
@@ -629,6 +634,7 @@ class TypeCheckingVisitor(Visitor):
         if left.type == right.type:
             node.type = left.type
         else:
+            node.type = "typeerror"
             self.errors += left.type + " " + right.type + "\n"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
@@ -637,10 +643,6 @@ class TypeCheckingVisitor(Visitor):
     def visit(self, node):
         left, right = node.children
         node.type = self.get_var_dtype(right.name)
-    
-    @visitor.when(ReturnNode)
-    def visit(self, node):
-        pass
 
     @visitor.when(IdNode)
     def visit(self, node):
