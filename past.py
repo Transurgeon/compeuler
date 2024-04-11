@@ -5,6 +5,7 @@ from typing import List
 from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
 from siementic import *
+from moongen import MoonGenerationVisitor
 
 class Past:
     def __init__(self, lexer: LexFridman) -> None:
@@ -216,6 +217,14 @@ class Past:
         fout = open(name + ".outsemanticerrors", "w")
         fout.write(type_check.errors)
 
+    def printMoonCode(self, root):
+        moon_gen = MoonGenerationVisitor()
+        root.accept(moon_gen)
+        name, _ = self.lex.filename.split(".")
+        fout = open(name + ".moon", "w")
+        fout.write(moon_gen.moonExecCode)
+        fout.write(moon_gen.moonDataCode)
+        
     #####################################
     # GRAMMAR RULES 
     # START -> prog 
@@ -228,6 +237,7 @@ class Past:
         self.exportGraph(root) # for A3
         self.printSymbolTables(root)
         self.printSemanticErrors(root)
+        self.printMoonCode(root)
         
     # prog -> rept-prog0 
     def prog(self):

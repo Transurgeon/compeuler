@@ -5,12 +5,10 @@ from prettytable import PrettyTable
 #####################################
 # Node class
 class Node(anytree.Node):
-    """
-    def accept(self, visitor):
-        for child in self.children:
-            child.accept(visitor)
-        visitor.visit(self)
-    """
+    def __init__(self, name, parent=None, children=None, **kwargs):
+        super().__init__(name, parent, children, **kwargs)
+        self.moonVarName = ""
+        
     def accept(self, visitor):
         # allow for pre visit children node function calls
         method_name = 'pre_visit_' + type(self).__name__
@@ -21,6 +19,7 @@ class Node(anytree.Node):
         for child in self.children:
             child.accept(visitor)
         visitor.visit(self)
+
 
 #####################################
 # Leaf nodes
@@ -496,8 +495,10 @@ class SymbolTableVisitor(Visitor):
             if v.name == "varDecl":
                 # update both the current offset and the table entry
                 node.curr_offset = node.curr_offset + v.mem_size
-                v.table_entry[3] = node.curr_offset
-                node.symbol_data.append(v.table_entry)
+                # create copy to avoid referencing the variable's entry
+                row = v.table_entry.copy()
+                row[3] = node.curr_offset
+                node.symbol_data.append(row)
         # update symbol table with data
         node.symbol_table.add_rows(node.symbol_data)
         # update function node's symbol table and append to output
