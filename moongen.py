@@ -62,6 +62,10 @@ class MoonGenerationVisitor(Visitor):
         self.moonDataCode += self.moonCodeIndent + "% space for variable " + tagName + "\n"
         self.moonDataCode += f"{tagName:<10} res {node.table_entry[3]}\n"
     
+    @visitor.when(VariableNode)
+    def visit(self, node):
+        node.moonVarName = node.children[0].moonVarName
+    
     @visitor.when(IfNode)
     def visit(self, node):
         pass
@@ -84,19 +88,44 @@ class MoonGenerationVisitor(Visitor):
     
     @visitor.when(WriteNode)
     def visit(self, node):
-        pass
+        node.moonVarName = node.children[0].moonVarName
+        localRegister = self.registers.pop()
+        
+        self.moonExecCode += self.moonCodeIndent + "% processing: output(" + node.moonVarName + ")\n"
+        self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + node.moonVarName + "(r0)\n"
+        self.moonExecCode += self.moonCodeIndent + "% put value on stack\n"
+        self.moonExecCode += self.moonCodeIndent + "sw -8(r14)," + localRegister
+        self.moonExecCode += self.moonCodeIndent + "% link buffer to stack\n"
+        self.moonExecCode += self.moonCodeIndent + "addi " + localRegister + ",r0, buf\n"
+        self.moonExecCode += self.moonCodeIndent + "sw -12(r14)," + localRegister + "\n"
+        self.moonExecCode += self.moonCodeIndent + "% convert int to string for output\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15, intstr\n"
+        self.moonExecCode += self.moonCodeIndent + "sw -8(r14), r13\n"
+        self.moonExecCode += self.moonCodeIndent + "% output to console\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15, putstr\n"
+
+        self.registers.append(localRegister)
     
     @visitor.when(ReturnNode)
     def visit(self, node):
         pass
-        
+    
+    @visitor.when(ArithExprNode)
+    def visit(self, node):
+        node.moonVarName = node.children[0].moonVarName
+    
     @visitor.when(RelExprNode)
     def visit(self, node):
         pass
         
     @visitor.when(AssignNode)
     def visit(self, node):
-        pass
+        localRegister = self.registers.pop()
+        left, right = node.children
+        self.moonExecCode += self.moonCodeIndent + "% processing: "  + left.moonVarName + " := " + right.moonVarName + "\n";
+        self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + left.moonVarName + "(r0)\n";
+        self.moonExecCode += self.moonCodeIndent + "sw " + right.moonVarName + "(r0)," + localRegister + "\n";
+        self.registers.append(localRegister)
         
     @visitor.when(ArgParamNode)
     def visit(self, node):
@@ -112,18 +141,49 @@ class MoonGenerationVisitor(Visitor):
         self.tempVarNum += 1
         leftChildRegister, rightChildRegister, localRegister = self.registers[-3:]
         leftOp, operation, rightOp = node.children
-        
-        moonExecCode = ''
-        moonExecCode += self.moonCodeIndent + f"% processing: {node.moonVarName}" + ":= " + leftOp.moonVarName + " + " + rightOp.moonVarName + "\n"
+        # perform different operation depending on operand
+        match operation.name:
+            case "+":
+                oper = "addi "
+            case "-":
+                oper = "subi "
+            case "|":
+                oper = "ori "
+            case _:
+                oper = ""
+        # generate moon code blocks for addop node
+        moonExecCode = self.moonCodeIndent + f"% processing: {node.moonVarName}" + ":= " + leftOp.moonVarName + operation.name + rightOp.moonVarName + "\n"
         moonExecCode += self.moonCodeIndent + "lw " + leftChildRegister + "," + leftOp.moonVarName + "(r0)\n"
-        moonExecCode += self.moonCodeIndent + "addi " + localRegister + "," + leftChildRegister + "," + rightOp.moonVarName + "\n"
-        self.moonDataCode += self.moonCodeIndent + "% space for " + leftOp.moonVarName + " + " + rightOp.moonVarName + "\n"
-        self.moonDataCode += f"{node.moonVarName:<10} res {4}\n"
+        moonExecCode += self.moonCodeIndent + oper + localRegister + "," + leftChildRegister + "," + rightOp.moonVarName + "\n"
         moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "(r0)," + localRegister + "\n"
-
+        
+        self.moonDataCode += self.moonCodeIndent + "% space for " + leftOp.moonVarName + " + " + rightOp.moonVarName + "\n"
+        self.moonDataCode += f"{node.moonVarName:<10} res {node.size}\n"
         self.moonExecCode += moonExecCode
         
     @visitor.when(MultOpNode)
     def visit(self, node):
-        pass
+        node.moonVarName = 't' + str(self.tempVarNum)
+        self.tempVarNum += 1
+        leftChildRegister, rightChildRegister, localRegister = self.registers[-3:]
+        leftOp, operation, rightOp = node.children
+        # perform different operation depending on operand
+        match operation.name:
+            case "*":
+                oper = "muli "
+            case "/":
+                oper = "divi "
+            case "&":
+                oper = "andi "
+            case _:
+                oper = ""
+        # generate moon code blocks for multop node
+        moonExecCode = self.moonCodeIndent + f"% processing: {node.moonVarName}" + ":= " + leftOp.moonVarName + operation.name + rightOp.moonVarName + "\n"
+        moonExecCode += self.moonCodeIndent + "lw " + leftChildRegister + "," + leftOp.moonVarName + "(r0)\n"
+        moonExecCode += self.moonCodeIndent + oper + localRegister + "," + leftChildRegister + "," + rightOp.moonVarName + "\n"
+        moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "(r0)," + localRegister + "\n"
+        
+        self.moonDataCode += self.moonCodeIndent + "% space for " + leftOp.moonVarName + operation.name + rightOp.moonVarName + "\n"
+        self.moonDataCode += f"{node.moonVarName:<10} res {node.size}\n"
+        self.moonExecCode += moonExecCode
     
