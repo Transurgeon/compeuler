@@ -2,11 +2,11 @@ func main() -> void {
     let a: integer;
     let b: integer;
     let c: integer;
-
+    let d: integer;
     a = 5;
     b = 3;
 
     c = a + b;
-
-    write(c);
+    d = a + c;
+    write(d);
 }
