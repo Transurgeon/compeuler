@@ -13,6 +13,10 @@ class MoonGenerationVisitor(Visitor):
         self.moonCodeIndent = "           " # 10 empty space characters for indent
 
     # pre-visit functions
+    def pre_visit_ProgramNode(self, node):
+        self.moonExecCode += self.moonCodeIndent + "entry\n"
+        self.moonExecCode += self.moonCodeIndent + "addi r14,r0,topaddr\n"
+        
     def pre_visit_StructNode(self, node):
         self.scope_stack.append(node.name)
     
@@ -34,6 +38,11 @@ class MoonGenerationVisitor(Visitor):
     def visit(self, node):
         pass
     
+    @visitor.when(ProgramNode)
+    def visit(self, node):
+        self.moonDataCode += self.moonCodeIndent + "% buffer space used for console output\n"
+        self.moonDataCode += "buf        res 20\n"
+        
     @visitor.when(IdNode)
     def visit(self, node):
         node.moonVarName = self.scope_stack[-1] + "_" + node.name
@@ -94,7 +103,7 @@ class MoonGenerationVisitor(Visitor):
         self.moonExecCode += self.moonCodeIndent + "% processing: output(" + node.moonVarName + ")\n"
         self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + node.moonVarName + "(r0)\n"
         self.moonExecCode += self.moonCodeIndent + "% put value on stack\n"
-        self.moonExecCode += self.moonCodeIndent + "sw -8(r14)," + localRegister
+        self.moonExecCode += self.moonCodeIndent + "sw -8(r14)," + localRegister + "\n"
         self.moonExecCode += self.moonCodeIndent + "% link buffer to stack\n"
         self.moonExecCode += self.moonCodeIndent + "addi " + localRegister + ",r0, buf\n"
         self.moonExecCode += self.moonCodeIndent + "sw -12(r14)," + localRegister + "\n"
