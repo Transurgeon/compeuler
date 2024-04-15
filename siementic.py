@@ -8,6 +8,7 @@ class Node(anytree.Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
         self.moonVarName = ""
+        self.type = ""
         
     def accept(self, visitor):
         # allow for pre visit children node function calls
@@ -453,7 +454,10 @@ class SymbolTableVisitor(Visitor):
                 node.symbol_data.append(c.table_entry)
                 struct_dict[c.struct_name] = c.table_output
             elif c.name == "impl":
-                self.output += struct_dict[c.struct_name] + c.table_output
+                try:
+                    self.output += struct_dict[c.struct_name] + c.table_output
+                except:
+                    self.errors += "Must define struct before impl on line: " + str(node.line)
             else:
                 node.symbol_data.append(c.table_entry)
                 self.output += c.table_output
@@ -636,7 +640,6 @@ class TypeCheckingVisitor(Visitor):
             node.type = left.type
         else:
             node.type = "typeerror"
-            self.errors += left.type + " " + right.type + "\n"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
         

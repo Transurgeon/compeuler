@@ -233,7 +233,7 @@ class Past:
         self.prog()
         self.derivation += "Parsing Completed Successfully"
         root = self.stack.pop()
-        # self.printTree(root) # for A3
+        self.printTree(root) # for A3
         self.exportGraph(root) # for A3
         self.printSymbolTables(root)
         self.printSemanticErrors(root)

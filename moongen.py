@@ -179,23 +179,6 @@ class MoonGenerationVisitor(Visitor):
         self.moonDataCode += f"{node.moonVarName:<10} res {node.size}\n"
         self.moonExecCode += moonExecCode
         
-    @visitor.when(NotNode)
-    def visit(self, node):
-        node.moonVarName = 't' + str(self.tempVarNum)
-        self.tempVarNum += 1
-        leftChildRegister, rightChildRegister, localRegister = self.registers[-3:]
-        leftOp, operation, rightOp = node.children
-        
-        moonExecCode = self.moonCodeIndent + f"% processing: {node.moonVarName}" + ":= " + leftOp.moonVarName + operation.name + rightOp.moonVarName + "\n"
-        moonExecCode += self.moonCodeIndent + "lw " + leftChildRegister + "," + leftOp.moonVarName + "(r0)\n"
-        moonExecCode += self.moonCodeIndent + "lw " + rightChildRegister + "," + rightOp.moonVarName + "(r0)\n"
-        moonExecCode += self.moonCodeIndent + "not " + localRegister + "," + leftChildRegister + "," + rightChildRegister + "\n"
-        moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "(r0)," + localRegister + "\n"
-        
-        self.moonDataCode += self.moonCodeIndent + "% space for " + leftOp.moonVarName + operation.name + rightOp.moonVarName + "\n"
-        self.moonDataCode += f"{node.moonVarName:<10} res {node.size}\n"
-        self.moonExecCode += moonExecCode
-        
     @visitor.when(AssignNode)
     def visit(self, node):
         localRegister = self.registers.pop()
