@@ -21,17 +21,16 @@ class MoonGenerationVisitor(Visitor):
         
     def pre_visit_StructNode(self, node):
         self.scope_stack.append(node.name)
-    
-    def pre_visit_FuncDeclNode(self, node):
-        node.moonVarName = node.table_entry[0]
-        
-        self.moonExecCode += self.moonCodeIndent + "% processing function definition: "  + node.moonVarName + "\n"
-        self.moonExecCode += f"{node.moonVarName:<10}"
-        self.moonDataCode += f"{node.moonVarName + "link":<11} res 4\n"
-        self.moonExecCode += self.moonCodeIndent + "sw " + node.name + "link(r0),r15\n"
-        self.moonDataCode += f"{node.moonVarName + "return":<11} res 4\n"
 
     def pre_visit_FunctionNode(self, node):
+        node.moonVarName = node.table_entry[0]
+        if node.moonVarName != "main":
+            self.moonExecCode += self.moonCodeIndent + "% processing function definition: "  + node.moonVarName + "\n"
+            self.moonExecCode += f"{node.moonVarName:<10}"
+            self.moonDataCode += f"{node.moonVarName + "link":<11} res 4\n"
+            self.moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "link(r0),r15\n"
+            self.moonDataCode += f"{node.moonVarName + "return":<11} res 4\n"
+
         self.scope_data.append(node.table_entry)
     
     # visitor functions
@@ -71,13 +70,11 @@ class MoonGenerationVisitor(Visitor):
     def visit(self, node):
         self.scope_stack.pop()
 
-    @visitor.when(FuncDeclNode)
-    def visit(self, node):
-        self.moonExecCode += self.moonCodeIndent + "lw r15," + node.name + "link(r0)\n"
-        self.moonExecCode += self.moonCodeIndent + "jr r15\n"
-        
     @visitor.when(FunctionNode)
     def visit(self, node):
+        if node.moonVarName != "main":
+            self.moonExecCode += self.moonCodeIndent + "lw r15," + node.moonVarName + "link(r0)\n"
+            self.moonExecCode += self.moonCodeIndent + "jr r15\n"
         self.scope_data.pop()
     
     @visitor.when(VarDeclNode)
@@ -136,6 +133,7 @@ class MoonGenerationVisitor(Visitor):
     def visit(self, node):
         localRegister = self.registers.pop()
         
+        node.moonVarName = self.scope_data[-1][0]
         self.moonExecCode += self.moonCodeIndent + "% processing: return("  + node.children[0].moonVarName + ")\n"
         self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + node.children[0].moonVarName + "(r0)\n"
         self.moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "return(r0)," + localRegister + "\n"
@@ -201,9 +199,11 @@ class MoonGenerationVisitor(Visitor):
             param_name = node.children[0].moonVarName + "fp" + str(param_idx)
             self.moonExecCode += self.moonCodeIndent + "sw " + param_name + "(r0)," + localRegister + "\n"
             param_idx += 1
+            self.moonDataCode += self.moonCodeIndent + "% space for param " + str(param_idx) + " of func " + node.children[0].moonVarName + " \n"
+            self.moonDataCode += f"{param_name:<10} res 4\n"
         
         self.moonExecCode += self.moonCodeIndent + "% func call (jump) for " + node.children[0].moonVarName + " \n"
-        self.moonExecCode += self.moonCodeIndent + "jl r15," + node.moonVarName + "\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15," + node.children[0].moonVarName + "\n"
         self.moonDataCode += self.moonCodeIndent + "% space for function call expression factor\n"
         self.moonDataCode += f"{node.moonVarName:<10} res 4\n"
         self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + node.children[0].moonVarName + "return(r0)\n"

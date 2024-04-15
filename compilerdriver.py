@@ -10,6 +10,7 @@ for filename in os.listdir(path):
         parser.parse()
         
 ### Test files for final project demo
+"""
 path = "tests/"
 for filename in os.listdir(path):
     if filename.endswith(".src"):
@@ -25,3 +26,4 @@ for filename in os.listdir(path):
         fout.write(parser.derivation)
         fout = open(path + name + ".syntaxerrors", "w")
         fout.write(parser.syntaxErrors)
+"""
