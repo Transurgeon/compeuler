@@ -1,0 +1,34 @@
+func id() -> void {
+    id.id(id) ;
+    id(id).id = id;
+    id(id).id() ;
+    id.id[id] = id;
+    id[id].id = id;
+    id[id].id[id] = id;
+    id.id[id][id] = id;
+    id[id][id].id = id;
+    id[id][id].id[id][id] =id ;
+    id(id).id[id] = id; 
+    id(id).id[id][id] = id ; 
+    id(id).id[id][id][id] = id;
+    id(id).id[id][id][id][id] = id;
+    id[id][id][id].id(id).id[id].id(id).id[id][id] = id;
+}
+/*
+    variable + idnest
+    --------------------------------------
+|X| id
+|X| id.id
+|X| id.id(id)
+|X| id(id).id
+|X| id(id).id()
+|X| id.id[id]
+|X| id[id].id
+|X| id[id].id[id]
+|X| id.id[id][id]
+|X| id[id][id].id
+|X| id[id][id].id[id][id]
+|X| id(id).id[id]
+|X| id(id).id[id][id]
+|X| expression as array index
+*/

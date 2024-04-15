@@ -1,0 +1,29 @@
+func main() -> void {
+    let a: integer;
+    let b: integer;
+    let mult: integer;
+    let d: integer;
+
+    a = 5;
+    b = 99;
+    read(mult);
+
+    d = (b/a) * mult;
+
+    write(d);
+
+    let e: integer[3];
+    let f: integer[4];
+    let g: integer;
+
+    e[0] = 4;
+    e[2] = 12;
+
+    f[3] = 6;
+    f[0] = 9;
+
+    g = f[12/4];
+
+    write(f[0] * g);
+    write(e[2]/e[0]);
+}

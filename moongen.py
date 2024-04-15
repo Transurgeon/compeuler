@@ -6,6 +6,7 @@ import visitor
 class MoonGenerationVisitor(Visitor):
     def __init__(self) -> None:
         self.scope_stack = ["global"]
+        self.scope_data = []
         self.registers = ["r12", "r11", "r10", "r9", "r8", "r7", "r6", "r5", "r4", "r3", "r2", "r1"]
         self.tempVarNum = 0
         self.moonExecCode = ""
@@ -14,6 +15,7 @@ class MoonGenerationVisitor(Visitor):
 
     # pre-visit functions
     def pre_visit_ProgramNode(self, node):
+        self.scope_data = node.symbol_data
         self.moonExecCode += self.moonCodeIndent + "entry\n"
         self.moonExecCode += self.moonCodeIndent + "addi r14,r0,topaddr\n"
         
@@ -29,8 +31,8 @@ class MoonGenerationVisitor(Visitor):
         self.moonExecCode += self.moonCodeIndent + "sw " + node.name + "link(r0),r15\n"
         self.moonDataCode += f"{node.moonVarName + "return":<11} res 4\n"
 
-    def pre_visit_ImplNode(self, node):
-        pass
+    def pre_visit_FunctionNode(self, node):
+        self.scope_data.append(node.table_entry)
     
     # visitor functions
     @visitor.on('node')
@@ -45,7 +47,7 @@ class MoonGenerationVisitor(Visitor):
         
     @visitor.when(IdNode)
     def visit(self, node):
-        node.moonVarName = self.scope_stack[-1] + "_" + node.name
+        node.moonVarName = node.name
     
     @visitor.when(IntNode)
     def visit(self, node):
@@ -76,11 +78,11 @@ class MoonGenerationVisitor(Visitor):
         
     @visitor.when(FunctionNode)
     def visit(self, node):
-        pass
+        self.scope_data.pop()
     
     @visitor.when(VarDeclNode)
     def visit(self, node):
-        tagName = self.scope_stack[-1] + "_" + node.table_entry[0]
+        tagName = node.table_entry[0]
         node.moonVarName = tagName
         node.children[0].moonVarName = tagName
         self.moonDataCode += self.moonCodeIndent + "% space for variable " + tagName + "\n"
@@ -202,15 +204,29 @@ class MoonGenerationVisitor(Visitor):
         self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + right.moonVarName + "(r0)\n";
         self.moonExecCode += self.moonCodeIndent + "sw " + left.moonVarName + "(r0)," + localRegister + "\n";
         self.registers.append(localRegister)
-        
-    @visitor.when(ArgParamNode)
-    def visit(self, node):
-        pass
-    
+
     @visitor.when(FuncCallNode)
     def visit(self, node):
-        pass
-    
+        node.moonVarName = 't' + str(self.tempVarNum)
+        self.tempVarNum += 1
+        localRegister = self.registers.pop()
+        table_entry = self
+        param_idx = 0
+        self.moonExecCode += self.moonCodeIndent + "% processing: function call to "  + node.children[0].moonVarName + " \n"
+        for param in node.children[1].children:
+            self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + param.moonVarName + "(r0)\n"
+            param_name = node.children[0].moonVarName + "fp" + str(param_idx)
+            self.moonExecCode += self.moonCodeIndent + "sw " + param_name + "(r0)," + localRegister + "\n"
+            param_idx += 1
+        
+        self.moonExecCode += self.moonCodeIndent + "% func call (jump) for " + node.children[0].moonVarName + " \n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15," + node.moonVarName + "\n"
+        self.moonDataCode += self.moonCodeIndent + "% space for function call expression factor\n"
+        self.moonDataCode += f"{node.moonVarName:<10} res 4\n"
+        self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + node.children[0].moonVarName + "return(r0)\n"
+        self.moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "(r0)," + localRegister + "\n"
+        self.registers.append(localRegister)
+
     @visitor.when(AddOpNode)
     def visit(self, node):
         node.moonVarName = 't' + str(self.tempVarNum)

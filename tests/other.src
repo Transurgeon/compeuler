@@ -1,0 +1,15 @@
+func main() -> void {
+    let a: integer;
+    let b: integer;
+    let c: integer;
+
+    a = 23;
+    b = 46;
+
+    c = sum(a, b);
+    write(c);
+}
+
+func sum(b:integer, c:integer) -> integer {
+    return(b + c);
+}
