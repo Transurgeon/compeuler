@@ -222,7 +222,7 @@ class Past:
         root.accept(moon_gen)
         name, _ = self.lex.filename.split(".")
         fout = open(name + ".moon", "w")
-        fout.write(moon_gen.moonExecCode + "\n")
+        fout.write(moon_gen.moonExecCode)
         fout.write(moon_gen.moonDataCode)
         
     #####################################

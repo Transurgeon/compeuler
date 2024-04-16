@@ -193,6 +193,7 @@ class VariableNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
         super().__init__(name, parent, children, **kwargs)
         self.type = ""
+        self.indices = []
 
 class StatBlockNode(Node):
     def __init__(self, name, parent=None, children=None, **kwargs):
@@ -632,6 +633,9 @@ class TypeCheckingVisitor(Visitor):
     def visit(self, node):
         id, indiceList = node.children
         node.type = self.get_var_dtype(id.name)
+        for _ in indiceList.children:
+            # cut out one dimension of array type
+            node.type = node.type[:-3]
     
     @visitor.when(AssignNode)
     def visit(self, node):
@@ -640,6 +644,7 @@ class TypeCheckingVisitor(Visitor):
             node.type = left.type
         else:
             node.type = "typeerror"
+            self.errors += str(left.type) + " and " + str(right.type) + "\n"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
         

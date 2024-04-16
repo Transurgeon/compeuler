@@ -40,7 +40,6 @@ class MoonGenerationVisitor(Visitor):
     
     @visitor.when(ProgramNode)
     def visit(self, node):
-        self.moonExecCode += self.moonCodeIndent + "hlt"
         self.moonDataCode += self.moonCodeIndent + "% buffer space used for console output\n"
         self.moonDataCode += "buf        res 20\n"
         
@@ -75,6 +74,8 @@ class MoonGenerationVisitor(Visitor):
         if node.moonVarName != "main":
             self.moonExecCode += self.moonCodeIndent + "lw r15," + node.moonVarName + "link(r0)\n"
             self.moonExecCode += self.moonCodeIndent + "jr r15\n"
+        else:
+            self.moonExecCode += self.moonCodeIndent + "hlt\n"
         self.scope_data.pop()
     
     @visitor.when(VarDeclNode)
