@@ -633,6 +633,9 @@ class TypeCheckingVisitor(Visitor):
     def visit(self, node):
         id, indiceList = node.children
         node.type = self.get_var_dtype(id.name)
+        if node.type == "variable undeclared error":
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "use of undeclared variable in the local scope\n"
         for _ in indiceList.children:
             # cut out one dimension of array type
             node.type = node.type[:-3]
@@ -652,6 +655,9 @@ class TypeCheckingVisitor(Visitor):
     def visit(self, node):
         left, right = node.children
         node.type = self.get_var_dtype(right.name)
+        if node.type == "variable undeclared error":
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "invalid access of member " + right.name + " for the class: " + left.name + "\n"
 
     @visitor.when(IdNode)
     def visit(self, node):
@@ -660,13 +666,8 @@ class TypeCheckingVisitor(Visitor):
     @visitor.when(FuncCallNode)
     def visit(self, node):
         func, paramList = node.children
-        func_params = [child.type for child in paramList.children]
-        self.errors += str(func_params) + "\n"
-        
-        # check for functions declared in class scope
-        if node.parent.name == 'dot':
-            self.errors += str(node.parent) + "\n"
-            
-        # check for free functions declared in function scope
-        else:
-            pass
+        node.type = self.get_var_dtype(func.name)
+        if node.type == "variable undeclared error":
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "use of undeclared function in the global scope\n"
+    

@@ -30,7 +30,15 @@ class MoonGenerationVisitor(Visitor):
             self.moonDataCode += f"{node.moonVarName + "link":<11} res 4\n"
             self.moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "link(r0),r15\n"
             self.moonDataCode += f"{node.moonVarName + "return":<11} res 4\n"
-
+            # store passed inputs into the parameter values
+            localRegister = self.registers.pop()
+            param_idx = 0
+            for param in node.children[1].children:
+                param_name = node.moonVarName + "fp" + str(param_idx)
+                self.moonExecCode += self.moonCodeIndent + "lw " + localRegister + "," + param_name + "(r0)\n"
+                self.moonExecCode += self.moonCodeIndent + "sw " + param.children[0].name + "(r0)," + localRegister + "\n"
+                param_idx += 1
+        
         self.scope_data.append(node.table_entry)
     
     # visitor functions
@@ -192,7 +200,6 @@ class MoonGenerationVisitor(Visitor):
         node.moonVarName = 't' + str(self.tempVarNum)
         self.tempVarNum += 1
         localRegister = self.registers.pop()
-        table_entry = self
         param_idx = 0
         self.moonExecCode += self.moonCodeIndent + "% processing: function call to "  + node.children[0].moonVarName + " \n"
         for param in node.children[1].children:
