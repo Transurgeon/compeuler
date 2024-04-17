@@ -1,3 +1,0 @@
-struct id inherits shriek, sama, node {public let adamo : int[5];} ;
-
-impl id { func id ( id : float ) -> float { return ( 5 ) ; } }

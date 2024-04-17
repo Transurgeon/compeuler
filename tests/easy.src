@@ -6,7 +6,6 @@ func main() -> void {
     a = 5;
     b = 3;
 
-    c = a + b;
-    d = a + c;
-    write(d);
+    c = a + b * c;
+    write(c);
 }

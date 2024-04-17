@@ -219,7 +219,7 @@ class MoonGenerationVisitor(Visitor):
     def visit(self, node):
         node.moonVarName = 't' + str(self.tempVarNum)
         self.tempVarNum += 1
-        leftChildRegister, rightChildRegister, localRegister = self.registers[-3:]
+        leftChildRegister, rightChildRegister, localRegister = "r1", "r2", "r3"
         leftOp, operation, rightOp = node.children
         # perform different operation depending on operand
         match operation.name:
@@ -246,7 +246,7 @@ class MoonGenerationVisitor(Visitor):
     def visit(self, node):
         node.moonVarName = 't' + str(self.tempVarNum)
         self.tempVarNum += 1
-        leftChildRegister, rightChildRegister, localRegister = self.registers[-3:]
+        leftChildRegister, rightChildRegister, localRegister = "r1", "r2", "r3"
         leftOp, operation, rightOp = node.children
         # perform different operation depending on operand
         match operation.name:

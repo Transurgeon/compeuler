@@ -640,9 +640,10 @@ class TypeCheckingVisitor(Visitor):
             self.errors += "use of undeclared variable in the local scope\n"
         for _ in indiceList.children:
             # cut out one dimension of array type
-            node.type = node.type[:-3]
+            if node.type:
+                node.type = node.type[:-3]
         # check if dimensions match
-        if "]" in node.type:
+        if node.type and "]" in node.type:
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "invalid dimension of variable access for " + node.type + "\n"
     
