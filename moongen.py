@@ -48,6 +48,8 @@ class MoonGenerationVisitor(Visitor):
     
     @visitor.when(ProgramNode)
     def visit(self, node):
+        self.moonDataCode += self.moonCodeIndent + "cr db 13, 10, 0\n"
+        self.moonDataCode += self.moonCodeIndent + "align\n"
         self.moonDataCode += self.moonCodeIndent + "% buffer space used for console output\n"
         self.moonDataCode += "buf        res 20\n"
         
@@ -97,26 +99,21 @@ class MoonGenerationVisitor(Visitor):
     @visitor.when(VariableNode)
     def visit(self, node):
         node.moonVarName = node.children[0].moonVarName
-    
-    @visitor.when(IfNode)
-    def visit(self, node):
-        pass
-    
-    @visitor.when(ThenNode)
-    def visit(self, node):
-        pass
-        
-    @visitor.when(ElseNode)
-    def visit(self, node):
-        pass
-        
-    @visitor.when(WhileNode)
-    def visit(self, node):
-        pass
      
     @visitor.when(ReadNode)
     def visit(self, node):
-        pass
+        node.moonVarName = node.children[0].moonVarName
+        prompt = "ent" + node.moonVarName
+        self.moonDataCode += f"{prompt:<10} db \"Enter value for " + node.moonVarName + ": \", 0\n"
+        self.moonExecCode += self.moonCodeIndent + "% Read into " + node.moonVarName + "\n"
+        self.moonExecCode += self.moonCodeIndent + "addi r1,r0," + prompt + "\n"
+        self.moonExecCode += self.moonCodeIndent + "sw -8(r14),r1\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15,putstr\n"
+        self.moonExecCode += self.moonCodeIndent + "addi r1,r0,buf\n"
+        self.moonExecCode += self.moonCodeIndent + "sw -8(r14),r1\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15,getstr\n"
+        self.moonExecCode += self.moonCodeIndent + "jl r15,strint\n"
+        self.moonExecCode += self.moonCodeIndent + "sw " + node.moonVarName + "(r0),r13\n"
     
     @visitor.when(WriteNode)
     def visit(self, node):

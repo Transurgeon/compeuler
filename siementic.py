@@ -453,12 +453,14 @@ class SymbolTableVisitor(Visitor):
         for c in node.children:
             if c.name == "struct":
                 node.symbol_data.append(c.table_entry)
+                if c.struct_name in struct_dict:
+                    self.errors += "Multiply declared struct: " + c.struct_name + "\n"
                 struct_dict[c.struct_name] = c.table_output
             elif c.name == "impl":
                 try:
                     self.output += struct_dict[c.struct_name] + c.table_output
                 except:
-                    self.errors += "Must define struct before impl on line: " + str(node.line)
+                    self.errors += "Must define struct before impl for struct: " + c.struct_name + "\n"
             else:
                 node.symbol_data.append(c.table_entry)
                 self.output += c.table_output
@@ -639,6 +641,10 @@ class TypeCheckingVisitor(Visitor):
         for _ in indiceList.children:
             # cut out one dimension of array type
             node.type = node.type[:-3]
+        # check if dimensions match
+        if "]" in node.type:
+            self.errors += "error on line: " + str(node.line) + "\n"
+            self.errors += "invalid dimension of variable access for " + node.type + "\n"
     
     @visitor.when(AssignNode)
     def visit(self, node):
@@ -647,7 +653,6 @@ class TypeCheckingVisitor(Visitor):
             node.type = left.type
         else:
             node.type = "typeerror"
-            self.errors += str(left.type) + " and " + str(right.type) + "\n"
             self.errors += "error on line: " + str(node.line) + "\n"
             self.errors += "mismatch between nodes of type: " + left.name + right.name + "\n"
         
